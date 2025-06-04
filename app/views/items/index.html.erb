@@ -76,7 +76,8 @@
       </div>
 
       <% if @items.any? %>
-        <div class="table-responsive">
+        <!-- Desktop table (hidden on mobile, shown on medium screens and up) -->
+        <div class="table-responsive d-none d-md-block">
           <table class="table table-striped">
             <thead>
               <tr>
@@ -126,8 +127,8 @@
           </table>
         </div>
 
-        <!-- Mobile card layout (hidden on desktop, shown on mobile) -->
-        <div class="d-block d-sm-none">
+        <!-- Mobile card layout (shown on mobile, hidden on medium screens and up) -->
+        <div class="d-md-none">
           <% @items.each do |item| %>
             <div class="mobile-item-card <%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
               <div class="mobile-item-header">

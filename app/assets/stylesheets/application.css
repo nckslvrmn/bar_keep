@@ -36,10 +36,12 @@
     background-color: transparent;
 }
 
-.restocking-page .item-thumbnail,
-.card .item-thumbnail {
-    width: 120px;
-    height: 120px;
+/* Desktop sizes for specific contexts */
+@media (min-width: 992px) {
+    .restocking-page .item-thumbnail {
+        width: 100px;
+        height: 100px;
+    }
 }
 
 .item-image {
@@ -91,117 +93,100 @@
    Mobile Responsive Design
    ==================================== */
 
-/* General mobile improvements */
-@media (max-width: 768px) {
+/* Ensure all images have proper constraints */
+img {
+    max-width: 100%;
+    height: auto;
+}
 
-    /* Reduce padding on mobile */
+/* Tablet/iPad styles (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+
+    /* Constrain ALL thumbnails on tablets */
+    .item-thumbnail {
+        width: 60px !important;
+        height: 60px !important;
+        max-width: 60px !important;
+        max-height: 60px !important;
+    }
+
+    /* Constrain larger images */
+    .item-image {
+        max-width: 120px !important;
+        max-height: 120px !important;
+    }
+
+    /* Fix table layout on tablets */
+    .table td {
+        padding: 0.5rem;
+        vertical-align: middle;
+    }
+
+    /* Adjust restocking cards for tablets */
+    .restocking-page .item-thumbnail {
+        width: 80px !important;
+        height: 80px !important;
+        max-width: 80px !important;
+        max-height: 80px !important;
+    }
+}
+
+/* Mobile styles (below 768px) */
+@media (max-width: 767px) {
+
+    /* Container adjustments */
     .container-fluid {
         padding-left: 10px !important;
         padding-right: 10px !important;
     }
 
-    /* Stack filters on top on mobile */
-    .col-md-3 {
-        margin-bottom: 20px;
-    }
-}
-
-/* iPad specific styles (tablets) */
-@media (min-width: 768px) and (max-width: 1024px) {
-
-    /* Constrain image sizes on iPad */
-    .item-thumbnail {
-        max-width: 80px;
-        max-height: 80px;
-    }
-
-    .restocking-page .item-thumbnail,
-    .card .item-thumbnail {
-        max-width: 100px;
-        max-height: 100px;
-        width: 100px;
-        height: 100px;
-    }
-
-    .item-image {
-        max-width: 150px;
-        max-height: 150px;
-    }
-
-    /* Ensure images don't overflow their containers */
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-}
-
-/* iPhone and small mobile devices */
-@media (max-width: 576px) {
-
-    /* Hide table on mobile and show cards instead */
-    .table-responsive {
-        display: none !important;
-    }
-
-    /* Show mobile cards only on small screens */
-    .d-block.d-sm-none {
-        display: block !important;
-    }
-
-    /* Mobile card layout for items list */
+    /* Mobile card styles for items list */
     .mobile-item-card {
-        display: block;
         background-color: var(--bs-secondary-bg);
         border: 1px solid var(--bs-border-color);
         border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 15px;
+        padding: 12px;
+        margin-bottom: 12px;
     }
 
     .mobile-item-header {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        gap: 12px;
         margin-bottom: 10px;
     }
 
     .mobile-item-image {
-        width: 60px;
-        height: 60px;
-        margin-right: 15px;
+        width: 50px;
+        height: 50px;
         flex-shrink: 0;
     }
 
-    .mobile-item-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
     .mobile-item-details {
-        flex-grow: 1;
+        flex: 1;
         min-width: 0;
-        /* Prevent overflow */
     }
 
     .mobile-item-name {
-        font-size: 16px;
-        font-weight: bold;
-        margin-bottom: 5px;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        line-height: 1.2;
         word-break: break-word;
     }
 
     .mobile-item-meta {
-        font-size: 14px;
+        font-size: 13px;
         color: var(--bs-text-muted);
-        margin-bottom: 5px;
     }
 
     .mobile-item-categories {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .mobile-item-categories .badge {
-        font-size: 11px;
+        font-size: 10px;
+        padding: 2px 6px;
         margin-right: 4px;
         margin-bottom: 4px;
     }
@@ -210,7 +195,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 10px;
         padding-top: 10px;
         border-top: 1px solid var(--bs-border-color);
     }
@@ -222,68 +206,93 @@
     }
 
     .mobile-quantity-controls .btn {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 14px;
+        min-width: 36px;
     }
 
     .mobile-item-actions {
         display: flex;
-        gap: 5px;
+        gap: 6px;
     }
 
     .mobile-item-actions .btn {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 12px;
     }
 
-    /* Restocking page mobile improvements */
-    .restocking-page .col-md-6 {
-        padding-left: 5px;
-        padding-right: 5px;
+    /* Restocking page fixes */
+    .restocking-page .card {
+        margin-bottom: 15px;
     }
 
     .restocking-page .card-body {
         padding: 12px;
     }
 
-    .restocking-page .d-flex {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .restocking-page .item-thumbnail {
-        margin-right: 0 !important;
-        margin-bottom: 10px;
-        width: 80px;
-        height: 80px;
-    }
-
-    .restocking-page .quantity-controls {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-
-    .restocking-page .quantity-controls .btn {
-        padding: 6px 12px;
-        font-size: 16px;
-    }
-
-    .restocking-page .mt-3.d-flex {
-        flex-direction: row;
-        justify-content: center;
+    /* Keep horizontal layout for item info */
+    .restocking-page .d-flex.align-items-start {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
         gap: 10px;
     }
 
-    .restocking-page .mt-3.d-flex .btn {
+    .restocking-page .item-thumbnail {
+        width: 60px !important;
+        height: 60px !important;
+        flex-shrink: 0;
+        margin-right: 0 !important;
+    }
+
+    .restocking-page .flex-grow-1 {
         flex: 1;
-        max-width: 100px;
-        padding: 8px 12px;
+        min-width: 0;
+    }
+
+    .restocking-page .card-title {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    /* Center quantity controls with proper spacing */
+    .restocking-page .quantity-controls {
+        justify-content: center;
+        margin: 12px 0;
+        gap: 15px;
+    }
+
+    .restocking-page .quantity-controls .btn {
+        padding: 6px 14px;
+        font-size: 16px;
+        min-width: 42px;
+    }
+
+    .restocking-page .quantity-controls span {
+        font-size: 18px;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    /* Fix bottom buttons */
+    .restocking-page .mt-3.d-flex.justify-content-between {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 10px;
+        margin-top: 12px !important;
+    }
+
+    .restocking-page .mt-3.d-flex.justify-content-between .btn {
+        flex: 0 0 auto;
+        padding: 6px 16px;
         font-size: 14px;
     }
 
-    /* Improve filter sidebar on mobile */
+    /* Other mobile improvements */
+    h1 {
+        font-size: 24px;
+    }
+
     .card-body h5 {
         font-size: 18px;
     }
@@ -291,100 +300,58 @@
     .category-filters {
         max-height: 150px !important;
     }
-
-    /* Improve header spacing */
-    h1 {
-        font-size: 24px;
-    }
-
-    /* Stack header buttons on very small screens */
-    .d-flex.justify-content-between {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
 }
 
-/* Additional mobile improvements for very small screens */
+/* Very small devices (iPhone SE, etc) */
 @media (max-width: 375px) {
-
-    /* Even smaller adjustments for iPhone SE and similar */
     .mobile-item-image {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
     }
 
     .mobile-item-name {
         font-size: 14px;
     }
 
-    .mobile-item-meta {
-        font-size: 12px;
+    .restocking-page .item-thumbnail {
+        width: 50px !important;
+        height: 50px !important;
     }
 
-    .mobile-quantity-controls .btn,
-    .mobile-item-actions .btn {
-        font-size: 11px;
-        padding: 3px 6px;
+    .restocking-page .card-title {
+        font-size: 15px;
     }
 
     .restocking-page .quantity-controls .btn {
-        padding: 4px 8px;
+        padding: 5px 12px;
         font-size: 14px;
     }
 }
 
-/* Additional mobile optimizations for item show page */
+/* Item show page mobile optimization */
 @media (max-width: 768px) {
-
-    /* Stack columns on mobile */
-    .col-md-4,
-    .col-md-8 {
-        margin-bottom: 20px;
-    }
-
-    /* Constrain item images on show page */
     .item-image {
         max-width: 100%;
-        max-height: 250px;
+        max-height: 200px;
         margin: 0 auto;
         display: block;
     }
 
-    /* Improve button group spacing */
-    .card-body .d-flex {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    /* Adjust definition list for mobile */
-    .dl-horizontal dt {
-        text-align: left;
-        margin-bottom: 5px;
-    }
-
-    /* Make quantity controls more touch-friendly */
     .quantity-controls {
         justify-content: center;
-        margin: 10px 0;
     }
 
     .quantity-controls .btn {
         padding: 8px 16px;
         font-size: 16px;
         min-width: 44px;
-        min-height: 44px;
     }
 
-    /* Improve metadata display on mobile */
-    .metadata-item {
-        font-size: 14px;
+    /* Fix column stacking */
+    .row>* {
+        padding-left: 10px;
+        padding-right: 10px;
     }
-}
-
-/* Ensure all images respect container boundaries */
-img {
-    max-width: 100%;
-    height: auto;
 }
 
 /* Fix for Bootstrap columns on very small screens */
