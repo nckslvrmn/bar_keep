@@ -58,20 +58,6 @@
     </nav>
 
     <main class="container-fluid mt-4">
-      <% if notice.present? %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <%= notice %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <% end %>
-
-      <% if alert.present? %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <%= alert %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      <% end %>
-
       <%= yield %>
     </main>
 
