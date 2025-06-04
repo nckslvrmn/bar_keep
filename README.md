@@ -32,15 +32,7 @@ BarKeep is designed to run in Docker containers for consistent deployment across
 
 2. **Build the container**
    ```bash
-   # Build the Docker image
    docker build -t barkeep .
-
-   # Run the container with persistent storage
-   docker run -d \
-     --name barkeep \
-     -p 3000:3000 \
-     -v $(pwd)/storage:/app/storage \
-     barkeep
    ```
 
 3. **Set up the database** (Important: Do this before starting the container!)
@@ -135,6 +127,32 @@ rails server
 - `RAILS_ENV` - Set to `production` for production deployments
 - `SECRET_KEY_BASE` - Required for production (generate with `rails secret`)
 - `RAILS_MAX_THREADS` - Number of threads (default: 5)
+- `ALLOWED_HOST` - Additional hostname to allow requests from (useful for custom domains or reverse proxies)
+
+### Host Configuration
+
+By default, Rails only accepts requests from localhost in development. In production, you can set the `ALLOWED_HOST` environment variable to allow requests from your domain:
+
+```bash
+# Docker run example
+docker run -d \
+  --name barkeep \
+  -p 3000:3000 \
+  -v $(pwd)/storage:/app/storage \
+  -e ALLOWED_HOST=barkeep.yourdomain.com \
+  barkeep
+
+# Docker Compose example
+environment:
+  - RAILS_ENV=production
+  - SECRET_KEY_BASE=your_secret_key_here
+  - ALLOWED_HOST=barkeep.yourdomain.com
+```
+
+This is particularly useful when:
+- Running behind a reverse proxy (nginx, Caddy, etc.)
+- Using custom domains or subdomains
+- Testing with tools like ngrok during development
 
 ### Database
 
@@ -148,8 +166,8 @@ BarKeep uses SQLite by default with databases stored in the `storage` directory:
 ### Default Credentials
 
 If you ran the seed command, you can log in with:
-- **Email**: admin@example.com
-- **Password**: password123
+- **Email**: admin
+- **Password**: changeme123
 
 ### Key Features
 
