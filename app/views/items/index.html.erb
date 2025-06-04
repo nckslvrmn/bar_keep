@@ -125,6 +125,56 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile card layout (hidden on desktop, shown on mobile) -->
+        <div class="d-block d-sm-none">
+          <% @items.each do |item| %>
+            <div class="mobile-item-card <%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
+              <div class="mobile-item-header">
+                <div class="mobile-item-image">
+                  <% if item.image.attached? %>
+                    <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain; border-radius: 5px;" %>
+                  <% else %>
+                    <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center" style="border-radius: 5px;">
+                      <span style="font-size: 24px;">📷</span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="mobile-item-details">
+                  <div class="mobile-item-name">
+                    <%= link_to item.name, item, class: "text-decoration-none text-light" %>
+                  </div>
+                  <div class="mobile-item-meta">
+                    <%= item.item_type %>
+                    <% if item.out_of_stock? %>
+                      <span class="badge bg-danger ms-2">Out of Stock</span>
+                    <% elsif item.low_stock? %>
+                      <span class="badge bg-warning ms-2">Low Stock</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mobile-item-categories">
+                <% item.categories.each do |category| %>
+                  <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %>"><%= category.name %></span>
+                <% end %>
+              </div>
+
+              <div class="mobile-item-controls">
+                <div class="mobile-quantity-controls">
+                  <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-outline-danger", params: { amount: 1 } %>
+                  <span class="mx-2 fw-bold"><%= item.quantity %></span>
+                  <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-outline-success", params: { amount: 1 } %>
+                </div>
+                <div class="mobile-item-actions">
+                  <%= link_to "View", item, class: "btn btn-info" %>
+                  <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
       <% else %>
         <div class="alert alert-info">
           No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
