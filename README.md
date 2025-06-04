@@ -30,22 +30,7 @@ BarKeep is designed to run in Docker containers for consistent deployment across
    cd bar_keep
    ```
 
-2. **Set up the database** (Important: Do this before starting the container!)
-   ```bash
-   # Create the storage directory if it doesn't exist
-   mkdir -p storage
-
-   # Run database setup in a temporary container
-   docker run --rm -v $(pwd):/app -w /app ruby:3.4 bash -c "
-     gem install bundler &&
-     bundle install &&
-     bundle exec rails db:create &&
-     bundle exec rails db:migrate &&
-     bundle exec rails db:seed
-   "
-   ```
-
-3. **Build and run the container**
+2. **Build the container**
    ```bash
    # Build the Docker image
    docker build -t barkeep .
@@ -58,7 +43,30 @@ BarKeep is designed to run in Docker containers for consistent deployment across
      barkeep
    ```
 
-4. **Access the application**
+3. **Set up the database** (Important: Do this before starting the container!)
+   ```bash
+   # Create the storage directory if it doesn't exist
+   mkdir -p storage
+
+   # Run database setup in a temporary container
+   docker run --rm -v $(pwd):/app -w /app barkeep:latest bash -c "
+     bundle exec rails db:create &&
+     bundle exec rails db:migrate &&
+     bundle exec rails db:seed
+   "
+   ```
+
+4. **Run the container**
+   ```bash
+   # Run the container with persistent storage
+   docker run -d \
+     --name barkeep \
+     -p 3000:3000 \
+     -v $(pwd)/storage:/app/storage \
+     barkeep
+   ```
+
+5. **Access the application**
 
    Open your browser and navigate to `http://localhost:3000`
 
