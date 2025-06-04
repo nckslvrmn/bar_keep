@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+
+if [ -z "${LD_PRELOAD+x}" ]; then
+    LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
+    export LD_PRELOAD
+fi
+
+if [ $# -eq 0 ] || \
+   ([ "$1" = "bundle" ] && [ "$2" = "exec" ] && [ "$3" = "puma" ]) || \
+   ([ "$1" = "rails" ] && ([ "$2" = "server" ] || [ "$2" = "s" ])) || \
+   [[ "$*" == *"puma"* ]]; then
+  if ! [[ -f "storage/${RAILS_ENV:-development}.sqlite3" ]]; then
+      mkdir -p storage
+      echo "Database not found. Setting up database..."
+
+      echo "Creating database..."
+      bundle exec rails db:create
+
+      echo "Running migrations..."
+      bundle exec rails db:migrate
+
+      echo "Seeding database..."
+      bundle exec rails db:seed
+
+      echo "Database setup complete!"
+  fi
+    echo "Running migrations to ensure it's up to date..."
+    bundle exec rails db:migrate
+
+    if ! ls public/icon-*.png >/dev/null 2>&1; then
+        echo "Icons not found. Generating icons..."
+        bundle exec rake icons:generate
+        echo "Icon generation complete!"
+    fi
+
+    echo "Precompiling assets..."
+    bundle exec rails assets:precompile
+fi
+
+exec "$@"

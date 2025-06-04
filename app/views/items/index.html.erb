@@ -1,0 +1,234 @@
+<div class="container-fluid px-3" data-controller="item-filter">
+  <div class="row">
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Filters</h5>
+
+          <% if params[:category_ids].present? %>
+            <div class="alert alert-info mb-3">
+              <strong>Filtering by categories (<%= params[:category_match] == "all" ? "ALL" : "ANY" %>):</strong><br>
+              <% selected_categories = Category.where(id: params[:category_ids]) %>
+              <% selected_categories.each do |cat| %>
+                <span class="badge bg-primary"><%= cat.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="mb-3">
+            <%= text_field_tag :search, params[:search],
+                class: "form-control",
+                placeholder: "Search items...",
+                data: {
+                  "item-filter-target": "searchInput",
+                  action: "input->item-filter#onSearchInput"
+                } %>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Categories</label>
+            <div class="category-filters" style="max-height: 200px; overflow-y: auto;">
+              <% @categories.each do |category| %>
+                <div class="form-check">
+                  <%= check_box_tag "category_ids[]", category.id,
+                      params[:category_ids]&.include?(category.id.to_s),
+                      class: "form-check-input",
+                      id: "category_#{category.id}",
+                      data: {
+                        "item-filter-target": "categoryCheckbox",
+                        action: "change->item-filter#onCategoryChange"
+                      } %>
+                  <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
+                </div>
+              <% end %>
+            </div>
+            <div class="mt-2">
+              <div class="form-check form-check-inline">
+                <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
+                    class: "form-check-input",
+                    data: {
+                      "item-filter-target": "categoryMatchRadio",
+                      action: "change->item-filter#onCategoryMatchChange"
+                    } %>
+                <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
+              </div>
+              <div class="form-check form-check-inline">
+                <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
+                    class: "form-check-input",
+                    data: {
+                      "item-filter-target": "categoryMatchRadio",
+                      action: "change->item-filter#onCategoryMatchChange"
+                    } %>
+                <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
+              </div>
+            </div>
+            <small class="form-text text-muted">Select multiple categories to filter</small>
+          </div>
+
+          <div class="mb-3">
+            <%= select_tag :item_type,
+                options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]),
+                class: "form-select",
+                data: {
+                  "item-filter-target": "itemTypeSelect",
+                  action: "change->item-filter#onItemTypeChange"
+                } %>
+          </div>
+
+          <div class="mb-3">
+            <%= select_tag :stock_status,
+                options_for_select([
+                  ['All Items', ''],
+                  ['In Stock', 'in_stock'],
+                  ['Low Stock', 'low_stock'],
+                  ['Out of Stock', 'out_of_stock']
+                ], params[:stock_status]),
+                class: "form-select",
+                data: {
+                  "item-filter-target": "stockStatusSelect",
+                  action: "change->item-filter#onStockStatusChange"
+                } %>
+          </div>
+
+          <button type="button" class="btn btn-outline-secondary w-100" data-action="click->item-filter#clearFilters">
+            Clear All Filters
+          </button>
+
+          <div class="mt-3 text-center">
+            <small class="text-muted" data-item-filter-target="resultsCount"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9 col-md-8">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Inventory</h1>
+        <div class="d-flex gap-2">
+          <button type="button"
+                  class="btn btn-outline-danger"
+                  data-action="click->item-filter#showOutOfStock"
+                  data-item-filter-target="needsRestockingBtn">
+            Show Out of Stock
+          </button>
+          <%= link_to "Add New Item", new_item_path, class: "btn btn-success" %>
+        </div>
+      </div>
+
+      <% if @items.any? %>
+        <div class="table-responsive d-none d-md-block">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Categories</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th style="white-space: nowrap; min-width: 120px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @items.each do |item| %>
+                <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>"
+                    data-item-filter-target="item"
+                    data-item-name="<%= item.name %>"
+                    data-item-categories="<%= item.categories.pluck(:id).to_json %>"
+                    data-item-type="<%= item.item_type %>"
+                    data-item-quantity="<%= item.quantity %>"
+                    data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
+                  <td>
+                    <%= item_thumbnail(item) %>
+                  </td>
+                  <td><%= link_to item.name, item, class: "text-decoration-none" %></td>
+                  <td>
+                    <% item.categories.each do |category| %>
+                      <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
+                    <% end %>
+                  </td>
+                  <td><%= item.item_type %></td>
+                  <td>
+                    <div class="quantity-controls">
+                      <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-sm btn-outline-danger", params: { amount: 1 } %>
+                      <span class="mx-2"><%= item.quantity %></span>
+                      <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-sm btn-outline-success", params: { amount: 1 } %>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1" style="white-space: nowrap;">
+                      <%= link_to "View", item, class: "btn btn-sm btn-info" %>
+                      <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="d-md-none">
+          <% @items.each do |item| %>
+            <div class="mobile-item-card <%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>"
+                 data-item-filter-target="item"
+                 data-item-name="<%= item.name %>"
+                 data-item-categories="<%= item.categories.pluck(:id).to_json %>"
+                 data-item-type="<%= item.item_type %>"
+                 data-item-quantity="<%= item.quantity %>"
+                 data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
+              <div class="mobile-item-header">
+                <div class="mobile-item-image">
+                  <% if item.image.attached? %>
+                    <%= optimized_item_image(item, class: "w-100 h-100", style: "object-fit: contain; border-radius: 5px;") %>
+                  <% else %>
+                    <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center" style="border-radius: 5px;">
+                      <span style="font-size: 32px;">📷</span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="mobile-item-details">
+                  <div class="mobile-item-name">
+                    <%= link_to item.name, item, class: "text-decoration-none" %>
+                  </div>
+                  <div class="mobile-item-meta">
+                    <%= item.item_type %>
+                    <% if item.out_of_stock? %>
+                      <span class="badge bg-danger ms-2">Out of Stock</span>
+                    <% elsif item.low_stock? %>
+                      <span class="badge bg-warning ms-2">Low Stock</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mobile-item-categories">
+                <% item.categories.each do |category| %>
+                  <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %>"><%= category.name %></span>
+                <% end %>
+              </div>
+
+              <div class="mobile-item-controls">
+                <div class="mobile-quantity-controls">
+                  <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-outline-danger", params: { amount: 1 } %>
+                  <span class="mx-2 fw-bold"><%= item.quantity %></span>
+                  <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-outline-success", params: { amount: 1 } %>
+                </div>
+                <div class="mobile-item-actions">
+                  <%= link_to "View", item, class: "btn btn-info" %>
+                  <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="alert alert-info d-none" data-item-filter-target="noResults">
+          No items match your filters. Try adjusting your search criteria.
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+{
+    "splash_screens": {
+        "iphone_se": {
+            "width": 640,
+            "height": 1136,
+            "ratio": "2x",
+            "orientation": "portrait"
+        },
+        "iphone_8": {
+            "width": 750,
+            "height": 1334,
+            "ratio": "2x",
+            "orientation": "portrait"
+        },
+        "iphone_8_plus": {
+            "width": 1242,
+            "height": 2208,
+            "ratio": "3x",
+            "orientation": "portrait"
+        },
+        "iphone_x": {
+            "width": 1125,
+            "height": 2436,
+            "ratio": "3x",
+            "orientation": "portrait"
+        },
+        "iphone_12_mini": {
+            "width": 1080,
+            "height": 2340,
+            "ratio": "3x",
+            "orientation": "portrait"
+        },
+        "iphone_12": {
+            "width": 1170,
+            "height": 2532,
+            "ratio": "3x",
+            "orientation": "portrait"
+        },
+        "iphone_12_pro_max": {
+            "width": 1284,
+            "height": 2778,
+            "ratio": "3x",
+            "orientation": "portrait"
+        },
+        "ipad": {
+            "width": 1536,
+            "height": 2048,
+            "ratio": "2x",
+            "orientation": "portrait"
+        },
+        "ipad_pro_11": {
+            "width": 1668,
+            "height": 2388,
+            "ratio": "2x",
+            "orientation": "portrait"
+        },
+        "ipad_pro_12_9": {
+            "width": 2048,
+            "height": 2732,
+            "ratio": "2x",
+            "orientation": "portrait"
+        }
+    },
+    "note": "To generate splash screens, create images with these dimensions and add appropriate link tags to the application layout"
+}

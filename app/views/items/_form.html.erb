@@ -1,0 +1,115 @@
+<%= form_with(model: item, local: true) do |form| %>
+  <% if item.errors.any? %>
+    <div class="alert alert-danger">
+      <h6><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h6>
+      <ul>
+        <% item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Basic Information</h5>
+
+          <div class="mb-3">
+            <%= form.label :name, class: "form-label" %>
+            <%= form.text_field :name, class: "form-control", required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :category_names, "Categories", class: "form-label" %>
+            <%= form.text_field :category_names, value: item.category_names, class: "form-control", placeholder: "Enter categories separated by commas (e.g., Spirits, Whiskey, Premium)" %>
+            <div class="form-text">
+              You can enter multiple categories separated by commas. New categories will be created automatically.
+              <% if categories.any? %>
+                <br>Existing categories: <%= categories.pluck(:name).join(', ') %>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :item_type, "Type", class: "form-label" %>
+            <%= form.select :item_type, options_for_select(Item::ITEM_TYPES, item.item_type || Item::ITEM_TYPES.first), {}, class: "form-select", required: true %>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= form.label :quantity, class: "form-label" %>
+                <%= form.number_field :quantity, class: "form-control", min: 0, required: true %>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <%= form.label :low_stock_threshold, class: "form-label" %>
+                <%= form.number_field :low_stock_threshold, class: "form-control", min: 0 %>
+                <div class="form-text">Alert when quantity drops to this level</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :image, "Product Image", class: "form-label" %>
+            <% if item.persisted? && item.image.attached? %>
+              <div class="mb-2">
+                <p>Current image:</p>
+                <div class="rounded p-3 text-center">
+                  <%= optimized_item_image(item, class: "item-image", style: "object-fit: contain;") %>
+                </div>
+              </div>
+            <% end %>
+            <%= form.file_field :image, class: "form-control", accept: "image/*" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Additional Information</h5>
+          <p class="text-muted">Add custom fields like purchase location, notes, etc.</p>
+
+          <div id="metadata-fields" data-controller="metadata-fields">
+            <% metadata = item.persisted? ? item.metadata_hash : {} %>
+            <% if metadata.any? %>
+              <% metadata.each do |key, value| %>
+                <div class="metadata-field mb-3">
+                  <label class="form-label"><%= key.humanize %></label>
+                  <% if key == 'notes' %>
+                    <textarea name="metadata[<%= key %>]" class="form-control" rows="3"><%= value %></textarea>
+                  <% else %>
+                    <input type="text" name="metadata[<%= key %>]" class="form-control" value="<%= value %>">
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="metadata-field mb-3">
+                <input type="text" name="metadata[purchase_location]" class="form-control mb-2" placeholder="Purchase Location">
+              </div>
+              <div class="metadata-field mb-3">
+                <input type="text" name="metadata[price]" class="form-control mb-2" placeholder="Price">
+              </div>
+              <div class="metadata-field mb-3">
+                <textarea name="metadata[notes]" class="form-control" rows="3" placeholder="Notes"></textarea>
+              </div>
+            <% end %>
+          </div>
+
+          <button type="button" class="btn btn-sm btn-secondary" data-action="click->metadata-fields#add">+ Add Custom Field</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= form.submit item.persisted? ? "Update Item" : "Create Item", class: "btn btn-primary" %>
+    <%= link_to "Cancel", item.persisted? ? item : items_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
