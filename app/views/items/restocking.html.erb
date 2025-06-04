@@ -1,0 +1,71 @@
+<div class="restocking-page">
+  <h1>Items Needing Restocking</h1>
+
+  <div class="mb-4">
+    <p class="text-muted">Items that are out of stock or running low</p>
+  </div>
+
+  <% if @items.any? %>
+    <div class="row">
+      <% @items.each do |item| %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card <%= 'border-danger' if item.out_of_stock? %> <%= 'border-warning' if item.low_stock? %>">
+            <div class="card-body">
+              <div class="d-flex align-items-start">
+                <% if item.image.attached? %>
+                  <div class="item-thumbnail me-3 d-flex align-items-center justify-content-center">
+                    <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain;" %>
+                  </div>
+                <% else %>
+                  <div class="item-thumbnail bg-secondary d-flex align-items-center justify-content-center me-3">
+                    <span>📷</span>
+                  </div>
+                <% end %>
+
+                <div class="flex-grow-1">
+                  <h5 class="card-title mb-1"><%= link_to item.name, item, class: "text-decoration-none text-light" %></h5>
+                  <div class="mb-1">
+                    <% item.categories.each do |category| %>
+                      <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
+                    <% end %>
+                  </div>
+                  <p class="text-muted mb-1"><%= item.item_type %></p>
+
+                  <% if item.out_of_stock? %>
+                    <span class="badge bg-danger">Out of Stock</span>
+                  <% else %>
+                    <span class="badge bg-warning">Low Stock (<%= item.quantity %> remaining)</span>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <div class="quantity-controls justify-content-center">
+                  <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-sm btn-outline-danger", params: { amount: 1 } %>
+                  <span class="mx-3 fs-5"><%= item.quantity %></span>
+                  <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-sm btn-outline-success", params: { amount: 1 } %>
+                </div>
+              </div>
+
+              <div class="mt-3 d-flex justify-content-between">
+                <%= link_to "View", item, class: "btn btn-sm btn-info" %>
+                <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-success">
+      <h5 class="alert-heading">All stocked up! 🎉</h5>
+      <p>No items need restocking at the moment.</p>
+      <hr>
+      <p class="mb-0"><%= link_to "View all items", items_path, class: "alert-link" %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-3">
+    <%= link_to "Back to Inventory", items_path, class: "btn btn-secondary" %>
+  </div>
+</div>

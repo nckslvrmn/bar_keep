@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Sign in to Bar Keep</h2>
+
+          <%= form_with url: login_path, local: true do |form| %>
+            <% if flash[:alert] %>
+              <div class="alert alert-danger" role="alert">
+                <%= flash[:alert] %>
+              </div>
+            <% end %>
+
+            <div class="mb-3">
+              <%= form.label :username, class: "form-label" %>
+              <%= form.text_field :username,
+                  autocomplete: "username",
+                  required: true,
+                  class: "form-control",
+                  placeholder: "Enter your username" %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :password, class: "form-label" %>
+              <%= form.password_field :password,
+                  autocomplete: "current-password",
+                  required: true,
+                  class: "form-control",
+                  placeholder: "Enter your password" %>
+            </div>
+
+            <div class="d-grid">
+              <%= form.submit "Sign in", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

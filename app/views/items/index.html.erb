@@ -1,0 +1,135 @@
+<div class="container-fluid px-3">
+  <div class="row">
+    <div class="col-md-3 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Filters</h5>
+
+          <% if params[:category_ids].present? %>
+            <div class="alert alert-info mb-3">
+              <strong>Filtering by categories (<%= params[:category_match] == "all" ? "ALL" : "ANY" %>):</strong><br>
+              <% selected_categories = Category.where(id: params[:category_ids]) %>
+              <% selected_categories.each do |cat| %>
+                <span class="badge bg-primary"><%= cat.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with(url: items_path, method: :get, local: true) do |f| %>
+            <div class="mb-3">
+              <%= f.text_field :search, class: "form-control", placeholder: "Search items...", value: params[:search] %>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Categories</label>
+              <div class="category-filters" style="max-height: 200px; overflow-y: auto;">
+                <% @categories.each do |category| %>
+                  <div class="form-check">
+                    <%= check_box_tag "category_ids[]", category.id,
+                        params[:category_ids]&.include?(category.id.to_s),
+                        class: "form-check-input",
+                        id: "category_#{category.id}" %>
+                    <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="mt-2">
+                <div class="form-check form-check-inline">
+                  <%= radio_button_tag :category_match, "any", params[:category_match] != "all", class: "form-check-input" %>
+                  <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
+                </div>
+                <div class="form-check form-check-inline">
+                  <%= radio_button_tag :category_match, "all", params[:category_match] == "all", class: "form-check-input" %>
+                  <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
+                </div>
+              </div>
+              <small class="form-text text-muted">Select multiple categories to filter</small>
+            </div>
+
+            <div class="mb-3">
+              <%= f.select :item_type, options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]), {}, class: "form-select" %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.select :stock_status, options_for_select([
+                ['All Items', ''],
+                ['In Stock', 'in_stock'],
+                ['Low Stock', 'low_stock'],
+                ['Out of Stock', 'out_of_stock']
+              ], params[:stock_status]), {}, class: "form-select" %>
+            </div>
+
+            <%= f.submit "Filter", class: "btn btn-primary w-100" %>
+          <% end %>
+
+          <% if params[:category_ids].present? || params[:item_type].present? || params[:stock_status].present? || params[:search].present? %>
+            <%= link_to "Clear All Filters", items_path, class: "btn btn-outline-secondary w-100 mt-2" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-9 col-md-8">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Inventory</h1>
+        <%= link_to "Add New Item", new_item_path, class: "btn btn-success" %>
+      </div>
+
+      <% if @items.any? %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Categories</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @items.each do |item| %>
+                <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
+                  <td>
+                    <% if item.image.attached? %>
+                      <div class="item-thumbnail d-flex align-items-center justify-content-center">
+                        <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain;" %>
+                      </div>
+                    <% else %>
+                      <div class="item-thumbnail bg-secondary d-flex align-items-center justify-content-center">
+                        <span>📷</span>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td><%= link_to item.name, item, class: "text-decoration-none text-light" %></td>
+                  <td>
+                    <% item.categories.each do |category| %>
+                      <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
+                    <% end %>
+                  </td>
+                  <td><%= item.item_type %></td>
+                  <td>
+                    <div class="quantity-controls">
+                      <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-sm btn-outline-danger", params: { amount: 1 } %>
+                      <span class="mx-2"><%= item.quantity %></span>
+                      <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-sm btn-outline-success", params: { amount: 1 } %>
+                    </div>
+                  </td>
+                  <td>
+                    <%= link_to "View", item, class: "btn btn-sm btn-info" %>
+                    <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

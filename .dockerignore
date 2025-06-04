@@ -1,0 +1,37 @@
+# Ignore bundler config
+.bundle
+
+# Ignore log files and temp files
+log/*
+tmp/*
+
+# Ignore storage (ActiveStorage local files)
+storage/*
+
+# Ignore master key and credentials
+config/master.key
+config/credentials.yml.enc
+
+# Ignore dotenv environment files
+.env
+.env.*
+
+# Ignore node modules (if using webpacker or js bundling)
+node_modules
+
+# Ignore SQLite database (if you want to mount it instead)
+db/*.sqlite3
+db/*.sqlite3-journal
+
+# Ignore byebug command history file
+.byebug_history
+
+# Ignore coverage reports
+coverage/*
+
+# Ignore system test screenshots
+spec/examples.txt
+tmp/capybara
+
+# Ignore OS generated files
+.DS_Store

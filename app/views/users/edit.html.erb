@@ -1,0 +1,79 @@
+<div class="container mt-4">
+  <h1>User Settings</h1>
+
+  <% if flash[:notice] %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= flash[:notice] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% end %>
+
+  <% if flash[:alert] %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <%= flash[:alert] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Profile Information</h5>
+
+          <%= form_with model: @user, url: user_path, local: true do |form| %>
+            <div class="mb-3">
+              <%= form.label :username, class: "form-label" %>
+              <%= form.text_field :username, class: "form-control" %>
+              <% if @user.errors[:username].any? %>
+                <div class="text-danger mt-1">
+                  <%= @user.errors[:username].first %>
+                </div>
+              <% end %>
+            </div>
+
+            <%= form.submit "Update Profile", class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Change Password</h5>
+
+          <%= form_with url: update_password_user_path, method: :patch, local: true do |form| %>
+            <div class="mb-3">
+              <%= form.label :current_password, class: "form-label" %>
+              <%= form.password_field :current_password,
+                  class: "form-control",
+                  autocomplete: "current-password" %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :new_password, "New Password", class: "form-label" %>
+              <%= form.password_field :new_password,
+                  class: "form-control",
+                  autocomplete: "new-password" %>
+              <div class="form-text">Must be at least 6 characters</div>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :password_confirmation, "Confirm New Password", class: "form-label" %>
+              <%= form.password_field :password_confirmation,
+                  class: "form-control",
+                  autocomplete: "new-password" %>
+            </div>
+
+            <%= form.submit "Change Password", class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= link_to "← Back to Inventory", root_path, class: "btn btn-secondary" %>
+  </div>
+</div>
