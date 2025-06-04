@@ -5,12 +5,29 @@
     --bs-light: #f8f9fa;
 }
 
+/* Ensure proper rendering on iOS */
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     background-color: #1a1a1a;
     color: #e0e0e0;
+    min-height: 100vh;
+    /* iOS Safari fix for background color */
+    -webkit-background-color: #1a1a1a;
 }
 
-* {
+/* Remove universal selector - can cause issues on iOS */
+/* Instead, apply color to specific elements */
+p,
+span,
+div,
+li,
+td,
+th,
+label {
     color: #e0e0e0;
 }
 
@@ -42,6 +59,10 @@ a {
 
 .navbar {
     background-color: #2c2c2c !important;
+    /* iOS Safari fix */
+    -webkit-background-color: #2c2c2c;
+    position: relative;
+    z-index: 1000;
 
     .navbar-brand,
     .nav-link {
@@ -83,6 +104,9 @@ a {
 
 .btn {
     color: #fff;
+    /* iOS Safari fixes */
+    -webkit-appearance: none;
+    -webkit-text-fill-color: currentColor;
 }
 
 .btn-primary {
@@ -146,9 +170,14 @@ a {
     background-color: #2c2c2c;
     border-color: #444;
     color: #e0e0e0;
+    /* iOS Safari fixes */
+    -webkit-appearance: none;
+    -webkit-text-fill-color: #e0e0e0;
 
     &::placeholder {
         color: #6c757d;
+        -webkit-text-fill-color: #6c757d;
+        opacity: 1;
     }
 }
 
@@ -158,6 +187,8 @@ a {
     border-color: #0d6efd;
     color: #e0e0e0;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    /* iOS Safari fix */
+    -webkit-text-fill-color: #e0e0e0;
 }
 
 .form-label {
@@ -242,6 +273,8 @@ a {
 .dropdown-menu {
     background-color: #2c2c2c;
     border-color: #444;
+    /* iOS Safari fix */
+    -webkit-overflow-scrolling: touch;
 
     .dropdown-item {
         color: #e0e0e0;
@@ -323,5 +356,45 @@ dl dd {
     .form-check-input:checked {
         background-color: #0d6efd;
         border-color: #0d6efd;
+    }
+}
+
+/* iOS Safari specific fixes for main content */
+main {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+/* Ensure container has proper background */
+.container-fluid {
+    background-color: transparent;
+}
+
+/* Fix for iOS input background in dark mode */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea,
+select {
+    -webkit-appearance: none;
+    -webkit-text-fill-color: #e0e0e0;
+    background-color: #2c2c2c !important;
+}
+
+/* Ensure all text is visible on iOS */
+@supports (-webkit-touch-callout: none) {
+
+    /* iOS only styles */
+    body,
+    .navbar,
+    .card,
+    .table,
+    .form-control,
+    .form-select,
+    .btn {
+        -webkit-text-fill-color: currentColor;
     }
 }
