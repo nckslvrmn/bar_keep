@@ -54,8 +54,8 @@ class ItemsController < ApplicationController
 
   def new
     @item = Item.new
-    @item.quantity = 0
-    @item.low_stock_threshold = 1
+    @item.quantity = 1
+    @item.low_stock_threshold = 0
   end
 
   def create
