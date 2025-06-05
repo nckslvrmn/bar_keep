@@ -14,7 +14,7 @@ class Item < ApplicationRecord
   scope :needs_restocking, -> { where("quantity = 0 OR (quantity <= low_stock_threshold AND low_stock_threshold IS NOT NULL)") }
 
   # Item types
-  ITEM_TYPES = [ "Alcohol", "Mixer", "Ingredient", "Tool", "Other" ].freeze
+  ITEM_TYPES = [ "Alcohol", "Liqueur", "Juice", "Syrup", "Ingredient", "Other" ].freeze
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
