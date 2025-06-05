@@ -24,11 +24,18 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  # SSL Configuration - can be disabled for local development/testing
+  # Set FORCE_SSL=false to disable SSL requirements
+  if ENV.fetch("FORCE_SSL", "true") == "true"
+    # Assume all access to the app is happening through a SSL-terminating reverse proxy.
+    config.assume_ssl = true
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+    # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+    config.force_ssl = true
+  else
+    config.assume_ssl = false
+    config.force_ssl = false
+  end
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -80,7 +87,11 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  config.hosts = []
+  config.hosts = [
+    "localhost",           # Allow localhost connections by default
+    "127.0.0.1",          # Allow IP-based localhost
+    /\A\[::1\]\z/         # IPv6 localhost
+  ]
 
   # Add the hostname from environment variable if present
   if ENV["ALLOWED_HOST"].present?

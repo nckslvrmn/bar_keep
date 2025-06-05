@@ -17,8 +17,9 @@ RUN bundle install
 
 COPY . .
 
-RUN bundle exec rails assets:precompile
+RUN chmod +x bin/docker-entrypoint
 
 EXPOSE 3000
 
+ENTRYPOINT ["bin/docker-entrypoint"]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

@@ -26,37 +26,39 @@ BarKeep is designed to run in Docker containers for consistent deployment across
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/bar_keep.git
+   git clone https://github.com/nckslvrmn/bar_keep.git
    cd bar_keep
    ```
 
 2. **Build the container**
    ```bash
-   docker build -t barkeep .
+   docker build -t bar_keep .
    ```
 
-3. **Set up the database** (Important: Do this before starting the container!)
+3. **Generate a secret key** (Required!)
    ```bash
-   # Create the storage directory if it doesn't exist
-   mkdir -p storage
-
-   # Run database setup in a temporary container
-   docker run --rm -v $(pwd):/app -w /app barkeep:latest bash -c "
-     bundle exec rails db:create &&
-     bundle exec rails db:migrate &&
-     bundle exec rails db:seed
-   "
+   # Now that the container is built, generate a secret key
+   docker run --rm bar_keep:latest rails secret
    ```
+
+   **Copy this key - you'll need it for the next step. Keep it safe and never commit it to version control!**
 
 4. **Run the container**
    ```bash
-   # Run the container with persistent storage
+   # Run the container with persistent storage and your secret key
    docker run -d \
      --name barkeep \
      -p 3000:3000 \
      -v $(pwd)/storage:/app/storage \
-     barkeep
+     -e SECRET_KEY_BASE=YOUR_GENERATED_SECRET_KEY_HERE \
+     -e ALLOWED_HOST=barkeep.yourdomain.com  # Set to your custom domain \
+     -e FORCE_SSL=false \
+     bar_keep:latest
    ```
+
+   > **Note**: The database will be automatically created, migrated, and seeded on first run!
+   >
+   > **For production deployments**: Remove `-e FORCE_SSL=false` to enable SSL security unless behind a proxy
 
 5. **Access the application**
 
@@ -64,27 +66,30 @@ BarKeep is designed to run in Docker containers for consistent deployment across
 
 ### Docker Compose (Recommended)
 
-Create a `docker-compose.yml` file:
+Follow steps 1-3 in the Quick Start section and then:
 
-```yaml
-version: '3.8'
+1. **Create a `docker-compose.yml` file**:
+   ```yaml
+   version: '3.8'
 
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./storage:/app/storage
-    environment:
-      - RAILS_ENV=production
-      - SECRET_KEY_BASE=your_secret_key_here
-```
+   services:
+     app:
+       build: .
+       ports:
+         - "3000:3000"
+       volumes:
+         - ./storage:/app/storage
+       environment:
+         - RAILS_ENV=production
+         - SECRET_KEY_BASE=YOUR_GENERATED_SECRET_KEY_HERE  # Required!
+         - ALLOWED_HOST=barkeep.yourdomain.com  # Set to your custom domain
+         - FORCE_SSL=false  # leave as false if hosted behind proxy
+   ```
 
-Then run:
-```bash
-docker-compose up -d
-```
+2. Run:
+   ```bash
+   docker-compose up -d
+   ```
 
 ## 📁 Data Persistence
 
@@ -124,35 +129,25 @@ rails server
 
 ### Environment Variables
 
-- `RAILS_ENV` - Set to `production` for production deployments
-- `SECRET_KEY_BASE` - Required for production (generate with `rails secret`)
+- `SECRET_KEY_BASE` - **Required!** Generate with `docker run --rm bar_keep:latest rails secret`
+- `RAILS_ENV` - Set to `production` for production deployments (default: production)
 - `RAILS_MAX_THREADS` - Number of threads (default: 5)
-- `ALLOWED_HOST` - Additional hostname to allow requests from (useful for custom domains or reverse proxies)
+- `FORCE_SSL` - Set to `false` to disable SSL for local testing or if hosting behind proxy
+- `ALLOWED_HOST` - Hostname to accept requests from (default: localhost). Set to your domain in production
+- `SEED_DATABASE` - Set to "true" to seed the database in production (optional)
 
 ### Host Configuration
 
-By default, Rails only accepts requests from localhost in development. In production, you can set the `ALLOWED_HOST` environment variable to allow requests from your domain:
+By default, Rails accepts requests from localhost (including 127.0.0.1 and ::1) in production mode. Rails uses a security feature that blocks requests from unknown hosts to prevent DNS rebinding attacks.
 
-```bash
-# Docker run example
-docker run -d \
-  --name barkeep \
-  -p 3000:3000 \
-  -v $(pwd)/storage:/app/storage \
-  -e ALLOWED_HOST=barkeep.yourdomain.com \
-  barkeep
+The `ALLOWED_HOST` environment variable tells Rails which additional hostname to accept requests from. You'll need to set this when:
 
-# Docker Compose example
-environment:
-  - RAILS_ENV=production
-  - SECRET_KEY_BASE=your_secret_key_here
-  - ALLOWED_HOST=barkeep.yourdomain.com
-```
-
-This is particularly useful when:
 - Running behind a reverse proxy (nginx, Caddy, etc.)
-- Using custom domains or subdomains
+- Using a custom domain or subdomain
+- Accessing the application from a non-localhost address
 - Testing with tools like ngrok during development
+
+For example, if your BarKeep instance is accessible at `barkeep.yourdomain.com`, you would set `ALLOWED_HOST=barkeep.yourdomain.com`. If you're using a reverse proxy, make sure the host matches what the proxy forwards.
 
 ### Database
 
@@ -166,8 +161,10 @@ BarKeep uses SQLite by default with databases stored in the `storage` directory:
 ### Default Credentials
 
 If you ran the seed command, you can log in with:
-- **Email**: admin
-- **Password**: changeme123
+- **Username**: `admin`
+- **Password**: `changeme123`
+
+⚠️ **Please change the password after first login!**
 
 ### Key Features
 
@@ -181,14 +178,10 @@ If you ran the seed command, you can log in with:
 
 For production deployments:
 
-1. Generate a secret key:
-   ```bash
-   docker run --rm barkeep rails secret
-   ```
-
-2. Set the SECRET_KEY_BASE environment variable
-3. Ensure the storage volume is backed up regularly
-4. Consider using a reverse proxy (nginx, Caddy) for SSL
+1. **Use the secret key** you generated earlier (see the [Generate a Secret Key](#-generate-a-secret-key-required) section)
+2. Ensure the storage volume is backed up regularly
+3. Consider using a reverse proxy (nginx, Caddy) for SSL
+4. Monitor your logs: `docker logs -f barkeep`
 
 ## 🤝 Contributing
 

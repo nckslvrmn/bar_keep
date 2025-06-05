@@ -8,16 +8,23 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# ANSI color codes
+bold = "\e[1m"
+green = "\e[32m"
+yellow = "\e[33m"
+red = "\e[31m"
+reset = "\e[0m"
+
 # Create default user if none exist
 if User.count.zero?
-  default_user = User.create!(
+  User.create!(
     username: 'admin',
     password: 'changeme123',
     password_confirmation: 'changeme123'
   )
 
-  puts "Default user created:"
-  puts "Username: admin"
-  puts "Password: changeme123"
-  puts "Please change the password after first login!"
+  puts "\n#{bold}#{green}✓ Default user created:#{reset}"
+  puts "#{bold}Username: #{yellow}admin#{reset}"
+  puts "#{bold}Password: #{red}changeme123#{reset}"
+  puts "\n#{bold}⚠️  Please change the password after first login!#{reset}\n\n"
 end
