@@ -5,9 +5,6 @@ WORKDIR /app
 ARG RAILS_ENV
 ENV RAILS_ENV=${RAILS_ENV:-production}
 
-ARG SECRET_KEY_BASE
-ENV SECRET_KEY_BASE=${SECRET_KEY_BASE}
-
 ENV BUNDLE_WITHOUT=development:test
 
 RUN gem install bundler
