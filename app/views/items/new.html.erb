@@ -36,7 +36,7 @@
 
           <div class="mb-3">
             <%= form.label :item_type, "Type", class: "form-label" %>
-            <%= form.select :item_type, options_for_select(Item::ITEM_TYPES), {}, class: "form-select", required: true, selected: Item::ITEM_TYPES.first %>
+            <%= form.select :item_type, options_for_select(Item::ITEM_TYPES, Item::ITEM_TYPES.first), {}, class: "form-select", required: true %>
           </div>
 
           <div class="row">
