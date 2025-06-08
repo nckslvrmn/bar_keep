@@ -1,4 +1,6 @@
 class ItemsController < ApplicationController
+  include ImageProcessing
+
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement ]
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
 
@@ -59,6 +61,9 @@ class ItemsController < ApplicationController
   end
 
   def create
+    # Process image to WebP before creating the item
+    process_image_params(:item)
+
     @item = Item.new(item_params.except(:category_names))
 
     if @item.save
@@ -81,6 +86,9 @@ class ItemsController < ApplicationController
   end
 
   def update
+    # Process image to WebP before updating the item
+    process_image_params(:item)
+
     if @item.update(item_params.except(:category_names))
       # Handle categories
       handle_categories(@item, params[:item][:category_names])

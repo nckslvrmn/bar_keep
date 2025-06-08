@@ -93,15 +93,7 @@
               <% @items.each do |item| %>
                 <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
                   <td>
-                    <% if item.image.attached? %>
-                      <div class="item-thumbnail d-flex align-items-center justify-content-center">
-                        <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain;" %>
-                      </div>
-                    <% else %>
-                      <div class="item-thumbnail bg-secondary d-flex align-items-center justify-content-center">
-                        <span>📷</span>
-                      </div>
-                    <% end %>
+                    <%= item_thumbnail(item) %>
                   </td>
                   <td><%= link_to item.name, item, class: "text-decoration-none text-light" %></td>
                   <td>
@@ -134,7 +126,7 @@
               <div class="mobile-item-header">
                 <div class="mobile-item-image">
                   <% if item.image.attached? %>
-                    <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain; border-radius: 5px;" %>
+                    <%= optimized_item_image(item, class: "w-100 h-100", style: "object-fit: contain; border-radius: 5px;") %>
                   <% else %>
                     <div class="w-100 h-100 bg-secondary d-flex align-items-center justify-content-center" style="border-radius: 5px;">
                       <span style="font-size: 24px;">📷</span>

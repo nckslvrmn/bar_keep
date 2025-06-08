@@ -14,7 +14,7 @@
           <div class="col-md-4">
             <% if @item.image.attached? %>
               <div class="rounded p-3 text-center">
-                <%= image_tag @item.image, class: "item-image w-100", style: "object-fit: contain;" %>
+                <%= optimized_item_image(@item, class: "item-image w-100", style: "object-fit: contain;") %>
               </div>
             <% else %>
               <div class="item-image w-100 bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">

@@ -62,7 +62,7 @@
               <div class="mb-2">
                 <p>Current image:</p>
                 <div class="rounded p-3 text-center">
-                  <%= image_tag @item.image, class: "item-image", style: "object-fit: contain;" %>
+                  <%= optimized_item_image(@item, class: "item-image", style: "object-fit: contain;") %>
                 </div>
               </div>
             <% end %>

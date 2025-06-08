@@ -84,6 +84,15 @@
     background-color: rgba(255, 255, 255, 0.05);
 }
 
+/* Sticky filters card - only on desktop and tablet */
+@media (min-width: 768px) {
+    .col-md-3 .card {
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+    }
+}
+
 /* Table striping for dark theme */
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     background-color: rgba(255, 255, 255, 0.02);

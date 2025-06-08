@@ -38,5 +38,19 @@ module BarKeep
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Replace the default in-process and non-durable queuing backend for Active Job.
+    config.active_job.queue_adapter = :solid_queue
+
+    # Cache
+    config.cache_store = :solid_cache_store
+
+    # Cable
+    # config.action_cable.adapter = :solid_cable
+
+    # Enable parameter wrapping for JSON.
+    # You can enable this globally or on a per-controller basis.
+    # This is useful when you're sending requests from forms in JSON format.
+    config.action_controller.wrap_parameters_by_default = true
   end
 end

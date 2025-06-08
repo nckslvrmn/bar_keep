@@ -24,6 +24,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Use proxy mode for Active Storage to enable cache headers
+  config.active_storage.resolve_model_to_route = :rails_storage_proxy
+
   # SSL Configuration - can be disabled for local development/testing
   # Set FORCE_SSL=false to disable SSL requirements
   if ENV.fetch("FORCE_SSL", "true") == "true"

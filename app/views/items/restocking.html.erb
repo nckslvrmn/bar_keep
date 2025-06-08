@@ -12,15 +12,9 @@
           <div class="card <%= 'border-danger' if item.out_of_stock? %> <%= 'border-warning' if item.low_stock? %>">
             <div class="card-body">
               <div class="d-flex align-items-start">
-                <% if item.image.attached? %>
-                  <div class="item-thumbnail me-3 d-flex align-items-center justify-content-center">
-                    <%= image_tag item.image, class: "w-100 h-100", style: "object-fit: contain;" %>
-                  </div>
-                <% else %>
-                  <div class="item-thumbnail bg-secondary d-flex align-items-center justify-content-center me-3">
-                    <span>📷</span>
-                  </div>
-                <% end %>
+                <div class="me-3">
+                  <%= item_thumbnail(item) %>
+                </div>
 
                 <div class="flex-grow-1">
                   <h5 class="card-title mb-1"><%= link_to item.name, item, class: "text-decoration-none text-light" %></h5>
