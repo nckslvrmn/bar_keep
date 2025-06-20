@@ -40,7 +40,8 @@ module BarKeep
     config.generators.system_tests = nil
 
     # Replace the default in-process and non-durable queuing backend for Active Job.
-    config.active_job.queue_adapter = :solid_queue
+    # config.active_job.queue_adapter = :solid_queue
+    # Note: Using :inline adapter in environment-specific configs for synchronous execution
 
     # Cache
     config.cache_store = :solid_cache_store

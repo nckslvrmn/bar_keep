@@ -1,5 +1,9 @@
-module ImageProcessing
+module ImageProcessingConcern
   extend ActiveSupport::Concern
+
+  included do
+    helper_method :process_image_params
+  end
 
   private
 

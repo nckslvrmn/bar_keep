@@ -6,7 +6,7 @@
           <h1 class="card-title"><%= @item.name %></h1>
           <div>
             <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning" %>
-            <%= link_to "Delete", @item, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+            <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
           </div>
         </div>
 
