@@ -1,4 +1,4 @@
-<div class="container-fluid px-3">
+<div class="container-fluid px-3" data-controller="item-filter">
   <div class="row">
     <div class="col-md-3 mb-4">
       <div class="card">
@@ -15,56 +15,88 @@
             </div>
           <% end %>
 
-          <%= form_with(url: items_path, method: :get, local: true) do |f| %>
-            <div class="mb-3">
-              <%= f.text_field :search, class: "form-control", placeholder: "Search items...", value: params[:search] %>
-            </div>
+          <div class="mb-3">
+            <%= text_field_tag :search, params[:search],
+                class: "form-control",
+                placeholder: "Search items...",
+                data: {
+                  "item-filter-target": "searchInput",
+                  action: "input->item-filter#onSearchInput"
+                } %>
+          </div>
 
-            <div class="mb-3">
-              <label class="form-label">Categories</label>
-              <div class="category-filters" style="max-height: 200px; overflow-y: auto;">
-                <% @categories.each do |category| %>
-                  <div class="form-check">
-                    <%= check_box_tag "category_ids[]", category.id,
-                        params[:category_ids]&.include?(category.id.to_s),
-                        class: "form-check-input",
-                        id: "category_#{category.id}" %>
-                    <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
-                  </div>
-                <% end %>
-              </div>
-              <div class="mt-2">
-                <div class="form-check form-check-inline">
-                  <%= radio_button_tag :category_match, "any", params[:category_match] != "all", class: "form-check-input" %>
-                  <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
+          <div class="mb-3">
+            <label class="form-label">Categories</label>
+            <div class="category-filters" style="max-height: 200px; overflow-y: auto;">
+              <% @categories.each do |category| %>
+                <div class="form-check">
+                  <%= check_box_tag "category_ids[]", category.id,
+                      params[:category_ids]&.include?(category.id.to_s),
+                      class: "form-check-input",
+                      id: "category_#{category.id}",
+                      data: {
+                        "item-filter-target": "categoryCheckbox",
+                        action: "change->item-filter#onCategoryChange"
+                      } %>
+                  <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
                 </div>
-                <div class="form-check form-check-inline">
-                  <%= radio_button_tag :category_match, "all", params[:category_match] == "all", class: "form-check-input" %>
-                  <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
-                </div>
+              <% end %>
+            </div>
+            <div class="mt-2">
+              <div class="form-check form-check-inline">
+                <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
+                    class: "form-check-input",
+                    data: {
+                      "item-filter-target": "categoryMatchRadio",
+                      action: "change->item-filter#onCategoryMatchChange"
+                    } %>
+                <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
               </div>
-              <small class="form-text text-muted">Select multiple categories to filter</small>
+              <div class="form-check form-check-inline">
+                <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
+                    class: "form-check-input",
+                    data: {
+                      "item-filter-target": "categoryMatchRadio",
+                      action: "change->item-filter#onCategoryMatchChange"
+                    } %>
+                <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
+              </div>
             </div>
+            <small class="form-text text-muted">Select multiple categories to filter</small>
+          </div>
 
-            <div class="mb-3">
-              <%= f.select :item_type, options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]), {}, class: "form-select" %>
-            </div>
+          <div class="mb-3">
+            <%= select_tag :item_type,
+                options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]),
+                class: "form-select",
+                data: {
+                  "item-filter-target": "itemTypeSelect",
+                  action: "change->item-filter#onItemTypeChange"
+                } %>
+          </div>
 
-            <div class="mb-3">
-              <%= f.select :stock_status, options_for_select([
-                ['All Items', ''],
-                ['In Stock', 'in_stock'],
-                ['Low Stock', 'low_stock'],
-                ['Out of Stock', 'out_of_stock']
-              ], params[:stock_status]), {}, class: "form-select" %>
-            </div>
+          <div class="mb-3">
+            <%= select_tag :stock_status,
+                options_for_select([
+                  ['All Items', ''],
+                  ['In Stock', 'in_stock'],
+                  ['Low Stock', 'low_stock'],
+                  ['Out of Stock', 'out_of_stock']
+                ], params[:stock_status]),
+                class: "form-select",
+                data: {
+                  "item-filter-target": "stockStatusSelect",
+                  action: "change->item-filter#onStockStatusChange"
+                } %>
+          </div>
 
-            <%= f.submit "Filter", class: "btn btn-primary w-100" %>
-          <% end %>
+          <button type="button" class="btn btn-outline-secondary w-100" data-action="click->item-filter#clearFilters">
+            Clear All Filters
+          </button>
 
-          <% if params[:category_ids].present? || params[:item_type].present? || params[:stock_status].present? || params[:search].present? %>
-            <%= link_to "Clear All Filters", items_path, class: "btn btn-outline-secondary w-100 mt-2" %>
-          <% end %>
+          <div class="mt-3 text-center">
+            <small class="text-muted" data-item-filter-target="resultsCount"></small>
+          </div>
         </div>
       </div>
     </div>
@@ -91,7 +123,13 @@
             </thead>
             <tbody>
               <% @items.each do |item| %>
-                <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
+                <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>"
+                    data-item-filter-target="item"
+                    data-item-name="<%= item.name %>"
+                    data-item-categories="<%= item.categories.pluck(:id).to_json %>"
+                    data-item-type="<%= item.item_type %>"
+                    data-item-quantity="<%= item.quantity %>"
+                    data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
                   <td>
                     <%= item_thumbnail(item) %>
                   </td>
@@ -122,7 +160,13 @@
         <!-- Mobile card layout (shown on mobile, hidden on medium screens and up) -->
         <div class="d-md-none">
           <% @items.each do |item| %>
-            <div class="mobile-item-card <%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>">
+            <div class="mobile-item-card <%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>"
+                 data-item-filter-target="item"
+                 data-item-name="<%= item.name %>"
+                 data-item-categories="<%= item.categories.pluck(:id).to_json %>"
+                 data-item-type="<%= item.item_type %>"
+                 data-item-quantity="<%= item.quantity %>"
+                 data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
               <div class="mobile-item-header">
                 <div class="mobile-item-image">
                   <% if item.image.attached? %>
@@ -167,6 +211,10 @@
               </div>
             </div>
           <% end %>
+        </div>
+
+        <div class="alert alert-info d-none" data-item-filter-target="noResults">
+          No items match your filters. Try adjusting your search criteria.
         </div>
       <% else %>
         <div class="alert alert-info">
