@@ -255,3 +255,21 @@ img {
         width: 100%;
     }
 }
+
+.table {
+    table-layout: auto;
+}
+
+.table th:last-child,
+.table td:last-child {
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.table td:last-child .d-flex {
+    flex-wrap: nowrap !important;
+}
+
+.table td:last-child .btn {
+    white-space: nowrap;
+}

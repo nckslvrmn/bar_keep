@@ -125,7 +125,7 @@
                 <th>Categories</th>
                 <th>Type</th>
                 <th>Quantity</th>
-                <th>Actions</th>
+                <th style="white-space: nowrap; min-width: 120px;">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -155,8 +155,10 @@
                     </div>
                   </td>
                   <td>
-                    <%= link_to "View", item, class: "btn btn-sm btn-info" %>
-                    <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+                    <div class="d-flex gap-1" style="white-space: nowrap;">
+                      <%= link_to "View", item, class: "btn btn-sm btn-info" %>
+                      <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+                    </div>
                   </td>
                 </tr>
               <% end %>
