@@ -28,6 +28,12 @@ if [ $# -eq 0 ] || \
     echo "Running migrations to ensure it's up to date..."
     bundle exec rails db:migrate
 
+    if ! ls public/icon-*.png >/dev/null 2>&1; then
+        echo "Icons not found. Generating icons..."
+        bundle exec rake icons:generate
+        echo "Icon generation complete!"
+    fi
+
     echo "Precompiling assets..."
     bundle exec rails assets:precompile
 fi

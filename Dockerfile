@@ -7,6 +7,10 @@ ENV RAILS_ENV=${RAILS_ENV:-production}
 
 ENV BUNDLE_WITHOUT=development:test
 
+RUN apt-get update && apt-get install -y \
+    librsvg2-bin \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN gem install bundler
 
 COPY Gemfile Gemfile.lock ./

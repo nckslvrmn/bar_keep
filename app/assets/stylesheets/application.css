@@ -1,3 +1,4 @@
+/* Dark mode colors */
 [data-bs-theme="dark"] {
     --bs-body-bg: #1a1a1a;
     --bs-body-color: #e0e0e0;
@@ -7,15 +8,63 @@
     --bs-border-color: #444;
     --bs-link-color: #6ea8fe;
     --bs-link-hover-color: #9ec5fe;
+    --navbar-bg: #2c2c2c;
+    --card-bg: #2c2c2c;
+    --metadata-bg: rgba(255, 255, 255, 0.05);
+    --stripe-bg: rgba(255, 255, 255, 0.02);
+}
+
+/* Light mode colors */
+[data-bs-theme="light"] {
+    --bs-body-bg: #ffffff;
+    --bs-body-color: #212529;
+    --bs-emphasis-color: #000;
+    --bs-secondary-bg: #f8f9fa;
+    --bs-tertiary-bg: #e9ecef;
+    --bs-border-color: #dee2e6;
+    --bs-link-color: #0d6efd;
+    --bs-link-hover-color: #0a58ca;
+    --navbar-bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --metadata-bg: rgba(0, 0, 0, 0.03);
+    --stripe-bg: rgba(0, 0, 0, 0.02);
+}
+
+/* iOS safe area support */
+@supports(padding: max(0px)) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
 }
 
 .navbar {
-    background-color: var(--bs-secondary-bg) !important;
+    background-color: var(--navbar-bg) !important;
+}
+
+[data-bs-theme="light"] .navbar {
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
 .card {
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--card-bg);
     border-color: var(--bs-border-color);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--bs-body-color);
+    cursor: pointer;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.theme-toggle:hover {
+    background-color: var(--metadata-bg);
 }
 
 .item-thumbnail {
@@ -35,7 +84,7 @@
 }
 
 .metadata-item {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--metadata-bg);
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -67,7 +116,7 @@
     border: 1px solid var(--bs-border-color);
     border-radius: 5px;
     padding: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--metadata-bg);
 }
 
 @media (min-width: 768px) {
@@ -79,11 +128,11 @@
 }
 
 .table-striped>tbody>tr:nth-of-type(odd)>* {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--stripe-bg);
 }
 
 .mobile-item-card {
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--card-bg);
     border: 1px solid var(--bs-border-color);
     border-radius: 8px;
     padding: 12px;
