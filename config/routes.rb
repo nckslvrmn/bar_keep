@@ -32,9 +32,5 @@ Rails.application.routes.draw do
       patch :increment
       patch :decrement
     end
-
-    collection do
-      get :restocking
-    end
   end
 end

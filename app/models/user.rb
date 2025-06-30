@@ -6,7 +6,6 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
 
-  # Normalize username to lowercase
   before_save :normalize_username
 
   private

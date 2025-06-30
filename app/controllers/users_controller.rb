@@ -1,9 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user
 
-  def edit
-    # Show user edit form
-  end
+  def edit;end
 
   def update
     if @user.update(user_params)

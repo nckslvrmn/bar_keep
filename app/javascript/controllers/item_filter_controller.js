@@ -1,14 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["item", "searchInput", "categoryCheckbox", "categoryMatchRadio", "itemTypeSelect", "stockStatusSelect", "resultsCount", "noResults"]
+    static targets = ["item", "searchInput", "categoryCheckbox", "categoryMatchRadio", "itemTypeSelect", "stockStatusSelect", "resultsCount", "noResults", "needsRestockingBtn"]
 
     connect() {
-        // Initialize filtering when the controller connects
         this.filterItems()
+        this.updateRestockingButtonState()
     }
 
-    // Called whenever any filter input changes
     filterItems() {
         const searchTerm = this.searchInputTarget.value.toLowerCase()
         const selectedCategories = this.getSelectedCategories()
@@ -16,8 +15,7 @@ export default class extends Controller {
         const itemType = this.itemTypeSelectTarget.value
         const stockStatus = this.stockStatusSelectTarget.value
 
-        let visibleCount = 0
-        let hiddenCount = 0
+        let matchingItems = 0
 
         this.itemTargets.forEach(item => {
             const shouldShow = this.itemMatchesFilters(item, {
@@ -30,24 +28,21 @@ export default class extends Controller {
 
             if (shouldShow) {
                 item.classList.remove("d-none")
-                // Only count if the parent container is visible
-                if (this.isItemVisible(item)) {
-                    visibleCount++
+
+                if (item.tagName === 'TR') {
+                    matchingItems++
                 }
             } else {
                 item.classList.add("d-none")
-                hiddenCount++
             }
         })
 
-        // Update results count if we have that target
         if (this.hasResultsCountTarget) {
-            this.resultsCountTarget.textContent = `${visibleCount} item${visibleCount !== 1 ? 's' : ''} found`
+            this.resultsCountTarget.textContent = `${matchingItems} item${matchingItems !== 1 ? 's' : ''} found`
         }
 
-        // Show/hide "no results" message based on whether ANY items are visible
         if (this.hasNoResultsTarget) {
-            if (visibleCount === 0) {
+            if (matchingItems === 0) {
                 this.noResultsTarget.classList.remove("d-none")
             } else {
                 this.noResultsTarget.classList.add("d-none")
@@ -56,7 +51,6 @@ export default class extends Controller {
     }
 
     itemMatchesFilters(item, filters) {
-        // Search filter
         if (filters.searchTerm) {
             const itemName = item.dataset.itemName.toLowerCase()
             if (!itemName.includes(filters.searchTerm)) {
@@ -64,18 +58,15 @@ export default class extends Controller {
             }
         }
 
-        // Category filter
         if (filters.selectedCategories.length > 0) {
             const itemCategories = JSON.parse(item.dataset.itemCategories || "[]")
 
             if (filters.categoryMatch === "all") {
-                // Item must have ALL selected categories
                 const hasAllCategories = filters.selectedCategories.every(catId =>
                     itemCategories.includes(parseInt(catId))
                 )
                 if (!hasAllCategories) return false
             } else {
-                // Item must have ANY of the selected categories
                 const hasAnyCategory = filters.selectedCategories.some(catId =>
                     itemCategories.includes(parseInt(catId))
                 )
@@ -83,12 +74,10 @@ export default class extends Controller {
             }
         }
 
-        // Item type filter
         if (filters.itemType && item.dataset.itemType !== filters.itemType) {
             return false
         }
 
-        // Stock status filter
         if (filters.stockStatus) {
             const quantity = parseInt(item.dataset.itemQuantity)
             const lowStockThreshold = parseInt(item.dataset.itemLowStockThreshold || "5")
@@ -120,7 +109,6 @@ export default class extends Controller {
         return checkedRadio ? checkedRadio.value : "any"
     }
 
-    // Event handlers
     onSearchInput() {
         this.filterItems()
     }
@@ -139,6 +127,7 @@ export default class extends Controller {
 
     onStockStatusChange() {
         this.filterItems()
+        this.updateRestockingButtonState()
     }
 
     clearFilters() {
@@ -148,22 +137,36 @@ export default class extends Controller {
         this.itemTypeSelectTarget.value = ""
         this.stockStatusSelectTarget.value = ""
         this.filterItems()
+        this.updateRestockingButtonState()
     }
 
-    // Check if the item's parent container is visible
-    isItemVisible(item) {
-        // Check if this is a table row (desktop view)
-        if (item.tagName === 'TR') {
-            const table = item.closest('.table-responsive')
-            return table && !table.classList.contains('d-none') && window.getComputedStyle(table).display !== 'none'
+    showOutOfStock() {
+        const isCurrentlyFiltered = this.stockStatusSelectTarget.value === "out_of_stock"
+
+        if (isCurrentlyFiltered) {
+            this.clearFilters()
+        } else {
+            this.searchInputTarget.value = ""
+            this.categoryCheckboxTargets.forEach(checkbox => checkbox.checked = false)
+            this.categoryMatchRadioTargets.find(radio => radio.value === "any").checked = true
+            this.itemTypeSelectTarget.value = ""
+            this.stockStatusSelectTarget.value = "out_of_stock"
+            this.filterItems()
         }
 
-        // Check if this is a mobile card
-        if (item.classList.contains('mobile-item-card')) {
-            const mobileContainer = item.closest('.d-md-none')
-            return mobileContainer && window.getComputedStyle(mobileContainer).display !== 'none'
-        }
+        this.updateRestockingButtonState()
+    }
 
-        return true
+    updateRestockingButtonState() {
+        if (this.hasNeedsRestockingBtnTarget) {
+            const isFiltered = this.stockStatusSelectTarget.value === "out_of_stock"
+            if (isFiltered) {
+                this.needsRestockingBtnTarget.classList.remove("btn-outline-danger")
+                this.needsRestockingBtnTarget.classList.add("btn-danger")
+            } else {
+                this.needsRestockingBtnTarget.classList.remove("btn-danger")
+                this.needsRestockingBtnTarget.classList.add("btn-outline-danger")
+            }
+        }
     }
 }

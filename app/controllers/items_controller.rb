@@ -7,10 +7,8 @@ class ItemsController < ApplicationController
   def index
     @items = Item.includes(:categories, image_attachment: :blob)
 
-    # Filter by categories (multiple)
     if params[:category_ids].present? && params[:category_ids].is_a?(Array)
       if params[:category_match] == "all"
-        # Find items that have ALL of the selected categories
         item_ids = Item.joins(:categories)
                        .where(categories: { id: params[:category_ids] })
                        .group("items.id")
@@ -18,18 +16,15 @@ class ItemsController < ApplicationController
                        .pluck(:id)
         @items = @items.where(id: item_ids)
       else
-        # Default: Find items that have ANY of the selected categories
         item_ids = Item.joins(:categories).where(categories: { id: params[:category_ids] }).pluck(:id).uniq
         @items = @items.where(id: item_ids)
       end
     end
 
-    # Filter by item type
     if params[:item_type].present?
       @items = @items.where(item_type: params[:item_type])
     end
 
-    # Filter by stock status
     if params[:stock_status].present?
       case params[:stock_status]
       when "out_of_stock"
@@ -41,7 +36,6 @@ class ItemsController < ApplicationController
       end
     end
 
-    # Search by name
     if params[:search].present?
       @items = @items.where("items.name LIKE ?", "%#{params[:search]}%")
     end
@@ -66,10 +60,8 @@ class ItemsController < ApplicationController
     @item = Item.new(item_params.except(:category_names))
 
     if @item.save
-      # Handle categories
       handle_categories(@item, params[:item][:category_names])
 
-      # Handle metadata
       if params[:metadata].present?
         @item.update_metadata(params[:metadata])
       end
@@ -88,10 +80,8 @@ class ItemsController < ApplicationController
     process_image_params(:item)
 
     if @item.update(item_params.except(:category_names))
-      # Handle categories
       handle_categories(@item, params[:item][:category_names])
 
-      # Handle metadata
       if params[:metadata].present?
         @item.update_metadata(params[:metadata])
       end
@@ -117,9 +107,7 @@ class ItemsController < ApplicationController
     redirect_back(fallback_location: items_path, notice: "Quantity decreased.")
   end
 
-  def restocking
-    @items = Item.needs_restocking.includes(:categories, image_attachment: :blob).order(:name)
-  end
+
 
   private
 
@@ -134,13 +122,10 @@ class ItemsController < ApplicationController
   def handle_categories(item, category_names_string)
     return unless category_names_string.present?
 
-    # Clear existing categories
     item.categories.clear
 
-    # Parse comma-separated category names
     category_names = category_names_string.split(",").map(&:strip).reject(&:blank?)
 
-    # Find or create each category and add to item
     category_names.each do |name|
       category = Category.find_or_create_by(name: name)
       item.categories << category unless item.categories.include?(category)
