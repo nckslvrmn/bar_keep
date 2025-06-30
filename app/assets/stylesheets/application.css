@@ -48,11 +48,19 @@
 }
 
 .out-of-stock {
-    background-color: rgba(220, 53, 69, 0.2);
+    background-color: rgba(220, 53, 69, 0.1) !important;
+}
+
+.out-of-stock td {
+    background-color: rgba(220, 53, 69, 0.1) !important;
 }
 
 .low-stock {
-    background-color: rgba(255, 193, 7, 0.2);
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+.low-stock td {
+    background-color: rgba(255, 193, 7, 0.1) !important;
 }
 
 .category-filters {
