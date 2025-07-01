@@ -1,0 +1,7 @@
+--dir
+.
+--ignore=tmp/
+--ignore=vendor/
+--suppress-error-code=5012
+--suppress-error-code=5067
+--suppress-error-code=5022

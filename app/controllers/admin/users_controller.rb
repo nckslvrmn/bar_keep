@@ -1,3 +1,5 @@
+# typed: false
+
 class Admin::UsersController < ApplicationController
   before_action :require_admin
   before_action :set_user, only: [ :show, :edit, :update, :destroy, :toggle_admin ]

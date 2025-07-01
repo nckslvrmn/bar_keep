@@ -1,3 +1,5 @@
+# typed: false
+
 class ItemsController < ApplicationController
   include ImageProcessingConcern
 

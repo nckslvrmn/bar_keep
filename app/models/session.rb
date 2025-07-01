@@ -1,3 +1,5 @@
+# typed: false
+
 class Session < ApplicationRecord
   belongs_to :user
 

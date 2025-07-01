@@ -1,3 +1,5 @@
+# typed: false
+
 module Authentication
   extend ActiveSupport::Concern
 

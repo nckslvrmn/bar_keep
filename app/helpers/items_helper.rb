@@ -1,3 +1,5 @@
+# typed: false
+
 module ItemsHelper
   def optimized_item_image(item, options = {})
     return unless item.image.attached?
