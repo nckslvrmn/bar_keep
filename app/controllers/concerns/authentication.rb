@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :current_user, :logged_in?
+    helper_method :current_user, :logged_in?, :admin?
   end
 
   private
@@ -32,6 +32,10 @@ module Authentication
 
   def logged_in?
     current_user.present?
+  end
+
+  def admin?
+    current_user&.admin?
   end
 
   def require_authentication

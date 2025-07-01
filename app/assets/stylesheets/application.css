@@ -111,6 +111,26 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+/* Fix for button_to inside dropdown */
+.dropdown-menu form {
+    margin: 0;
+}
+
+.dropdown-menu form button.dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    padding: 0.25rem 1rem;
+    color: var(--bs-dropdown-link-color);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.dropdown-menu form button.dropdown-item:hover {
+    background-color: var(--bs-dropdown-link-hover-bg);
+    color: var(--bs-dropdown-link-hover-color);
+}
+
 /* Cards */
 .card,
 .mobile-item-card {

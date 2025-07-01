@@ -5,7 +5,7 @@ class ItemsController < ApplicationController
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
 
   def index
-    @items = Item.includes(:categories, image_attachment: :blob)
+    @items = current_user.items.includes(:categories, image_attachment: :blob)
                  .by_categories(params[:category_ids], match_all: params[:category_match] == "all")
                  .by_type(params[:item_type])
                  .by_stock_status(params[:stock_status])
@@ -20,7 +20,7 @@ class ItemsController < ApplicationController
   end
 
   def new
-    @item = Item.new
+    @item = current_user.items.build
     @item.quantity = 1
     @item.low_stock_threshold = 0
   end
@@ -28,7 +28,7 @@ class ItemsController < ApplicationController
   def create
     process_image_params(:item)
 
-    @item = Item.new(item_params.except(:category_names))
+    @item = current_user.items.build(item_params.except(:category_names))
 
     if @item.save
       handle_categories(@item, params[:item][:category_names])
@@ -81,7 +81,7 @@ class ItemsController < ApplicationController
   private
 
   def set_item
-    @item = Item.find(params[:id])
+    @item = current_user.items.find(params[:id])
   end
 
   def load_categories

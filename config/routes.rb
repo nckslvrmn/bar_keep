@@ -24,6 +24,16 @@ Rails.application.routes.draw do
     end
   end
 
+  # Admin routes
+  namespace :admin do
+    resources :users do
+      member do
+        patch :toggle_admin
+      end
+    end
+    root "users#index"
+  end
+
   # Defines the root path route ("/")
   root "items#index"
 

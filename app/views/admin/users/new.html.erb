@@ -1,0 +1,48 @@
+<div class="container-lg">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h1 class="mb-4">Create New User</h1>
+
+      <%= form_with(model: [:admin, @user], local: true) do |form| %>
+        <% if @user.errors.any? %>
+          <div class="alert alert-danger">
+            <h6 class="alert-heading">Please fix the following errors:</h6>
+            <ul class="mb-0">
+              <% @user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= form.label :username, class: "form-label" %>
+          <%= form.text_field :username, class: "form-control", autofocus: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :password, class: "form-label" %>
+          <%= form.password_field :password, class: "form-control" %>
+          <div class="form-text">Minimum 6 characters</div>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :password_confirmation, class: "form-label" %>
+          <%= form.password_field :password_confirmation, class: "form-control" %>
+        </div>
+
+        <div class="mb-3">
+          <div class="form-check">
+            <%= form.check_box :is_admin, class: "form-check-input" %>
+            <%= form.label :is_admin, "Grant admin privileges", class: "form-check-label" %>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <%= form.submit "Create User", class: "btn btn-primary" %>
+          <%= link_to "Cancel", admin_users_path, class: "btn btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 class Item < ApplicationRecord
+  belongs_to :user
   has_and_belongs_to_many :categories
   has_many :item_metadata, dependent: :destroy
   has_one_attached :image
