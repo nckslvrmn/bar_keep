@@ -1,6 +1,5 @@
-const CACHE_NAME = 'bar-keep-v1';
+const CACHE_NAME = 'bar-keep-v2';
 const urlsToCache = [
-    '/',
     '/manifest.json',
     '/icon.svg',
     '/icon-192.png',
@@ -12,7 +11,9 @@ const EXCLUDED_PATHS = [
     '/login',
     '/logout',
     '/sessions',
-    '/users'
+    '/users',
+    '/items',
+    '/admin'
 ];
 
 // Install event - cache assets
@@ -47,8 +48,14 @@ self.addEventListener('fetch', event => {
     // Skip non-GET requests
     if (request.method !== 'GET') return;
 
-    // Skip authentication-related paths
+    // Skip authentication-related paths and dynamic content paths
     if (EXCLUDED_PATHS.some(path => url.pathname.startsWith(path))) {
+        return;
+    }
+
+    // Skip HTML requests (except offline.html) to ensure fresh content
+    if (request.headers.get('Accept')?.includes('text/html') &&
+        !url.pathname.includes('offline.html')) {
         return;
     }
 
@@ -80,10 +87,16 @@ self.addEventListener('fetch', event => {
                         return response;
                     }
 
+                    // Don't cache HTML responses to ensure fresh content
+                    const contentType = response.headers.get('Content-Type') || '';
+                    if (contentType.includes('text/html')) {
+                        return response;
+                    }
+
                     // Clone the response
                     const responseToCache = response.clone();
 
-                    // Add to cache
+                    // Add to cache (only non-HTML assets)
                     caches.open(CACHE_NAME)
                         .then(cache => {
                             cache.put(request, responseToCache);
