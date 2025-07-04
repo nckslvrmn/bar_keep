@@ -5,7 +5,13 @@
         <div class="card-body">
           <h2 class="card-title text-center mb-4">Sign in to Bar Keep</h2>
 
-          <%= form_with url: login_path, local: true do |form| %>
+          <%= form_with url: login_path,
+                       local: true,
+                       data: {
+                         turbo: false,
+                         controller: "login-form",
+                         action: "submit->login-form#submit"
+                       } do |form| %>
             <% if flash[:alert] %>
               <div class="alert alert-danger" role="alert">
                 <%= flash[:alert] %>

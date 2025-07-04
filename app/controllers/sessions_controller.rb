@@ -3,6 +3,10 @@
 class SessionsController < ApplicationController
   skip_before_action :require_authentication, only: [ :new, :create ]
 
+  # Use a different forgery protection strategy for login
+  # This allows login to proceed even with invalid/expired CSRF tokens
+  protect_from_forgery with: :reset_session, only: [ :create ], prepend: true
+
   def new
     redirect_to root_path if logged_in?
   end

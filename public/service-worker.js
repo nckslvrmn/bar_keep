@@ -7,6 +7,14 @@ const urlsToCache = [
     '/offline.html'
 ];
 
+// Paths that should never be cached
+const EXCLUDED_PATHS = [
+    '/login',
+    '/logout',
+    '/sessions',
+    '/users'
+];
+
 // Install event - cache assets
 self.addEventListener('install', event => {
     event.waitUntil(
@@ -33,11 +41,25 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
+    const { request } = event;
+    const url = new URL(request.url);
+
     // Skip non-GET requests
-    if (event.request.method !== 'GET') return;
+    if (request.method !== 'GET') return;
+
+    // Skip authentication-related paths
+    if (EXCLUDED_PATHS.some(path => url.pathname.startsWith(path))) {
+        return;
+    }
+
+    // Skip requests with session tokens or CSRF tokens
+    if (url.pathname.includes('authenticity_token') ||
+        request.headers.get('X-CSRF-Token')) {
+        return;
+    }
 
     event.respondWith(
-        caches.match(event.request)
+        caches.match(request)
             .then(response => {
                 // Cache hit - return response
                 if (response) {
@@ -45,11 +67,16 @@ self.addEventListener('fetch', event => {
                 }
 
                 // Clone the request
-                const fetchRequest = event.request.clone();
+                const fetchRequest = request.clone();
 
                 return fetch(fetchRequest).then(response => {
                     // Check if valid response
                     if (!response || response.status !== 200 || response.type !== 'basic') {
+                        return response;
+                    }
+
+                    // Don't cache responses that set cookies
+                    if (response.headers.get('Set-Cookie')) {
                         return response;
                     }
 
@@ -59,7 +86,7 @@ self.addEventListener('fetch', event => {
                     // Add to cache
                     caches.open(CACHE_NAME)
                         .then(cache => {
-                            cache.put(event.request, responseToCache);
+                            cache.put(request, responseToCache);
                         });
 
                     return response;
@@ -67,7 +94,7 @@ self.addEventListener('fetch', event => {
             })
             .catch(() => {
                 // Offline fallback for navigation requests
-                if (event.request.destination === 'document') {
+                if (request.destination === 'document') {
                     return caches.match('/offline.html');
                 }
             })
