@@ -158,6 +158,7 @@
                     <div class="d-flex gap-1" style="white-space: nowrap;">
                       <%= link_to "View", item, class: "btn btn-sm btn-info" %>
                       <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
+                      <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
                     </div>
                   </td>
                 </tr>
@@ -215,6 +216,7 @@
                 <div class="mobile-item-actions">
                   <%= link_to "View", item, class: "btn btn-info" %>
                   <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>
+                  <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
                 </div>
               </div>
             </div>
