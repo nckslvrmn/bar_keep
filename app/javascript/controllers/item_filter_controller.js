@@ -16,6 +16,9 @@ export default class extends Controller {
         const stockStatus = this.stockStatusSelectTarget.value
 
         let matchingItems = 0
+        const visibleCategories = new Set()
+        const categoryCounts = new Map()
+        const processedItems = new Set()
 
         this.itemTargets.forEach(item => {
             const shouldShow = this.itemMatchesFilters(item, {
@@ -29,13 +32,26 @@ export default class extends Controller {
             if (shouldShow) {
                 item.classList.remove("d-none")
 
-                if (item.tagName === 'TR') {
+                const itemKey = `${item.dataset.itemName}-${item.dataset.itemType}-${item.dataset.itemQuantity}`
+
+                if (!processedItems.has(itemKey)) {
+                    processedItems.add(itemKey)
                     matchingItems++
+
+                    // Track categories from unique items only
+                    const itemCategories = JSON.parse(item.dataset.itemCategories || "[]")
+                    itemCategories.forEach(catId => {
+                        const catIdStr = catId.toString()
+                        visibleCategories.add(catIdStr)
+                        categoryCounts.set(catIdStr, (categoryCounts.get(catIdStr) || 0) + 1)
+                    })
                 }
             } else {
                 item.classList.add("d-none")
             }
         })
+
+        this.updateCategoryVisibility(visibleCategories, categoryCounts)
 
         if (this.hasResultsCountTarget) {
             this.resultsCountTarget.textContent = `${matchingItems} item${matchingItems !== 1 ? 's' : ''} found`
@@ -48,6 +64,26 @@ export default class extends Controller {
                 this.noResultsTarget.classList.add("d-none")
             }
         }
+    }
+
+    updateCategoryVisibility(visibleCategories, categoryCounts) {
+        this.categoryCheckboxTargets.forEach(checkbox => {
+            const categoryId = checkbox.value
+            const categoryDiv = checkbox.closest('.form-check')
+            const label = categoryDiv.querySelector('.form-check-label')
+
+            const originalText = label.textContent.replace(/ \(\d+\)$/, '')
+
+            if (visibleCategories.has(categoryId)) {
+                categoryDiv.classList.remove("d-none")
+
+                const count = categoryCounts.get(categoryId) || 0
+                label.textContent = `${originalText} (${count})`
+            } else {
+                categoryDiv.classList.add("d-none")
+                checkbox.checked = false
+            }
+        })
     }
 
     itemMatchesFilters(item, filters) {
