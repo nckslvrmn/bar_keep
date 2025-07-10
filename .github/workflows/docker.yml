@@ -1,0 +1,33 @@
+name: Deploy Image to GHCR
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+
+jobs:
+  push-bar-keep-image:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './bar_keep'
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@main
+
+    - name: 'Login to GitHub Container Registry'
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{github.actor}}
+        password: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Build and push with version tag
+      run: |
+        VERSION=${{ github.ref_name }}
+
+        docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
+        docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:latest
+        docker push ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
+        docker push ghcr.io/${{ github.repository_owner }}/bar_keep:latest

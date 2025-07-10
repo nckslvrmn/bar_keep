@@ -1,4 +1,5 @@
 FROM ruby:3.4
+LABEL org.opencontainers.image.source="https://github.com/nckslvrmn/bar_keep"
 
 WORKDIR /app
 
