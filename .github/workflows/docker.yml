@@ -9,9 +9,6 @@ on:
 jobs:
   push-bar-keep-image:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: './bar_keep'
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@main
