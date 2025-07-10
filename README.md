@@ -2,6 +2,10 @@
 
 > A modern inventory management system designed for bars, restaurants, and beverage establishments. Built with Ruby on Rails and containerized with Docker for easy deployment.
 
+[![GHCR Version](https://ghcr-badge.egpl.dev/nckslvrmn/bar_keep/latest_tag?trim=major&label=ghcr.io)](https://github.com/nckslvrmn/bar_keep/pkgs/container/bar_keep)
+[![GHCR Size](https://ghcr-badge.egpl.dev/nckslvrmn/bar_keep/size?tag=latest&label=image+size)](https://github.com/nckslvrmn/bar_keep/pkgs/container/bar_keep)
+[![License](https://img.shields.io/github/license/nckslvrmn/bar_keep)](LICENSE)
+
 ## ✨ Features
 
 - **📦 Inventory Management** - Track all your beverages, ingredients, and supplies
@@ -15,35 +19,23 @@
 
 ## 🐳 Docker Setup
 
-BarKeep is designed to run in Docker containers for consistent deployment across environments.
+BarKeep is available as a pre-built Docker image on GitHub Container Registry (GHCR) for easy deployment.
 
 ### Prerequisites
 
 - Docker and Docker Compose installed
-- Git (to clone the repository)
 
 ### Quick Start
 
-1. **Clone the repository**
+1. **Generate a secret key** (Required!)
    ```bash
-   git clone https://github.com/nckslvrmn/bar_keep.git
-   cd bar_keep
-   ```
-
-2. **Build the container**
-   ```bash
-   docker build -t bar_keep .
-   ```
-
-3. **Generate a secret key** (Required!)
-   ```bash
-   # Now that the container is built, generate a secret key
-   docker run --rm bar_keep:latest rails secret
+   # Pull the image and generate a secret key
+   docker run --rm ghcr.io/nckslvrmn/bar_keep:latest rails secret
    ```
 
    **Copy this key - you'll need it for the next step. Keep it safe and never commit it to version control!**
 
-4. **Run the container**
+2. **Run the container**
    ```bash
    # Run the container with persistent storage and your secret key
    docker run -d \
@@ -53,20 +45,18 @@ BarKeep is designed to run in Docker containers for consistent deployment across
      -e SECRET_KEY_BASE=YOUR_GENERATED_SECRET_KEY_HERE \
      -e ALLOWED_HOST=barkeep.yourdomain.com  # Set to your custom domain \
      -e FORCE_SSL=false \
-     bar_keep:latest
+     ghcr.io/nckslvrmn/bar_keep:latest
    ```
 
    > **Note**: The database will be automatically created, migrated, and seeded on first run!
-   >
+
    > **For production deployments**: Remove `-e FORCE_SSL=false` to enable SSL security unless behind a proxy
 
-5. **Access the application**
+3. **Access the application**
 
    Open your browser and navigate to `http://localhost:3000`
 
 ### Docker Compose (Recommended)
-
-Follow steps 1-3 in the Quick Start section and then:
 
 1. **Create a `docker-compose.yml` file**:
    ```yaml
@@ -74,7 +64,7 @@ Follow steps 1-3 in the Quick Start section and then:
 
    services:
      app:
-       build: .
+       image: ghcr.io/nckslvrmn/bar_keep:latest
        ports:
          - "3000:3000"
        volumes:
@@ -90,6 +80,11 @@ Follow steps 1-3 in the Quick Start section and then:
    ```bash
    docker-compose up -d
    ```
+
+### Available Tags
+
+- `latest` - The most recent stable release
+- `vX.Y.Z` - Specific release versions (e.g., `v1.0.0`)
 
 ## 📁 Data Persistence
 
@@ -124,6 +119,38 @@ rails db:seed  # Creates sample data
 # Start the server
 rails server
 ```
+
+### Building Docker Image from Source
+
+If you want to build the Docker image from source for development:
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nckslvrmn/bar_keep.git
+   cd bar_keep
+   ```
+
+2. **Build the container**
+   ```bash
+   docker build -t bar_keep .
+   ```
+
+3. **Generate a secret key**
+   ```bash
+   docker run --rm bar_keep:latest rails secret
+   ```
+
+4. **Run your local build**
+   ```bash
+   docker run -d \
+     --name barkeep-dev \
+     -p 3000:3000 \
+     -v $(pwd)/storage:/app/storage \
+     -e SECRET_KEY_BASE=YOUR_GENERATED_SECRET_KEY_HERE \
+     -e ALLOWED_HOST=localhost \
+     -e FORCE_SSL=false \
+     bar_keep:latest
+   ```
 
 ## 🔧 Configuration
 
@@ -178,10 +205,11 @@ If you ran the seed command, you can log in with:
 
 For production deployments:
 
-1. **Use the secret key** you generated earlier (see the [Generate a Secret Key](#-generate-a-secret-key-required) section)
-2. Ensure the storage volume is backed up regularly
-3. Consider using a reverse proxy (nginx, Caddy) for SSL
-4. Monitor your logs: `docker logs -f barkeep`
+1. **Use a proper secret key** - Generate one using the method shown in the Docker Setup section
+2. **Use a stable version tag** - Consider using a specific version tag (e.g., `ghcr.io/nckslvrmn/bar_keep:v1.0.0`) instead of `latest` for production
+3. Ensure the storage volume is backed up regularly
+4. Consider using a reverse proxy (nginx, Caddy) for SSL
+5. Monitor your logs: `docker logs -f barkeep`
 
 ## 🤝 Contributing
 
