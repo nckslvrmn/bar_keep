@@ -9,6 +9,9 @@ on:
 jobs:
   push-bar-keep-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@main
