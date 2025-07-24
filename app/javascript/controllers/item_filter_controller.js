@@ -9,6 +9,22 @@ export default class extends Controller {
 
         this.boundHandleQuantityUpdate = this.handleQuantityUpdate.bind(this)
         this.element.addEventListener('item-quantity-updated', this.boundHandleQuantityUpdate)
+
+        if (this.hasNeedsRestockingBtnTarget) {
+            const button = this.needsRestockingBtnTarget
+            if (button) {
+                button.addEventListener('touchend', () => {
+                    setTimeout(() => {
+                        try {
+                            if (button && typeof button.blur === 'function') {
+                                button.blur()
+                            }
+                        } catch (e) {
+                        }
+                    }, 50)
+                })
+            }
+        }
     }
 
     disconnect() {
@@ -189,7 +205,7 @@ export default class extends Controller {
         this.updateRestockingButtonState()
     }
 
-    showOutOfStock() {
+    showOutOfStock(event) {
         const isCurrentlyFiltered = this.stockStatusSelectTarget.value === "out_of_stock"
 
         if (isCurrentlyFiltered) {
@@ -200,6 +216,29 @@ export default class extends Controller {
 
         this.filterItems()
         this.updateRestockingButtonState()
+
+        if (event && event.currentTarget) {
+            const button = event.currentTarget
+
+            try {
+                if (button && typeof button.blur === 'function') {
+                    button.blur()
+                }
+            } catch (e) {
+            }
+
+            setTimeout(() => {
+                try {
+                    if (button && typeof button.blur === 'function') {
+                        button.blur()
+                        if (button.classList) {
+                            button.classList.remove('active', 'focus')
+                        }
+                    }
+                } catch (e) {
+                }
+            }, 100)
+        }
     }
 
     updateRestockingButtonState() {

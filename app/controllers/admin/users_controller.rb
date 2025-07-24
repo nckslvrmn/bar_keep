@@ -53,7 +53,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def toggle_admin
-    # Prevent admins from removing their own admin status
     if @user == current_user
       redirect_to admin_users_path, alert: "You cannot change your own admin status."
       return
