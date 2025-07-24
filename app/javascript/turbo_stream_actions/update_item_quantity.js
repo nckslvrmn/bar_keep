@@ -36,11 +36,11 @@ Turbo.StreamActions.update_item_quantity = function () {
         }
     });
 
-    const filterController = document.querySelector('[data-controller="item-filter"]');
-    if (filterController && filterController._stimulus) {
-        const controller = filterController._stimulus.controllers.find(c => c.identifier === 'item-filter');
-        if (controller && controller.filterItems) {
-            controller.filterItems();
-        }
+    const filterElement = document.querySelector('[data-controller="item-filter"]');
+    if (filterElement && window.Stimulus) {
+        filterElement.dispatchEvent(new CustomEvent('item-quantity-updated', {
+            detail: { itemId, quantity, outOfStock, lowStock },
+            bubbles: true
+        }));
     }
 }

@@ -6,6 +6,19 @@ export default class extends Controller {
     connect() {
         this.filterItems()
         this.updateRestockingButtonState()
+
+        this.boundHandleQuantityUpdate = this.handleQuantityUpdate.bind(this)
+        this.element.addEventListener('item-quantity-updated', this.boundHandleQuantityUpdate)
+    }
+
+    disconnect() {
+        if (this.boundHandleQuantityUpdate) {
+            this.element.removeEventListener('item-quantity-updated', this.boundHandleQuantityUpdate)
+        }
+    }
+
+    handleQuantityUpdate(event) {
+        this.filterItems()
     }
 
     filterItems() {
