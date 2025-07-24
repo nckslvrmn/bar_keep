@@ -15,7 +15,6 @@ class Item < ApplicationRecord
   scope :in_stock, -> { where("quantity > 0 AND (low_stock_threshold IS NULL OR quantity > low_stock_threshold)") }
   scope :needs_restocking, -> { where("quantity = 0 OR (quantity <= low_stock_threshold AND low_stock_threshold IS NOT NULL)") }
 
-  # New scopes for filtering
   scope :by_categories, ->(category_ids, match_all: false) {
     return all if category_ids.blank?
 

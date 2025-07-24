@@ -72,12 +72,20 @@ class ItemsController < ApplicationController
 
   def increment
     @item.increment_quantity!(params[:amount]&.to_i || 1)
-    redirect_back(fallback_location: items_path, notice: "Quantity increased.")
+
+    respond_to do |format|
+      format.turbo_stream { render :update_quantity }
+      format.html { redirect_back(fallback_location: items_path, notice: "Quantity increased.") }
+    end
   end
 
   def decrement
     @item.decrement_quantity!(params[:amount]&.to_i || 1)
-    redirect_back(fallback_location: items_path, notice: "Quantity decreased.")
+
+    respond_to do |format|
+      format.turbo_stream { render :update_quantity }
+      format.html { redirect_back(fallback_location: items_path, notice: "Quantity decreased.") }
+    end
   end
 
   private

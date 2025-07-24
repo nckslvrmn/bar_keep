@@ -130,31 +130,32 @@
             </thead>
             <tbody>
               <% @items.each do |item| %>
-                <tr class="<%= 'out-of-stock' if item.out_of_stock? %> <%= 'low-stock' if item.low_stock? %>"
+                <% stock_classes = [] %>
+                <% stock_classes << 'out-of-stock' if item.out_of_stock? %>
+                <% stock_classes << 'low-stock' if item.low_stock? %>
+                <% stock_class_string = stock_classes.join(' ') %>
+
+                <tr class="<%= stock_class_string %>"
                     data-item-filter-target="item"
                     data-item-name="<%= item.name %>"
                     data-item-categories="<%= item.categories.pluck(:id).to_json %>"
                     data-item-type="<%= item.item_type %>"
                     data-item-quantity="<%= item.quantity %>"
                     data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
-                  <td>
+                  <td class="<%= stock_class_string %>">
                     <%= item_thumbnail(item) %>
                   </td>
-                  <td><%= link_to item.name, item, class: "text-decoration-none" %></td>
-                  <td>
+                  <td class="<%= stock_class_string %>"><%= link_to item.name, item, class: "text-decoration-none" %></td>
+                  <td class="<%= stock_class_string %>">
                     <% item.categories.each do |category| %>
                       <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
                     <% end %>
                   </td>
-                  <td><%= item.item_type %></td>
-                  <td>
-                    <div class="quantity-controls">
-                      <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-sm btn-outline-danger", params: { amount: 1 } %>
-                      <span class="mx-2"><%= item.quantity %></span>
-                      <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-sm btn-outline-success", params: { amount: 1 } %>
-                    </div>
+                  <td class="<%= stock_class_string %>"><%= item.item_type %></td>
+                  <td class="<%= stock_class_string %>">
+                    <%= render "quantity", item: item %>
                   </td>
-                  <td>
+                  <td class="<%= stock_class_string %>">
                     <div class="d-flex gap-1" style="white-space: nowrap;">
                       <%= link_to "View", item, class: "btn btn-sm btn-info" %>
                       <%= link_to "Edit", edit_item_path(item), class: "btn btn-sm btn-warning" %>
@@ -208,11 +209,7 @@
               </div>
 
               <div class="mobile-item-controls">
-                <div class="mobile-quantity-controls">
-                  <%= button_to "-", decrement_item_path(item), method: :patch, class: "btn btn-outline-danger", params: { amount: 1 } %>
-                  <span class="mx-2 fw-bold"><%= item.quantity %></span>
-                  <%= button_to "+", increment_item_path(item), method: :patch, class: "btn btn-outline-success", params: { amount: 1 } %>
-                </div>
+                <%= render "mobile_quantity", item: item %>
                 <div class="mobile-item-actions">
                   <%= link_to "View", item, class: "btn btn-info" %>
                   <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>

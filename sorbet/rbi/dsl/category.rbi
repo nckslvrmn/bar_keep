@@ -215,7 +215,7 @@ class Category
     sig { returns(::Category) }
     def fourth!; end
 
-    sig { returns(Array) }
+    sig { returns(T::Array[T.untyped]) }
     def ids; end
 
     sig do

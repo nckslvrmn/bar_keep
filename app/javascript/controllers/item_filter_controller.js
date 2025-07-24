@@ -20,7 +20,9 @@ export default class extends Controller {
         const categoryCounts = new Map()
         const processedItems = new Set()
 
-        this.itemTargets.forEach(item => {
+        const allItems = document.querySelectorAll('[data-item-filter-target="item"]')
+
+        allItems.forEach(item => {
             const shouldShow = this.itemMatchesFilters(item, {
                 searchTerm,
                 selectedCategories,
@@ -32,13 +34,12 @@ export default class extends Controller {
             if (shouldShow) {
                 item.classList.remove("d-none")
 
-                const itemKey = `${item.dataset.itemName}-${item.dataset.itemType}-${item.dataset.itemQuantity}`
+                const itemKey = `${item.dataset.itemName}-${item.dataset.itemType}`
 
                 if (!processedItems.has(itemKey)) {
                     processedItems.add(itemKey)
                     matchingItems++
 
-                    // Track categories from unique items only
                     const itemCategories = JSON.parse(item.dataset.itemCategories || "[]")
                     itemCategories.forEach(catId => {
                         const catIdStr = catId.toString()
@@ -81,7 +82,6 @@ export default class extends Controller {
                 label.textContent = `${originalText} (${count})`
             } else {
                 categoryDiv.classList.add("d-none")
-                checkbox.checked = false
             }
         })
     }
@@ -180,16 +180,12 @@ export default class extends Controller {
         const isCurrentlyFiltered = this.stockStatusSelectTarget.value === "out_of_stock"
 
         if (isCurrentlyFiltered) {
-            this.clearFilters()
+            this.stockStatusSelectTarget.value = ""
         } else {
-            this.searchInputTarget.value = ""
-            this.categoryCheckboxTargets.forEach(checkbox => checkbox.checked = false)
-            this.categoryMatchRadioTargets.find(radio => radio.value === "any").checked = true
-            this.itemTypeSelectTarget.value = ""
             this.stockStatusSelectTarget.value = "out_of_stock"
-            this.filterItems()
         }
 
+        this.filterItems()
         this.updateRestockingButtonState()
     }
 

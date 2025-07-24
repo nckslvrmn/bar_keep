@@ -6,7 +6,6 @@ const urlsToCache = [
     '/offline.html'
 ];
 
-// Paths that should never be cached
 const EXCLUDED_PATHS = [
     '/login',
     '/logout',
@@ -16,7 +15,6 @@ const EXCLUDED_PATHS = [
     '/admin'
 ];
 
-// Install event - cache assets
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -25,7 +23,6 @@ self.addEventListener('install', event => {
     );
 });
 
-// Activate event - clean up old caches
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
@@ -40,26 +37,21 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // Skip non-GET requests
     if (request.method !== 'GET') return;
 
-    // Skip authentication-related paths and dynamic content paths
     if (EXCLUDED_PATHS.some(path => url.pathname.startsWith(path))) {
         return;
     }
 
-    // Skip HTML requests (except offline.html) to ensure fresh content
     if (request.headers.get('Accept')?.includes('text/html') &&
         !url.pathname.includes('offline.html')) {
         return;
     }
 
-    // Skip requests with session tokens or CSRF tokens
     if (url.pathname.includes('authenticity_token') ||
         request.headers.get('X-CSRF-Token')) {
         return;
@@ -68,35 +60,28 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(request)
             .then(response => {
-                // Cache hit - return response
                 if (response) {
                     return response;
                 }
 
-                // Clone the request
                 const fetchRequest = request.clone();
 
                 return fetch(fetchRequest).then(response => {
-                    // Check if valid response
                     if (!response || response.status !== 200 || response.type !== 'basic') {
                         return response;
                     }
 
-                    // Don't cache responses that set cookies
                     if (response.headers.get('Set-Cookie')) {
                         return response;
                     }
 
-                    // Don't cache HTML responses to ensure fresh content
                     const contentType = response.headers.get('Content-Type') || '';
                     if (contentType.includes('text/html')) {
                         return response;
                     }
 
-                    // Clone the response
                     const responseToCache = response.clone();
 
-                    // Add to cache (only non-HTML assets)
                     caches.open(CACHE_NAME)
                         .then(cache => {
                             cache.put(request, responseToCache);
@@ -106,7 +91,6 @@ self.addEventListener('fetch', event => {
                 });
             })
             .catch(() => {
-                // Offline fallback for navigation requests
                 if (request.destination === 'document') {
                     return caches.match('/offline.html');
                 }

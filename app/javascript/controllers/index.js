@@ -2,6 +2,11 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
+// NOTE: We use importmap module names (e.g., "controllers/application") instead of
+// relative paths (e.g., "./application") to prevent 404 errors on controller assets.
+// The stimulus:manifest:update command will revert these to relative paths, so they
+// need to be manually fixed after running that command.
+
 import { application } from "controllers/application"
 
 import ItemFilterController from "controllers/item_filter_controller"

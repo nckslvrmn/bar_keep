@@ -41,10 +41,18 @@
 
               <dt class="col-sm-4">Quantity:</dt>
               <dd class="col-sm-8">
-                <div class="quantity-controls">
-                  <%= button_to "-", decrement_item_path(@item), method: :patch, class: "btn btn-outline-danger", params: { amount: 1 } %>
+                <div class="quantity-controls" id="item_<%= @item.id %>_quantity">
+                  <%= button_to "-", decrement_item_path(@item),
+                      method: :patch,
+                      class: "btn btn-outline-danger",
+                      params: { amount: 1 },
+                      data: { turbo_method: :patch } %>
                   <span class="mx-3 fs-4"><%= @item.quantity %></span>
-                  <%= button_to "+", increment_item_path(@item), method: :patch, class: "btn btn-outline-success", params: { amount: 1 } %>
+                  <%= button_to "+", increment_item_path(@item),
+                      method: :patch,
+                      class: "btn btn-outline-success",
+                      params: { amount: 1 },
+                      data: { turbo_method: :patch } %>
                 </div>
               </dd>
 

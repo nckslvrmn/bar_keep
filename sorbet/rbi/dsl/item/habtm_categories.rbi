@@ -281,7 +281,7 @@ class Item::HABTM_Categories
     sig { returns(::Item::HABTM_Categories) }
     def fourth!; end
 
-    sig { returns(Array) }
+    sig { returns(T::Array[T.untyped]) }
     def ids; end
 
     sig do

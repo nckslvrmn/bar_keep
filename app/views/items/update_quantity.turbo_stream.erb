@@ -1,0 +1,20 @@
+<%# Update all quantity displays for this item %>
+<%= turbo_stream.update "item_#{@item.id}_quantity" do %>
+  <%= button_to "-", decrement_item_path(@item),
+      method: :patch,
+      class: "btn btn-sm btn-outline-danger",
+      params: { amount: 1 } %>
+  <span class="mx-2"><%= @item.quantity %></span>
+  <%= button_to "+", increment_item_path(@item),
+      method: :patch,
+      class: "btn btn-sm btn-outline-success",
+      params: { amount: 1 } %>
+<% end %>
+
+<%# Execute custom Turbo Stream action to update item styling %>
+<turbo-stream action="update_item_quantity"
+              data-item-id="<%= @item.id %>"
+              data-quantity="<%= @item.quantity %>"
+              data-out-of-stock="<%= @item.out_of_stock? %>"
+              data-low-stock="<%= @item.low_stock? %>">
+</turbo-stream>

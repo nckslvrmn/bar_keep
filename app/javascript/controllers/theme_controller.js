@@ -6,7 +6,6 @@ export default class extends Controller {
     connect() {
         this.updateIcon()
 
-        // Listen for system theme changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
             if (!localStorage.getItem('theme')) {
                 const theme = e.matches ? 'dark' : 'light'
@@ -24,7 +23,6 @@ export default class extends Controller {
         localStorage.setItem('theme', newTheme)
         this.updateIcon()
 
-        // Update theme-color meta tag for PWA
         const metaThemeColor = document.querySelector('meta[name="theme-color"]')
         if (metaThemeColor) {
             metaThemeColor.content = newTheme === 'dark' ? '#2c2c2c' : '#e8e8e8'

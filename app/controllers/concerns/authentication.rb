@@ -21,10 +21,8 @@ module Authentication
       @current_session = Session.active.find_by(session_token: session[:session_token])
 
       if @current_session
-        # Extend session expiration on activity
         @current_session.extend_expiration!
       else
-        # Clear invalid session token
         session.delete(:session_token)
       end
     end
@@ -48,7 +46,6 @@ module Authentication
   end
 
   def skip_authentication
-    # This method allows controllers to skip authentication
   end
 
   def login_user(user)

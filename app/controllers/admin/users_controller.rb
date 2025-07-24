@@ -38,13 +38,11 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
-    # Prevent admins from deleting themselves
     if @user == current_user
       redirect_to admin_users_path, alert: "You cannot delete your own account."
       return
     end
 
-    # Prevent deletion of the last admin
     if @user.admin? && User.admins.count == 1
       redirect_to admin_users_path, alert: "Cannot delete the last admin user."
       return
@@ -61,7 +59,6 @@ class Admin::UsersController < ApplicationController
       return
     end
 
-    # Prevent removing admin status from the last admin
     if @user.admin? && User.admins.count == 1
       redirect_to admin_users_path, alert: "Cannot remove admin status from the last admin user."
       return
