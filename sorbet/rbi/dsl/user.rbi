@@ -726,6 +726,51 @@ class User
     sig { void }
     def is_admin_will_change!; end
 
+    sig { returns(T::Boolean) }
+    def is_guest; end
+
+    sig { params(value: T::Boolean).returns(T::Boolean) }
+    def is_guest=(value); end
+
+    sig { returns(T::Boolean) }
+    def is_guest?; end
+
+    sig { returns(T.nilable(T::Boolean)) }
+    def is_guest_before_last_save; end
+
+    sig { returns(T.untyped) }
+    def is_guest_before_type_cast; end
+
+    sig { returns(T::Boolean) }
+    def is_guest_came_from_user?; end
+
+    sig { returns(T.nilable([T::Boolean, T::Boolean])) }
+    def is_guest_change; end
+
+    sig { returns(T.nilable([T::Boolean, T::Boolean])) }
+    def is_guest_change_to_be_saved; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def is_guest_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable(T::Boolean)) }
+    def is_guest_in_database; end
+
+    sig { returns(T.nilable([T::Boolean, T::Boolean])) }
+    def is_guest_previous_change; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def is_guest_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable(T::Boolean)) }
+    def is_guest_previously_was; end
+
+    sig { returns(T.nilable(T::Boolean)) }
+    def is_guest_was; end
+
+    sig { void }
+    def is_guest_will_change!; end
+
     sig { returns(T.nilable(::String)) }
     def password_digest; end
 
@@ -784,6 +829,9 @@ class User
     def restore_is_admin!; end
 
     sig { void }
+    def restore_is_guest!; end
+
+    sig { void }
     def restore_password_digest!; end
 
     sig { void }
@@ -815,6 +863,12 @@ class User
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def saved_change_to_is_admin?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.nilable([T::Boolean, T::Boolean])) }
+    def saved_change_to_is_guest; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def saved_change_to_is_guest?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
     def saved_change_to_password_digest; end
@@ -935,6 +989,9 @@ class User
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def will_save_change_to_is_admin?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def will_save_change_to_is_guest?(from: T.unsafe(nil), to: T.unsafe(nil)); end
 
     sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
     def will_save_change_to_password_digest?(from: T.unsafe(nil), to: T.unsafe(nil)); end
