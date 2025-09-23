@@ -5,9 +5,13 @@ class ItemsController < ApplicationController
 
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement ]
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
+  before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement ]
 
   def index
-    @items = current_user.items.includes(:categories, image_attachment: :blob)
+    # Guest users see all items, regular users see only their own items
+    items_scope = current_user.guest? ? Item.all : current_user.items
+
+    @items = items_scope.includes(:categories, :user, image_attachment: :blob)
                  .by_categories(params[:category_ids], match_all: params[:category_match] == "all")
                  .by_type(params[:item_type])
                  .by_stock_status(params[:stock_status])
@@ -91,11 +95,22 @@ class ItemsController < ApplicationController
   private
 
   def set_item
-    @item = current_user.items.find(params[:id])
+    # Guest users can view all items, regular users only their own
+    if current_user.guest?
+      @item = Item.find(params[:id])
+    else
+      @item = current_user.items.find(params[:id])
+    end
   end
 
   def load_categories
     @categories = Category.all.order(:name)
+  end
+
+  def restrict_guest_access
+    if current_user.guest?
+      redirect_to items_path, alert: "Guest accounts have read-only access."
+    end
   end
 
   def handle_categories(item, category_names_string)

@@ -55,9 +55,11 @@
             <li class="nav-item">
               <%= link_to "All Items", items_path, class: "nav-link" %>
             </li>
-            <li class="nav-item">
-              <%= link_to "Add Item", new_item_path, class: "nav-link" %>
-            </li>
+            <% unless current_user&.guest? %>
+              <li class="nav-item">
+                <%= link_to "Add Item", new_item_path, class: "nav-link" %>
+              </li>
+            <% end %>
             <li class="nav-item">
               <button class="theme-toggle nav-link" data-controller="theme" data-action="click->theme#toggle">
                 <span data-theme-target="icon">🌙</span>
@@ -67,11 +69,19 @@
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                   <%= current_user.username %>
+                  <% if current_user.guest? %>
+                    <span class="badge bg-info ms-1">Guest</span>
+                  <% end %>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><%= link_to "Profile Settings", edit_user_path, class: "dropdown-item" %></li>
+                  <% unless current_user.guest? %>
+                    <li><%= link_to "Profile Settings", edit_user_path, class: "dropdown-item" %></li>
+                  <% end %>
                   <% if admin? %>
                     <li><%= link_to "Admin Panel", admin_root_path, class: "dropdown-item" %></li>
+                  <% end %>
+                  <% if current_user.guest? %>
+                    <li class="dropdown-item-text text-muted small">Guest Account - Read Only</li>
                   <% end %>
                   <li><hr class="dropdown-divider"></li>
                   <li><%= button_to "Logout", logout_path, method: :delete, class: "dropdown-item" %></li>

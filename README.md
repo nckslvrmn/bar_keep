@@ -2,7 +2,7 @@
 
 > A modern inventory management system designed for bars, restaurants, and beverage establishments. Built with Ruby on Rails and containerized with Docker for easy deployment.
 
-[GHCR](https://github.com/nckslvrmn/bar_keep/pkgs/container/bar_keep)
+[![GHCR](https://img.shields.io/github/v/release/nckslvrmn/bar_keep?label=GHCR&logo=github&color=blue)](https://github.com/nckslvrmn/bar_keep/pkgs/container/bar_keep)
 [![License](https://img.shields.io/github/license/nckslvrmn/bar_keep)](LICENSE)
 
 ## ✨ Features

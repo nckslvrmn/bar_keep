@@ -112,18 +112,23 @@
             <span class="btn-text-mobile">Out of Stock</span>
             <span class="btn-text-desktop">Show Out of Stock</span>
           </button>
-          <%= link_to new_item_path, class: "btn btn-success responsive-btn" do %>
-            <span class="btn-text-mobile">Add Item</span>
-            <span class="btn-text-desktop">Add New Item</span>
+          <% unless current_user&.guest? %>
+            <%= link_to new_item_path, class: "btn btn-success responsive-btn" do %>
+              <span class="btn-text-mobile">Add Item</span>
+              <span class="btn-text-desktop">Add New Item</span>
+            <% end %>
           <% end %>
         </div>
       </div>
 
       <% if @items.any? %>
-        <div class="items-list">
+        <div class="items-list <%= 'guest-view' if current_user&.guest? %>">
           <div class="items-header d-none d-md-flex">
             <div class="header-image">Image</div>
             <div class="header-name">Name</div>
+            <% if current_user&.guest? %>
+              <div class="header-owner">Owner</div>
+            <% end %>
             <div class="header-categories">Categories</div>
             <div class="header-type">Type</div>
             <div class="header-quantity">Quantity</div>
@@ -152,6 +157,12 @@
                 <%= link_to item.name, item, class: "text-decoration-none" %>
               </div>
 
+              <% if current_user&.guest? %>
+                <div class="item-owner-cell">
+                  <span class="text-muted"><%= item.user&.username || "Unknown" %></span>
+                </div>
+              <% end %>
+
               <div class="item-categories-cell">
                 <% item.categories.each do |category| %>
                   <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
@@ -169,8 +180,10 @@
               <div class="item-actions-cell">
                 <div class="action-buttons">
                   <%= link_to "View", item, class: "btn btn-info" %>
-                  <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>
-                  <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
+                  <% unless current_user&.guest? %>
+                    <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning" %>
+                    <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
+                  <% end %>
                 </div>
               </div>
             </div>

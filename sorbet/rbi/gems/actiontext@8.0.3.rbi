@@ -779,7 +779,7 @@ class ActionText::Content
   # source://actiontext//lib/action_text/content.rb#161
   def as_json(*_arg0); end
 
-  # Extracts +ActionText::Attachable+s from the HTML fragment:
+  # Extracts ActionText::Attachable objects from the HTML fragment:
   #
   #     attachable = ActiveStorage::Blob.first
   #     html = %Q(<action-text-attachment sgid="#{attachable.attachable_sgid}" caption="Captioned"></action-text-attachment>)
@@ -792,7 +792,7 @@ class ActionText::Content
   # source://actiontext//lib/action_text/content.rb#71
   def attachment_galleries; end
 
-  # Extracts +ActionText::Attachment+s from the HTML fragment:
+  # Extracts ActionText::Attachment objects from the HTML fragment:
   #
   #     attachable = ActiveStorage::Blob.first
   #     html = %Q(<action-text-attachment sgid="#{attachable.attachable_sgid}" caption="Captioned"></action-text-attachment>)
