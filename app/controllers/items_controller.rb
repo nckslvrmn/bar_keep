@@ -10,7 +10,7 @@ class ItemsController < ApplicationController
   def index
     # Guest users see all items, regular users see only their own items
     items_scope = current_user.guest? ? Item.all : current_user.items
-    
+
     @items = items_scope.includes(:categories, :user, image_attachment: :blob)
                  .by_categories(params[:category_ids], match_all: params[:category_match] == "all")
                  .by_type(params[:item_type])
