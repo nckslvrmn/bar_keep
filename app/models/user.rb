@@ -15,12 +15,24 @@ class User < ApplicationRecord
     is_admin?
   end
 
+  def guest?
+    is_guest?
+  end
+
   def self.admins
     where(is_admin: true)
   end
 
   def self.non_admins
     where(is_admin: false)
+  end
+
+  def self.guests
+    where(is_guest: true)
+  end
+
+  def self.regular_users
+    where(is_guest: false, is_admin: false)
   end
 
   private

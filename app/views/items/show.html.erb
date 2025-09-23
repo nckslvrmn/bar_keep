@@ -4,10 +4,12 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <h1 class="card-title"><%= @item.name %></h1>
-          <div>
-            <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning" %>
-            <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
-          </div>
+          <% unless current_user&.guest? %>
+            <div>
+              <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning" %>
+              <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
+            </div>
+          <% end %>
         </div>
 
         <div class="row mt-4">
@@ -39,21 +41,32 @@
               <dt class="col-sm-4">Type:</dt>
               <dd class="col-sm-8"><%= @item.item_type %></dd>
 
+              <% if current_user&.guest? %>
+                <dt class="col-sm-4">Owner:</dt>
+                <dd class="col-sm-8">
+                  <span class="text-muted"><%= @item.user&.username || "Unknown" %></span>
+                </dd>
+              <% end %>
+
               <dt class="col-sm-4">Quantity:</dt>
               <dd class="col-sm-8">
-                <div class="quantity-controls" id="item_<%= @item.id %>_quantity">
-                  <%= button_to "-", decrement_item_path(@item),
-                      method: :patch,
-                      class: "btn btn-outline-danger",
-                      params: { amount: 1 },
-                      data: { turbo_method: :patch } %>
-                  <span class="mx-3 fs-4"><%= @item.quantity %></span>
-                  <%= button_to "+", increment_item_path(@item),
-                      method: :patch,
-                      class: "btn btn-outline-success",
-                      params: { amount: 1 },
-                      data: { turbo_method: :patch } %>
-                </div>
+                <% if current_user&.guest? %>
+                  <span class="fs-4"><%= @item.quantity %></span>
+                <% else %>
+                  <div class="quantity-controls" id="item_<%= @item.id %>_quantity">
+                    <%= button_to "-", decrement_item_path(@item),
+                        method: :patch,
+                        class: "btn btn-outline-danger",
+                        params: { amount: 1 },
+                        data: { turbo_method: :patch } %>
+                    <span class="mx-3 fs-4"><%= @item.quantity %></span>
+                    <%= button_to "+", increment_item_path(@item),
+                        method: :patch,
+                        class: "btn btn-outline-success",
+                        params: { amount: 1 },
+                        data: { turbo_method: :patch } %>
+                  </div>
+                <% end %>
               </dd>
 
               <dt class="col-sm-4">Low Stock Threshold:</dt>

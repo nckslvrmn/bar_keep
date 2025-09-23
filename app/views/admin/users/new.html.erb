@@ -32,9 +32,17 @@
         </div>
 
         <div class="mb-3">
-          <div class="form-check">
-            <%= form.check_box :is_admin, class: "form-check-input" %>
-            <%= form.label :is_admin, "Grant admin privileges", class: "form-check-label" %>
+          <%= form.label :user_type, "User Type", class: "form-label" %>
+          <%= form.select :user_type, 
+              options_for_select([
+                ['Regular User', 'regular'],
+                ['Guest (Read-only)', 'guest'],
+                ['Administrator', 'admin']
+              ], 'regular'),
+              {},
+              class: "form-select" %>
+          <div class="form-text">
+            Regular users can manage their own items. Guests have read-only access to all items. Administrators can manage all users and items.
           </div>
         </div>
 

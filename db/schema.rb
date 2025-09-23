@@ -87,6 +87,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_01_023820) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_admin", default: false, null: false
+    t.boolean "is_guest", default: false, null: false
+    t.index ["is_guest"], name: "index_users_on_is_guest"
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 

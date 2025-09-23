@@ -17,7 +17,8 @@ class Admin::UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new(user_params.except(:user_type))
+    set_user_type(@user, params[:user][:user_type])
 
     if @user.save
       redirect_to admin_users_path, notice: "User #{@user.username} was successfully created."
@@ -30,7 +31,10 @@ class Admin::UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    user_type = params[:user][:user_type]
+
+    if @user.update(user_params.except(:user_type))
+      set_user_type(@user, user_type) if user_type.present?
       redirect_to admin_users_path, notice: "User #{@user.username} was successfully updated."
     else
       render :edit, status: :unprocessable_entity
@@ -75,7 +79,21 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username, :password, :password_confirmation, :is_admin)
+    params.require(:user).permit(:username, :password, :password_confirmation, :user_type)
+  end
+
+  def set_user_type(user, type)
+    user.is_admin = false
+    user.is_guest = false
+
+    case type
+    when "admin"
+      user.is_admin = true
+    when "guest"
+      user.is_guest = true
+    end
+
+    user.save
   end
 
   def require_admin

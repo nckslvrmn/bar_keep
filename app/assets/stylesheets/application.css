@@ -474,6 +474,11 @@ img {
         border-bottom: 2px solid var(--bs-border-color);
         font-weight: 600;
     }
+    
+    /* Adjust grid for guest users with owner column */
+    .guest-view .items-header {
+        grid-template-columns: 100px minmax(150px, 1fr) 120px minmax(120px, 200px) 80px 100px 180px;
+    }
 
     .items-header>div {
         padding: 0.75rem;
@@ -489,6 +494,11 @@ img {
         display: grid;
         grid-template-columns: 120px minmax(200px, 1fr) minmax(150px, 250px) 100px 120px 240px;
         border-bottom: 1px solid var(--bs-border-color);
+    }
+    
+    /* Adjust grid for guest users with owner column */
+    .guest-view .item-row {
+        grid-template-columns: 100px minmax(150px, 1fr) 120px minmax(120px, 200px) 80px 100px 180px;
     }
 
     .item-row:last-child {
@@ -574,6 +584,16 @@ img {
         border-radius: var(--border-radius-lg);
         margin-bottom: 15px;
     }
+    
+    /* Adjust grid for guest users with owner column on mobile */
+    .guest-view .item-row {
+        grid-template-areas:
+            "image name name"
+            "image categories categories"
+            "owner owner owner"
+            "type type type"
+            "quantity quantity actions";
+    }
 
     .item-row:last-child {
         margin-bottom: 0;
@@ -611,6 +631,14 @@ img {
 
     .item-type-cell {
         grid-area: type;
+        font-size: 14px;
+        color: var(--text-muted);
+        padding-top: 8px;
+        border-top: 1px solid var(--bs-border-color);
+    }
+    
+    .item-owner-cell {
+        grid-area: owner;
         font-size: 14px;
         color: var(--text-muted);
         padding-top: 8px;
