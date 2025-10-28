@@ -1,3 +1,9 @@
+<div data-controller="offline">
+  <!-- Offline Banner -->
+  <div class="alert alert-warning d-none mb-3" data-offline-target="banner" role="alert">
+    <strong>📵 Offline Mode</strong> - You're viewing cached inventory. Editing is disabled until you're back online.
+  </div>
+
 <div class="row">
   <div class="col-md-8">
     <div class="card">
@@ -6,8 +12,8 @@
           <h1 class="card-title"><%= @item.name %></h1>
           <% unless current_user&.guest? %>
             <div>
-              <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning" %>
-              <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?" }, class: "btn btn-danger" %>
+              <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning", data: { offline_target: "editButton" } %>
+              <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?", offline_target: "deleteButton" }, class: "btn btn-danger" %>
             </div>
           <% end %>
         </div>
@@ -58,13 +64,13 @@
                         method: :patch,
                         class: "btn btn-outline-danger",
                         params: { amount: 1 },
-                        data: { turbo_method: :patch } %>
+                        data: { turbo_method: :patch, offline_target: "quantityButton" } %>
                     <span class="mx-3 fs-4"><%= @item.quantity %></span>
                     <%= button_to "+", increment_item_path(@item),
                         method: :patch,
                         class: "btn btn-outline-success",
                         params: { amount: 1 },
-                        data: { turbo_method: :patch } %>
+                        data: { turbo_method: :patch, offline_target: "quantityButton" } %>
                   </div>
                 <% end %>
               </dd>
@@ -111,4 +117,5 @@
 
 <div class="mt-3">
   <%= link_to "Back to Inventory", items_path, class: "btn btn-secondary" %>
+</div>
 </div>

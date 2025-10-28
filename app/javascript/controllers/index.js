@@ -18,5 +18,8 @@ application.register("login-form", LoginFormController)
 import MetadataFieldsController from "controllers/metadata_fields_controller"
 application.register("metadata-fields", MetadataFieldsController)
 
+import OfflineController from "controllers/offline_controller"
+application.register("offline", OfflineController)
+
 import ThemeController from "controllers/theme_controller"
 application.register("theme", ThemeController)

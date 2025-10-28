@@ -5,11 +5,13 @@
     <%= button_to "-", decrement_item_path(item),
         method: :patch,
         class: "btn btn-sm btn-outline-danger",
-        params: { amount: 1 } %>
+        params: { amount: 1 },
+        data: { offline_target: "quantityButton" } %>
     <span class="mx-2"><%= item.quantity %></span>
     <%= button_to "+", increment_item_path(item),
         method: :patch,
         class: "btn btn-sm btn-outline-success",
-        params: { amount: 1 } %>
+        params: { amount: 1 },
+        data: { offline_target: "quantityButton" } %>
   <% end %>
 </div>
