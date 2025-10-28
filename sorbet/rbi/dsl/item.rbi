@@ -221,7 +221,7 @@ class Item
     sig { returns(::Item) }
     def fourth!; end
 
-    sig { returns(T::Array[T.untyped]) }
+    sig { returns(T::Array[::Integer]) }
     def ids; end
 
     sig do
