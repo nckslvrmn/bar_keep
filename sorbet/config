@@ -1,4 +1,4 @@
 --dir
 .
---ignore=/vendor/
---ignore=/tmp/
+--ignore=tmp/
+--ignore=vendor/

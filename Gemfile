@@ -25,7 +25,7 @@ group :development, :test do
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
   gem "sorbet"
-  gem "tapioca", require: false
+  gem "tapioca", ">= 0.17.0", require: false
 end
 
 group :development do
