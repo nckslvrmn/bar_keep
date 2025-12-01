@@ -1,6 +1,7 @@
-# typed: false
+# typed: true
 
 class Item < ApplicationRecord
+  extend T::Sig
   belongs_to :user
   has_and_belongs_to_many :categories
   has_many :item_metadata, dependent: :destroy
@@ -47,10 +48,12 @@ class Item < ApplicationRecord
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
+  sig { returns(T::Hash[String, String]) }
   def metadata_hash
     item_metadata.pluck(:key, :value).to_h
   end
 
+  sig { params(metadata_hash: T::Hash[String, String]).void }
   def update_metadata(metadata_hash)
     transaction do
       item_metadata.destroy_all
@@ -61,26 +64,32 @@ class Item < ApplicationRecord
     end
   end
 
+  sig { params(amount: Integer).void }
   def increment_quantity!(amount = 1)
     update!(quantity: quantity + amount)
   end
 
+  sig { params(amount: Integer).void }
   def decrement_quantity!(amount = 1)
     update!(quantity: [ quantity - amount, 0 ].max)
   end
 
+  sig { returns(T::Boolean) }
   def out_of_stock?
     quantity == 0
   end
 
+  sig { returns(T::Boolean) }
   def low_stock?
     low_stock_threshold.present? && quantity > 0 && quantity <= low_stock_threshold
   end
 
+  sig { returns(T::Boolean) }
   def needs_restocking?
     out_of_stock? || low_stock?
   end
 
+  sig { returns(String) }
   def category_names
     categories.pluck(:name).join(", ")
   end

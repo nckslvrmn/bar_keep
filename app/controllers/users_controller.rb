@@ -1,6 +1,7 @@
-# typed: false
+# typed: true
 
 class UsersController < ApplicationController
+  extend T::Sig
   before_action :set_user
 
   def edit;end

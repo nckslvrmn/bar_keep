@@ -1,6 +1,7 @@
-# typed: false
+# typed: true
 
 module ItemsHelper
+  extend T::Sig
   def optimized_item_image(item, options = {})
     return unless item.image.attached?
 

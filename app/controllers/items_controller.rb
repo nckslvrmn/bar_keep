@@ -1,6 +1,8 @@
-# typed: false
+# typed: true
 
 class ItemsController < ApplicationController
+  extend T::Sig
+
   include ImageProcessingConcern
 
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement ]
