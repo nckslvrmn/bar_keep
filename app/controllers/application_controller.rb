@@ -1,6 +1,7 @@
-# typed: false
+# typed: true
 
 class ApplicationController < ActionController::Base
+  extend T::Sig
   allow_browser versions: :modern unless Rails.env.development?
 
   include Authentication

@@ -12,6 +12,7 @@ ENV BUNDLE_WITHOUT=development:test
 
 RUN apt-get update && apt-get install -y \
     librsvg2-bin \
+    libvips \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler

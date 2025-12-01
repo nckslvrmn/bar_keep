@@ -25,7 +25,7 @@ class ItemsController
     include ::ItemsHelper
     include ::ApplicationController::HelperMethods
 
-    sig { params(params_key: T.untyped, image_field: T.untyped).returns(T.untyped) }
+    sig { params(params_key: ::Symbol, image_field: ::Symbol).void }
     def process_image_params(params_key, image_field = T.unsafe(nil)); end
   end
 

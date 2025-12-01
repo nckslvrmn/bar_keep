@@ -1,6 +1,7 @@
-# typed: false
+# typed: true
 
 class SessionsController < ApplicationController
+  extend T::Sig
   skip_before_action :require_authentication, only: [ :new, :create ]
   protect_from_forgery with: :reset_session, only: [ :create ], prepend: true
 
@@ -12,6 +13,7 @@ class SessionsController < ApplicationController
     user = User.find_by(username: params[:username]&.downcase&.strip)
 
     if user&.authenticate(params[:password])
+      reset_session
       login_user(user)
       redirect_to root_path, notice: "Welcome back, #{user.username}!"
     else

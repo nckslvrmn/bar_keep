@@ -27,13 +27,13 @@ class ApplicationController
     include ::ActionController::Base::HelperMethods
     include ::ItemsHelper
 
-    sig { returns(T.untyped) }
+    sig { returns(T::Boolean) }
     def admin?; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T.nilable(::User)) }
     def current_user; end
 
-    sig { returns(T.untyped) }
+    sig { returns(T::Boolean) }
     def logged_in?; end
   end
 

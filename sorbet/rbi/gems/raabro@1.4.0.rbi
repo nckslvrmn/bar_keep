@@ -13,15 +13,6 @@ module Raabro
     # source://raabro//lib/raabro.rb#596
     def included(target); end
 
-    # Black       0;30     Dark Gray     1;30
-    # Blue        0;34     Light Blue    1;34
-    # Green       0;32     Light Green   1;32
-    # Cyan        0;36     Light Cyan    1;36
-    # Red         0;31     Light Red     1;31
-    # Purple      0;35     Light Purple  1;35
-    # Brown       0;33     Yellow        1;33
-    # Light Gray  0;37     White         1;37
-    #
     # source://raabro//lib/raabro.rb#618
     def pp(tree, depth = T.unsafe(nil), opts = T.unsafe(nil)); end
   end
@@ -29,8 +20,6 @@ end
 
 # source://raabro//lib/raabro.rb#7
 class Raabro::Input
-  # @return [Input] a new instance of Input
-  #
   # source://raabro//lib/raabro.rb#12
   def initialize(string, offset = T.unsafe(nil), options = T.unsafe(nil)); end
 
@@ -40,32 +29,18 @@ class Raabro::Input
   # source://raabro//lib/raabro.rb#19
   def match(str_or_regex); end
 
-  # Returns the value of attribute offset.
-  #
   # source://raabro//lib/raabro.rb#9
   def offset; end
 
-  # Sets the attribute offset
-  #
-  # @param value the value to set the attribute offset to.
-  #
   # source://raabro//lib/raabro.rb#9
   def offset=(_arg0); end
 
-  # Returns the value of attribute options.
-  #
   # source://raabro//lib/raabro.rb#10
   def options; end
 
-  # Returns the value of attribute string.
-  #
   # source://raabro//lib/raabro.rb#9
   def string; end
 
-  # Sets the attribute string
-  #
-  # @param value the value to set the attribute string to.
-  #
   # source://raabro//lib/raabro.rb#9
   def string=(_arg0); end
 
@@ -102,15 +77,9 @@ module Raabro::ModuleMethods
   # source://raabro//lib/raabro.rb#527
   def jseq(name, input, startpa, eltpa, seppa = T.unsafe(nil), endpa = T.unsafe(nil)); end
 
-  # Returns the value of attribute last.
-  #
   # source://raabro//lib/raabro.rb#529
   def last; end
 
-  # Sets the attribute last
-  #
-  # @param value the value to set the attribute last to.
-  #
   # source://raabro//lib/raabro.rb#529
   def last=(_arg0); end
 
@@ -156,8 +125,6 @@ end
 
 # source://raabro//lib/raabro.rb#42
 class Raabro::Tree
-  # @return [Tree] a new instance of Tree
-  #
   # source://raabro//lib/raabro.rb#49
   def initialize(name, parter, input); end
 
@@ -176,23 +143,15 @@ class Raabro::Tree
   # source://raabro//lib/raabro.rb#64
   def c4; end
 
-  # Returns the value of attribute children.
-  #
   # source://raabro//lib/raabro.rb#47
   def children; end
 
-  # Sets the attribute children
-  #
-  # @param value the value to set the attribute children to.
-  #
   # source://raabro//lib/raabro.rb#47
   def children=(_arg0); end
 
   # source://raabro//lib/raabro.rb#65
   def clast; end
 
-  # @return [Boolean]
-  #
   # source://raabro//lib/raabro.rb#67
   def empty?; end
 
@@ -205,27 +164,15 @@ class Raabro::Tree
   # source://raabro//lib/raabro.rb#112
   def gather(name = T.unsafe(nil), acc = T.unsafe(nil)); end
 
-  # Returns the value of attribute input.
-  #
   # source://raabro//lib/raabro.rb#44
   def input; end
 
-  # Sets the attribute input
-  #
-  # @param value the value to set the attribute input to.
-  #
   # source://raabro//lib/raabro.rb#44
   def input=(_arg0); end
 
-  # Returns the value of attribute length.
-  #
   # source://raabro//lib/raabro.rb#46
   def length; end
 
-  # Sets the attribute length
-  #
-  # @param value the value to set the attribute length to.
-  #
   # source://raabro//lib/raabro.rb#46
   def length=(_arg0); end
 
@@ -235,25 +182,15 @@ class Raabro::Tree
   # source://raabro//lib/raabro.rb#96
   def lookup(name = T.unsafe(nil)); end
 
-  # Not "lookup all errors" but "lookup all error", in other
-  # words lookup the point up until which the parser stopped (not
-  # consuming all the input)
-  #
   # source://raabro//lib/raabro.rb#208
   def lookup_all_error; end
 
   # source://raabro//lib/raabro.rb#193
   def lookup_error(stack = T.unsafe(nil)); end
 
-  # Returns the value of attribute name.
-  #
   # source://raabro//lib/raabro.rb#44
   def name; end
 
-  # Sets the attribute name
-  #
-  # @param value the value to set the attribute name to.
-  #
   # source://raabro//lib/raabro.rb#44
   def name=(_arg0); end
 
@@ -263,40 +200,24 @@ class Raabro::Tree
   # source://raabro//lib/raabro.rb#161
   def odd_children; end
 
-  # Returns the value of attribute offset.
-  #
   # source://raabro//lib/raabro.rb#46
   def offset; end
 
-  # Sets the attribute offset
-  #
-  # @param value the value to set the attribute offset to.
-  #
   # source://raabro//lib/raabro.rb#46
   def offset=(_arg0); end
 
-  # Returns the value of attribute parter.
-  #
   # source://raabro//lib/raabro.rb#47
   def parter; end
 
-  # Sets the attribute parter
-  #
-  # @param value the value to set the attribute parter to.
-  #
   # source://raabro//lib/raabro.rb#47
   def parter=(_arg0); end
 
   # source://raabro//lib/raabro.rb#77
   def prune!; end
 
-  # ((-1 error,)) 0 nomatch, 1 success
-  #
   # source://raabro//lib/raabro.rb#45
   def result; end
 
-  # ((-1 error,)) 0 nomatch, 1 success
-  #
   # source://raabro//lib/raabro.rb#45
   def result=(_arg0); end
 

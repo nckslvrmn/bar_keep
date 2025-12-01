@@ -31,68 +31,106 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Categories</label>
-            <div class="category-filters" style="max-height: 200px; overflow-y: auto;">
-              <% @categories.each do |category| %>
-                <div class="form-check">
-                  <%= check_box_tag "category_ids[]", category.id,
-                      params[:category_ids]&.include?(category.id.to_s),
+            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#categoriesCollapse"
+                    aria-expanded="false"
+                    aria-controls="categoriesCollapse">
+              <span class="form-label mb-0">Categories</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </button>
+            <div class="collapse" id="categoriesCollapse">
+              <div class="category-filters mt-2" style="max-height: 200px; overflow-y: auto;">
+                <% @categories.each do |category| %>
+                  <div class="form-check">
+                    <%= check_box_tag "category_ids[]", category.id,
+                        params[:category_ids]&.include?(category.id.to_s),
+                        class: "form-check-input",
+                        id: "category_#{category.id}",
+                        data: {
+                          "item-filter-target": "categoryCheckbox",
+                          action: "change->item-filter#onCategoryChange"
+                        } %>
+                    <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
+                  </div>
+                <% end %>
+              </div>
+              <div class="mt-2">
+                <div class="form-check form-check-inline">
+                  <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
                       class: "form-check-input",
-                      id: "category_#{category.id}",
                       data: {
-                        "item-filter-target": "categoryCheckbox",
-                        action: "change->item-filter#onCategoryChange"
+                        "item-filter-target": "categoryMatchRadio",
+                        action: "change->item-filter#onCategoryMatchChange"
                       } %>
-                  <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
+                  <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
                 </div>
-              <% end %>
-            </div>
-            <div class="mt-2">
-              <div class="form-check form-check-inline">
-                <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
-                    class: "form-check-input",
-                    data: {
-                      "item-filter-target": "categoryMatchRadio",
-                      action: "change->item-filter#onCategoryMatchChange"
-                    } %>
-                <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
+                <div class="form-check form-check-inline">
+                  <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
+                      class: "form-check-input",
+                      data: {
+                        "item-filter-target": "categoryMatchRadio",
+                        action: "change->item-filter#onCategoryMatchChange"
+                      } %>
+                  <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
+                </div>
               </div>
-              <div class="form-check form-check-inline">
-                <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
-                    class: "form-check-input",
-                    data: {
-                      "item-filter-target": "categoryMatchRadio",
-                      action: "change->item-filter#onCategoryMatchChange"
-                    } %>
-                <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
-              </div>
+              <small class="form-text text-muted">Select multiple categories to filter</small>
             </div>
-            <small class="form-text text-muted">Select multiple categories to filter</small>
           </div>
 
           <div class="mb-3">
-            <%= select_tag :item_type,
-                options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]),
-                class: "form-select",
-                data: {
-                  "item-filter-target": "itemTypeSelect",
-                  action: "change->item-filter#onItemTypeChange"
-                } %>
+            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#itemTypeCollapse"
+                    aria-expanded="false"
+                    aria-controls="itemTypeCollapse">
+              <span class="form-label mb-0">Item Type</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </button>
+            <div class="collapse" id="itemTypeCollapse">
+              <%= select_tag :item_type,
+                  options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]),
+                  class: "form-select mt-2",
+                  data: {
+                    "item-filter-target": "itemTypeSelect",
+                    action: "change->item-filter#onItemTypeChange"
+                  } %>
+            </div>
           </div>
 
           <div class="mb-3">
-            <%= select_tag :stock_status,
-                options_for_select([
-                  ['All Items', ''],
-                  ['In Stock', 'in_stock'],
-                  ['Low Stock', 'low_stock'],
-                  ['Out of Stock', 'out_of_stock']
-                ], params[:stock_status]),
-                class: "form-select",
-                data: {
-                  "item-filter-target": "stockStatusSelect",
-                  action: "change->item-filter#onStockStatusChange"
-                } %>
+            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#stockStatusCollapse"
+                    aria-expanded="false"
+                    aria-controls="stockStatusCollapse">
+              <span class="form-label mb-0">Stock Status</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </button>
+            <div class="collapse" id="stockStatusCollapse">
+              <%= select_tag :stock_status,
+                  options_for_select([
+                    ['All Items', ''],
+                    ['In Stock', 'in_stock'],
+                    ['Low Stock', 'low_stock'],
+                    ['Out of Stock', 'out_of_stock']
+                  ], params[:stock_status]),
+                  class: "form-select mt-2",
+                  data: {
+                    "item-filter-target": "stockStatusSelect",
+                    action: "change->item-filter#onStockStatusChange"
+                  } %>
+            </div>
           </div>
 
           <button type="button" class="btn btn-outline-secondary w-100" data-action="click->item-filter#clearFilters">
@@ -141,57 +179,7 @@
           </div>
 
           <% @items.each do |item| %>
-            <% stock_classes = [] %>
-            <% stock_classes << 'out-of-stock' if item.out_of_stock? %>
-            <% stock_classes << 'low-stock' if item.low_stock? %>
-            <% stock_class_string = stock_classes.join(' ') %>
-
-            <div class="item-row <%= stock_class_string %>"
-                 data-item-filter-target="item"
-                 data-item-name="<%= item.name %>"
-                 data-item-categories="<%= item.categories.pluck(:id).to_json %>"
-                 data-item-type="<%= item.item_type %>"
-                 data-item-quantity="<%= item.quantity %>"
-                 data-item-low-stock-threshold="<%= item.low_stock_threshold || 5 %>">
-
-              <div class="item-image-cell">
-                <%= item_thumbnail(item) %>
-              </div>
-
-              <div class="item-name-cell">
-                <%= link_to item.name, item, class: "text-decoration-none" %>
-              </div>
-
-              <% if current_user&.guest? %>
-                <div class="item-owner-cell">
-                  <span class="text-muted"><%= item.user&.username || "Unknown" %></span>
-                </div>
-              <% end %>
-
-              <div class="item-categories-cell">
-                <% item.categories.each do |category| %>
-                  <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
-                <% end %>
-              </div>
-
-              <div class="item-type-cell">
-                <%= item.item_type %>
-              </div>
-
-              <div class="item-quantity-cell">
-                <%= render "quantity", item: item %>
-              </div>
-
-              <div class="item-actions-cell">
-                <div class="action-buttons">
-                  <%= link_to "View", item, class: "btn btn-info" %>
-                  <% unless current_user&.guest? %>
-                    <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning", data: { offline_target: "editButton" } %>
-                    <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?", offline_target: "deleteButton" }, class: "btn btn-danger" %>
-                  <% end %>
-                </div>
-              </div>
-            </div>
+            <%= render "item_row", item: item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? %>
           <% end %>
         </div>
 

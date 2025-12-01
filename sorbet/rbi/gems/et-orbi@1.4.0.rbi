@@ -8,18 +8,12 @@
 # source://et-orbi//lib/et-orbi/version.rb#2
 module EtOrbi
   class << self
-    # For `make info`
-    #
     # source://et-orbi//lib/et-orbi/info.rb#37
     def _make_info; end
 
-    # test tool
-    #
     # source://et-orbi//lib/et-orbi/zones.rb#89
     def _os_zone; end
 
-    # test tool
-    #
     # source://et-orbi//lib/et-orbi/zones.rb#89
     def _os_zone=(_arg0); end
 
@@ -29,13 +23,9 @@ module EtOrbi
     # source://et-orbi//lib/et-orbi/make.rb#9
     def chronic_enabled=(b); end
 
-    # @return [Boolean]
-    #
     # source://et-orbi//lib/et-orbi/make.rb#6
     def chronic_enabled?; end
 
-    # system tz determination
-    #
     # source://et-orbi//lib/et-orbi/zones.rb#102
     def debian_tz; end
 
@@ -51,9 +41,6 @@ module EtOrbi
     # source://et-orbi//lib/et-orbi/zone.rb#6
     def get_tzone(o); end
 
-    # https://en.wikipedia.org/wiki/ISO_8601
-    # Postel's law applies
-    #
     # source://et-orbi//lib/et-orbi/zones.rb#21
     def list_iso8601_zones(s); end
 
@@ -90,8 +77,6 @@ module EtOrbi
     # source://et-orbi//lib/et-orbi/zones.rb#176
     def tweak_zone_name(name); end
 
-    # Semi-helpful, since it requires the current time
-    #
     # source://et-orbi//lib/et-orbi/zones.rb#138
     def windows_zone_name(zone_name, time); end
 
@@ -115,18 +100,12 @@ module EtOrbi
     # source://et-orbi//lib/et-orbi/zones.rb#222
     def determine_local_tzones; end
 
-    # https://api.rubyonrails.org/classes/ActiveSupport/TimeWithZone.html
-    #
-    # If it responds to #time_zone, then return that time zone.
-    #
     # source://et-orbi//lib/et-orbi/zone.rb#126
     def get_as_tzone(t); end
 
     # source://et-orbi//lib/et-orbi/zone.rb#115
     def get_local_tzone(t); end
 
-    # custom timezones, no DST, just an offset, like "+08:00" or "-01:30"
-    #
     # source://et-orbi//lib/et-orbi/zone.rb#29
     def get_offset_tzone(str); end
 
@@ -177,19 +156,8 @@ module EtOrbi
   end
 end
 
-# Our EoTime class (which quacks like a ::Time).
-#
-# An EoTime instance should respond to most of the methods ::Time instances
-# respond to. If a method is missing, feel free to open an issue to
-# ask (politely) for it. If it makes sense, it'll get added, else
-# a workaround will get suggested.
-# The immediate workaround is to call #to_t on the EoTime instance to get
-# equivalent ::Time instance in the local, current, timezone.
-#
 # source://et-orbi//lib/et-orbi/time.rb#13
 class EtOrbi::EoTime
-  # @return [EoTime] a new instance of EoTime
-  #
   # source://et-orbi//lib/et-orbi/time.rb#67
   def initialize(s, zone); end
 
@@ -211,15 +179,6 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#220
   def ==(o); end
 
-  # Nota Bene:
-  #
-  # Unlike ==, the equal? method should never be overridden by subclasses
-  # as it is used to determine object identity (that is, a.equal?(b) if and
-  # only if a is the same object as b)
-  #
-  # The eql? method returns true if obj and other refer to the same hash key.
-  # This is used by Hash to test members for equality.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#241
   def >(o); end
 
@@ -229,14 +188,6 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#247
   def add(t); end
 
-  # Returns true if this EoTime instance corresponds to 2 different UTC
-  # times.
-  # It happens when transitioning from DST to winter time.
-  #
-  # https://www.timeanddate.com/time/change/usa/new-york?year=2018
-  #
-  # @return [Boolean]
-  #
   # source://et-orbi//lib/et-orbi/time.rb#127
   def ambiguous?; end
 
@@ -249,15 +200,9 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#217
   def day; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current UTC timezone.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#156
   def getgm; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current UTC timezone.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#155
   def getutc; end
 
@@ -270,13 +215,9 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#316
   def inc(t, dir = T.unsafe(nil)); end
 
-  # @return [Boolean]
-  #
   # source://et-orbi//lib/et-orbi/time.rb#188
   def is_dst?; end
 
-  # @return [Boolean]
-  #
   # source://et-orbi//lib/et-orbi/time.rb#192
   def isdst; end
 
@@ -295,30 +236,21 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#256
   def monthdays; end
 
-  # "reference day", used in fugit for cron modulo notation
-  #
   # source://et-orbi//lib/et-orbi/time.rb#362
   def rday; end
 
   # source://et-orbi//lib/et-orbi/time.rb#381
   def reach(points); end
 
-  # A debug method, seen in its first iteration in
-  # https://github.com/floraison/et-orbi?tab=readme-ov-file#rweek-and-rday-clarification-et-orbi-140
-  #
   # source://et-orbi//lib/et-orbi/time.rb#379
   def rr; end
 
-  # "reference week", used in fugit for cron modulo notation
-  #
   # source://et-orbi//lib/et-orbi/time.rb#371
   def rweek; end
 
   # source://et-orbi//lib/et-orbi/time.rb#217
   def sec; end
 
-  # instance methods
-  #
   # source://et-orbi//lib/et-orbi/time.rb#64
   def seconds; end
 
@@ -340,45 +272,27 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#164
   def to_i; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current timezone.
-  #
-  # Has a #to_t alias.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#181
   def to_local_time; end
 
   # source://et-orbi//lib/et-orbi/time.rb#281
   def to_s; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current timezone.
-  #
-  # Has a #to_t alias.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#186
   def to_t; end
 
   # source://et-orbi//lib/et-orbi/time.rb#311
   def to_time_s; end
 
-  # Debug current time by showing local time / delta / utc time
-  # for example: "0120-7(0820)"
-  #
   # source://et-orbi//lib/et-orbi/time.rb#300
   def to_utc_comparison_s; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current UTC timezone.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#157
   def to_utc_time; end
 
   # source://et-orbi//lib/et-orbi/time.rb#286
   def to_zs; end
 
-  # Nullify the "caches" used by #to_time, #rday, and others
-  #
   # source://et-orbi//lib/et-orbi/time.rb#96
   def touch; end
 
@@ -388,17 +302,9 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#217
   def usec; end
 
-  # Returns this ::EtOrbi::EoTime as a ::Time instance
-  # in the current UTC timezone.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#141
   def utc; end
 
-  # Returns true if this ::EtOrbi::EoTime instance timezone is UTC.
-  # Returns false else.
-  #
-  # @return [Boolean]
-  #
   # source://et-orbi//lib/et-orbi/time.rb#149
   def utc?; end
 
@@ -417,8 +323,6 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#217
   def year; end
 
-  # Returns the value of attribute zone.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#65
   def zone; end
 
@@ -433,20 +337,12 @@ class EtOrbi::EoTime
   # source://et-orbi//lib/et-orbi/time.rb#430
   def count_weeks(start, dir); end
 
-  # Gives back the Eotime instance pointing to the reference day
-  # used to compute #rweek and #rday
-  #
   # source://et-orbi//lib/et-orbi/time.rb#481
   def rref; end
 
   # source://et-orbi//lib/et-orbi/time.rb#443
   def strfz(code); end
 
-  # Returns a Ruby Time instance.
-  #
-  # Warning: the timezone of that Time instance will be UTC when used with
-  # TZInfo < 2.0.0.
-  #
   # source://et-orbi//lib/et-orbi/time.rb#425
   def to_time; end
 
@@ -483,17 +379,11 @@ EtOrbi::EoTime::DAY_S = T.let(T.unsafe(nil), Integer)
 # source://et-orbi//lib/et-orbi/time.rb#254
 EtOrbi::EoTime::WEEK_S = T.let(T.unsafe(nil), Integer)
 
-# RWEEK_REF_DEFAULT = '2019-01-01'.freeze
-#
 # source://et-orbi//lib/et-orbi/time.rb#491
 EtOrbi::RWEEK_REF_DEFAULT = T.let(T.unsafe(nil), String)
 
 # source://et-orbi//lib/et-orbi/version.rb#4
 EtOrbi::VERSION = T.let(T.unsafe(nil), String)
 
-# https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones
-# https://support.microsoft.com/en-ca/help/973627/microsoft-time-zone-index-values
-# https://ss64.com/nt/timezones.html
-#
 # source://et-orbi//lib/et-orbi/zones.rb#260
 EtOrbi::ZONE_ALIASES = T.let(T.unsafe(nil), Hash)
