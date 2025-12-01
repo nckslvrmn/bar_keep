@@ -706,14 +706,3 @@ img {
         min-height: 44px;
     }
 }
-
-.mobile-item-card,
-.mobile-item-header,
-.mobile-item-image,
-.mobile-item-details,
-.mobile-item-name,
-.mobile-item-meta,
-.mobile-item-categories,
-.mobile-item-controls,
-.mobile-item-actions,
-.mobile-quantity-controls {}

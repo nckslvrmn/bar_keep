@@ -13,6 +13,7 @@ class SessionsController < ApplicationController
     user = User.find_by(username: params[:username]&.downcase&.strip)
 
     if user&.authenticate(params[:password])
+      reset_session
       login_user(user)
       redirect_to root_path, notice: "Welcome back, #{user.username}!"
     else

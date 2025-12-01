@@ -118,14 +118,20 @@ class ItemsController < ApplicationController
   def handle_categories(item, category_names_string)
     return unless category_names_string.present?
 
-    item.categories.clear
-
     category_names = category_names_string.split(",").map(&:strip).reject(&:blank?)
+    return if category_names.empty?
 
-    category_names.each do |name|
-      category = Category.find_or_create_by(name: name)
-      item.categories << category unless item.categories.include?(category)
+    existing_categories = Category.where(name: category_names).index_by(&:name)
+    new_category_names = category_names - existing_categories.keys
+
+    if new_category_names.any?
+      new_categories = new_category_names.map do |name|
+        Category.create!(name: name, slug: name.parameterize)
+      end
+      new_categories.each { |cat| existing_categories[cat.name] = cat }
     end
+
+    item.categories = category_names.map { |name| existing_categories[name] }.compact
   end
 
   def item_params

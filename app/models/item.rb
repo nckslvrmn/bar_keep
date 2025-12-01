@@ -91,6 +91,6 @@ class Item < ApplicationRecord
 
   sig { returns(String) }
   def category_names
-    categories.pluck(:name).join(", ")
+    categories.map(&:name).join(", ")
   end
 end

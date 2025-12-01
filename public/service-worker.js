@@ -1,9 +1,15 @@
-const CACHE_NAME = 'bar-keep-v3';
+const CACHE_NAME = 'bar-keep-v4';
+const MAX_IMAGE_CACHE_SIZE = 50;
+const MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
 const urlsToCache = [
     '/manifest.json',
     '/icon.svg',
     '/icon-192.png',
     '/icon-512.png',
+    '/icon-180.png',
+    '/icon-152.png',
+    '/icon-120.png',
     '/offline.html'
 ];
 
@@ -110,6 +116,19 @@ self.addEventListener('fetch', event => {
                         caches.open(CACHE_NAME)
                             .then(cache => {
                                 cache.put(request, responseToCache);
+
+                                if (isImage) {
+                                    cache.keys().then(keys => {
+                                        const imageKeys = keys.filter(k =>
+                                            k.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                                        );
+
+                                        if (imageKeys.length > MAX_IMAGE_CACHE_SIZE) {
+                                            const keysToDelete = imageKeys.slice(0, imageKeys.length - MAX_IMAGE_CACHE_SIZE);
+                                            return Promise.all(keysToDelete.map(key => cache.delete(key)));
+                                        }
+                                    });
+                                }
                             });
                     }
 
