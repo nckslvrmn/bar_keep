@@ -30,12 +30,6 @@ end
 
 # source://rails-html-sanitizer//lib/rails-html-sanitizer.rb#17
 module ActionView::Helpers::SanitizeHelper::ClassMethods
-  # Replaces the allowed HTML attributes for the +sanitize+ helper.
-  #
-  #   class Application < Rails::Application
-  #     config.action_view.sanitized_allowed_attributes = ['onclick', 'longdesc']
-  #   end
-  #
   # source://rails-html-sanitizer//lib/rails-html-sanitizer.rb#34
   def sanitized_allowed_attributes=(attributes); end
 
@@ -57,12 +51,6 @@ module ActionView::Helpers::SanitizeHelper::ClassMethods
   # source://rails-html-sanitizer//lib/rails-html-sanitizer.rb#48
   def sanitized_allowed_protocols=(_); end
 
-  # Replaces the allowed tags for the +sanitize+ helper.
-  #
-  #   class Application < Rails::Application
-  #     config.action_view.sanitized_allowed_tags = 'table', 'tr', 'td'
-  #   end
-  #
   # source://rails-html-sanitizer//lib/rails-html-sanitizer.rb#24
   def sanitized_allowed_tags=(tags); end
 
@@ -105,14 +93,6 @@ module Rails::HTML; end
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#194
 module Rails::HTML4; end
 
-# == Rails::HTML4::FullSanitizer
-#
-# Removes all tags from HTML4 but strips out scripts, forms and comments.
-#
-#   full_sanitizer = Rails::HTML4::FullSanitizer.new
-#   full_sanitizer.sanitize("<b>Bold</b> no more!  <a href='more.html'>See more here</a>...")
-#   # => "Bold no more!  See more here..."
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#225
 class Rails::HTML4::FullSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -121,14 +101,6 @@ class Rails::HTML4::FullSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::Serializer::UTF8Encode
 end
 
-# == Rails::HTML4::LinkSanitizer
-#
-# Removes +a+ tags and +href+ attributes from HTML4 leaving only the link text.
-#
-#   link_sanitizer = Rails::HTML4::LinkSanitizer.new
-#   link_sanitizer.sanitize('<a href="example.com">Only the link text will be kept.</a>')
-#   # => "Only the link text will be kept."
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#240
 class Rails::HTML4::LinkSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -137,57 +109,6 @@ class Rails::HTML4::LinkSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::Serializer::UTF8Encode
 end
 
-# == Rails::HTML4::SafeListSanitizer
-#
-# Sanitizes HTML4 and CSS from an extensive safe list.
-#
-# === Whitespace
-#
-# We can't make any guarantees about whitespace being kept or stripped.  Loofah uses Nokogiri,
-# which wraps either a C or Java parser for the respective Ruby implementation.  Those two
-# parsers determine how whitespace is ultimately handled.
-#
-# When the stripped markup will be rendered the users browser won't take whitespace into account
-# anyway. It might be better to suggest your users wrap their whitespace sensitive content in
-# pre tags or that you do so automatically.
-#
-# === Options
-#
-# Sanitizes both html and css via the safe lists found in
-# Rails::HTML::Concern::Scrubber::SafeList
-#
-# SafeListSanitizer also accepts options to configure the safe list used when sanitizing html.
-# There's a class level option:
-#
-#   Rails::HTML4::SafeListSanitizer.allowed_tags = %w(table tr td)
-#   Rails::HTML4::SafeListSanitizer.allowed_attributes = %w(id class style)
-#
-# Tags and attributes can also be passed to +sanitize+.  Passed options take precedence over the
-# class level options.
-#
-# === Examples
-#
-#   safe_list_sanitizer = Rails::HTML4::SafeListSanitizer.new
-#
-#   # default: sanitize via a extensive safe list of allowed elements
-#   safe_list_sanitizer.sanitize(@article.body)
-#
-#   # sanitize via the supplied tags and attributes
-#   safe_list_sanitizer.sanitize(
-#     @article.body,
-#     tags: %w(table tr td),
-#     attributes: %w(id class style),
-#   )
-#
-#   # sanitize via a custom Loofah scrubber
-#   safe_list_sanitizer.sanitize(@article.body, scrubber: ArticleScrubber.new)
-#
-#   # prune nodes from the tree instead of stripping tags and leaving inner content
-#   safe_list_sanitizer = Rails::HTML4::SafeListSanitizer.new(prune: true)
-#
-#   # the sanitizer can also sanitize CSS
-#   safe_list_sanitizer.sanitize_css('background-color: #000;')
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#298
 class Rails::HTML4::SafeListSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -233,14 +154,6 @@ end
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#306
 module Rails::HTML5; end
 
-# == Rails::HTML5::FullSanitizer
-#
-# Removes all tags from HTML5 but strips out scripts, forms and comments.
-#
-#   full_sanitizer = Rails::HTML5::FullSanitizer.new
-#   full_sanitizer.sanitize("<b>Bold</b> no more!  <a href='more.html'>See more here</a>...")
-#   # => "Bold no more!  See more here..."
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#335
 class Rails::HTML5::FullSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -249,14 +162,6 @@ class Rails::HTML5::FullSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::Serializer::UTF8Encode
 end
 
-# == Rails::HTML5::LinkSanitizer
-#
-# Removes +a+ tags and +href+ attributes from HTML5 leaving only the link text.
-#
-#   link_sanitizer = Rails::HTML5::LinkSanitizer.new
-#   link_sanitizer.sanitize('<a href="example.com">Only the link text will be kept.</a>')
-#   # => "Only the link text will be kept."
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#350
 class Rails::HTML5::LinkSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -265,57 +170,6 @@ class Rails::HTML5::LinkSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::Serializer::UTF8Encode
 end
 
-# == Rails::HTML5::SafeListSanitizer
-#
-# Sanitizes HTML5 and CSS from an extensive safe list.
-#
-# === Whitespace
-#
-# We can't make any guarantees about whitespace being kept or stripped.  Loofah uses Nokogiri,
-# which wraps either a C or Java parser for the respective Ruby implementation.  Those two
-# parsers determine how whitespace is ultimately handled.
-#
-# When the stripped markup will be rendered the users browser won't take whitespace into account
-# anyway. It might be better to suggest your users wrap their whitespace sensitive content in
-# pre tags or that you do so automatically.
-#
-# === Options
-#
-# Sanitizes both html and css via the safe lists found in
-# Rails::HTML::Concern::Scrubber::SafeList
-#
-# SafeListSanitizer also accepts options to configure the safe list used when sanitizing html.
-# There's a class level option:
-#
-#   Rails::HTML5::SafeListSanitizer.allowed_tags = %w(table tr td)
-#   Rails::HTML5::SafeListSanitizer.allowed_attributes = %w(id class style)
-#
-# Tags and attributes can also be passed to +sanitize+.  Passed options take precedence over the
-# class level options.
-#
-# === Examples
-#
-#   safe_list_sanitizer = Rails::HTML5::SafeListSanitizer.new
-#
-#   # default: sanitize via a extensive safe list of allowed elements
-#   safe_list_sanitizer.sanitize(@article.body)
-#
-#   # sanitize via the supplied tags and attributes
-#   safe_list_sanitizer.sanitize(
-#     @article.body,
-#     tags: %w(table tr td),
-#     attributes: %w(id class style),
-#   )
-#
-#   # sanitize via a custom Loofah scrubber
-#   safe_list_sanitizer.sanitize(@article.body, scrubber: ArticleScrubber.new)
-#
-#   # prune nodes from the tree instead of stripping tags and leaving inner content
-#   safe_list_sanitizer = Rails::HTML5::SafeListSanitizer.new(prune: true)
-#
-#   # the sanitizer can also sanitize CSS
-#   safe_list_sanitizer.sanitize_css('background-color: #000;')
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#408
 class Rails::HTML5::SafeListSanitizer < ::Rails::HTML::Sanitizer
   include ::Rails::HTML::Concern::ComposedSanitize
@@ -417,20 +271,14 @@ module Rails::HTML::Concern::Scrubber::SafeList
   def allowed_tags(options); end
 
   class << self
-    # @private
-    #
     # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#142
     def included(klass); end
   end
 end
 
-# The default safe list for attributes
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#126
 Rails::HTML::Concern::Scrubber::SafeList::DEFAULT_ALLOWED_ATTRIBUTES = T.let(T.unsafe(nil), Set)
 
-# The default safe list for tags
-#
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#79
 Rails::HTML::Concern::Scrubber::SafeList::DEFAULT_ALLOWED_TAGS = T.let(T.unsafe(nil), Set)
 
@@ -449,76 +297,23 @@ Rails::HTML::FullSanitizer = Rails::HTML4::FullSanitizer
 # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#419
 Rails::HTML::LinkSanitizer = Rails::HTML4::LinkSanitizer
 
-# === Rails::HTML::PermitScrubber
-#
-# +Rails::HTML::PermitScrubber+ allows you to permit only your own tags and/or attributes.
-#
-# +Rails::HTML::PermitScrubber+ can be subclassed to determine:
-# - When a node should be skipped via +skip_node?+.
-# - When a node is allowed via +allowed_node?+.
-# - When an attribute should be scrubbed via +scrub_attribute?+.
-#
-# Subclasses don't need to worry if tags or attributes are set or not.
-# If tags or attributes are not set, Loofah's behavior will be used.
-# If you override +allowed_node?+ and no tags are set, it will not be called.
-# Instead Loofahs behavior will be used.
-# Likewise for +scrub_attribute?+ and attributes respectively.
-#
-# Text and CDATA nodes are skipped by default.
-# Unallowed elements will be stripped, i.e. element is removed but its subtree kept.
-# Supplied tags and attributes should be Enumerables.
-#
-# +tags=+
-# If set, elements excluded will be stripped.
-# If not, elements are stripped based on Loofahs +HTML5::Scrub.allowed_element?+.
-#
-# +attributes=+
-# If set, attributes excluded will be removed.
-# If not, attributes are removed based on Loofahs +HTML5::Scrub.scrub_attributes+.
-#
-#  class CommentScrubber < Rails::HTML::PermitScrubber
-#    def initialize
-#      super
-#      self.tags = %w(form script comment blockquote)
-#    end
-#
-#    def skip_node?(node)
-#      node.text?
-#    end
-#
-#    def scrub_attribute?(name)
-#      name == "style"
-#    end
-#  end
-#
-# See the documentation for +Nokogiri::XML::Node+ to understand what's possible
-# with nodes: https://nokogiri.org/rdoc/Nokogiri/XML/Node.html
-#
 # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#49
 class Rails::HTML::PermitScrubber < ::Loofah::Scrubber
-  # @return [PermitScrubber] a new instance of PermitScrubber
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#52
   def initialize(prune: T.unsafe(nil)); end
 
-  # Returns the value of attribute attributes.
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#50
   def attributes; end
 
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#62
   def attributes=(attributes); end
 
-  # Returns the value of attribute prune.
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#50
   def prune; end
 
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#66
   def scrub(node); end
 
-  # Returns the value of attribute tags.
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#50
   def tags; end
 
@@ -527,21 +322,15 @@ class Rails::HTML::PermitScrubber < ::Loofah::Scrubber
 
   protected
 
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#83
   def allowed_node?(node); end
 
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#95
   def keep_node?(node); end
 
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#162
   def scrub_attribute(node, attr_node); end
 
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#91
   def scrub_attribute?(name); end
 
@@ -554,8 +343,6 @@ class Rails::HTML::PermitScrubber < ::Loofah::Scrubber
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#103
   def scrub_node(node); end
 
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#87
   def skip_node?(node); end
 
@@ -570,8 +357,6 @@ Rails::HTML::SafeListSanitizer = Rails::HTML4::SafeListSanitizer
 class Rails::HTML::Sanitizer
   extend ::Rails::HTML4::Sanitizer::VendorMethods
 
-  # @raise [NotImplementedError]
-  #
   # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#18
   def sanitize(html, options = T.unsafe(nil)); end
 
@@ -587,8 +372,6 @@ class Rails::HTML::Sanitizer
     # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#13
     def best_supported_vendor; end
 
-    # @return [Boolean]
-    #
     # source://rails-html-sanitizer//lib/rails/html/sanitizer.rb#7
     def html5_support?; end
   end
@@ -597,40 +380,17 @@ end
 # source://rails-html-sanitizer//lib/rails/html/sanitizer/version.rb#6
 Rails::HTML::Sanitizer::VERSION = T.let(T.unsafe(nil), String)
 
-# === Rails::HTML::TargetScrubber
-#
-# Where +Rails::HTML::PermitScrubber+ picks out tags and attributes to permit in
-# sanitization, +Rails::HTML::TargetScrubber+ targets them for removal.
-#
-# +tags=+
-# If set, elements included will be stripped.
-#
-# +attributes=+
-# If set, attributes included will be removed.
-#
 # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#195
 class Rails::HTML::TargetScrubber < ::Rails::HTML::PermitScrubber
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#196
   def allowed_node?(node); end
 
-  # @return [Boolean]
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#200
   def scrub_attribute?(name); end
 end
 
-# === Rails::HTML::TextOnlyScrubber
-#
-# +Rails::HTML::TextOnlyScrubber+ allows you to permit text nodes.
-#
-# Unallowed elements will be stripped, i.e. element is removed but its subtree kept.
-#
 # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#210
 class Rails::HTML::TextOnlyScrubber < ::Loofah::Scrubber
-  # @return [TextOnlyScrubber] a new instance of TextOnlyScrubber
-  #
   # source://rails-html-sanitizer//lib/rails/html/scrubbers.rb#211
   def initialize; end
 

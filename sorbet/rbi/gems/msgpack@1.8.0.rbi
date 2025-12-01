@@ -59,8 +59,6 @@ end
 
 Integer::GMP_VERSION = T.let(T.unsafe(nil), String)
 
-# MessagePack extention packer and unpacker for built-in Time class
-#
 # source://msgpack//lib/msgpack/version.rb#1
 module MessagePack
   private
@@ -217,20 +215,12 @@ class MessagePack::Factory
   # source://msgpack//lib/msgpack/factory.rb#120
   def pool(size = T.unsafe(nil), **options); end
 
-  # see ext for other methods
-  #
-  # @raise [FrozenError]
-  #
   # source://msgpack//lib/msgpack/factory.rb#5
   def register_type(type, klass, options = T.unsafe(nil)); end
 
-  # [ {type: id, class: Class(or nil), packer: arg, unpacker: arg}, ... ]
-  #
   # source://msgpack//lib/msgpack/factory.rb#41
   def registered_types(selector = T.unsafe(nil)); end
 
-  # @return [Boolean]
-  #
   # source://msgpack//lib/msgpack/factory.rb#86
   def type_registered?(klass_or_type, selector = T.unsafe(nil)); end
 
@@ -251,8 +241,6 @@ end
 
 # source://msgpack//lib/msgpack/factory.rb#128
 class MessagePack::Factory::Pool
-  # @return [Pool] a new instance of Pool
-  #
   # source://msgpack//lib/msgpack/factory.rb#181
   def initialize(factory, size, options = T.unsafe(nil)); end
 
@@ -271,8 +259,6 @@ end
 
 # source://msgpack//lib/msgpack/factory.rb#130
 class MessagePack::Factory::Pool::MemberPool
-  # @return [MemberPool] a new instance of MemberPool
-  #
   # source://msgpack//lib/msgpack/factory.rb#131
   def initialize(size, &block); end
 
@@ -308,8 +294,6 @@ class MessagePack::Packer
   # source://msgpack//lib/msgpack.rb#7
   def pack(_arg0); end
 
-  # @raise [ArgumentError]
-  #
   # source://msgpack//lib/msgpack/packer.rb#9
   def register_type(type, klass, method_name = T.unsafe(nil), &block); end
 
@@ -334,8 +318,6 @@ class MessagePack::Packer
   # source://msgpack//lib/msgpack.rb#7
   def to_str; end
 
-  # @return [Boolean]
-  #
   # source://msgpack//lib/msgpack/packer.rb#24
   def type_registered?(klass_or_type); end
 
@@ -405,35 +387,23 @@ module MessagePack::Time; end
 # source://msgpack//lib/msgpack/time.rb#25
 MessagePack::Time::Packer = T.let(T.unsafe(nil), Proc)
 
-# 3-arg Time.at is available Ruby >= 2.5
-#
 # source://msgpack//lib/msgpack/time.rb#7
 MessagePack::Time::TIME_AT_3_AVAILABLE = T.let(T.unsafe(nil), TrueClass)
 
 # source://msgpack//lib/msgpack/time.rb#13
 MessagePack::Time::Unpacker = T.let(T.unsafe(nil), Proc)
 
-# a.k.a. "TimeSpec"
-#
 # source://msgpack//lib/msgpack/timestamp.rb#4
 class MessagePack::Timestamp
-  # @param sec [Integer]
-  # @param nsec [Integer]
-  # @return [Timestamp] a new instance of Timestamp
-  #
   # source://msgpack//lib/msgpack/timestamp.rb#24
   def initialize(sec, nsec); end
 
   # source://msgpack//lib/msgpack/timestamp.rb#72
   def ==(other); end
 
-  # @return [Integer]
-  #
   # source://msgpack//lib/msgpack/timestamp.rb#20
   def nsec; end
 
-  # @return [Integer]
-  #
   # source://msgpack//lib/msgpack/timestamp.rb#17
   def sec; end
 
@@ -455,9 +425,6 @@ MessagePack::Timestamp::TIMESTAMP32_MAX_SEC = T.let(T.unsafe(nil), Integer)
 # source://msgpack//lib/msgpack/timestamp.rb#14
 MessagePack::Timestamp::TIMESTAMP64_MAX_SEC = T.let(T.unsafe(nil), Integer)
 
-# The timestamp extension type defined in the MessagePack spec.
-# See https://github.com/msgpack/msgpack/blob/master/spec.md#timestamp-extension-type for details.
-#
 # source://msgpack//lib/msgpack/timestamp.rb#11
 MessagePack::Timestamp::TYPE = T.let(T.unsafe(nil), Integer)
 
@@ -521,8 +488,6 @@ class MessagePack::Unpacker
   # source://msgpack//lib/msgpack.rb#7
   def symbolize_keys?; end
 
-  # @return [Boolean]
-  #
   # source://msgpack//lib/msgpack/unpacker.rb#28
   def type_registered?(klass_or_type); end
 

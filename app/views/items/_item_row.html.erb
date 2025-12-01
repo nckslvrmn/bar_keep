@@ -1,0 +1,52 @@
+<% stock_classes = [] %>
+<% stock_classes << 'out-of-stock' if item.out_of_stock? %>
+<% stock_classes << 'low-stock' if item.low_stock? %>
+<% stock_class_string = stock_classes.join(' ') %>
+
+<div id="item_row_<%= item.id %>"
+     class="item-row <%= stock_class_string %>"
+     data-item-filter-target="item"
+     data-item-name="<%= item.name %>"
+     data-item-categories="<%= item.categories.pluck(:id).to_json %>"
+     data-item-type="<%= item.item_type %>"
+     data-item-quantity="<%= item.quantity %>"
+     <% if item.low_stock_threshold.present? %>data-item-low-stock-threshold="<%= item.low_stock_threshold %>"<% end %>>
+
+  <div class="item-image-cell">
+    <%= item_thumbnail(item) %>
+  </div>
+
+  <div class="item-name-cell">
+    <%= link_to item.name, item, class: "text-decoration-none" %>
+  </div>
+
+  <% if defined?(show_owner) && show_owner %>
+    <div class="item-owner-cell">
+      <span class="text-muted"><%= item.user&.username || "Unknown" %></span>
+    </div>
+  <% end %>
+
+  <div class="item-categories-cell">
+    <% item.categories.each do |category| %>
+      <span class="badge <%= params[:category_ids]&.include?(category.id.to_s) ? 'bg-primary' : 'bg-secondary' %> me-1"><%= category.name %></span>
+    <% end %>
+  </div>
+
+  <div class="item-type-cell">
+    <%= item.item_type %>
+  </div>
+
+  <div class="item-quantity-cell">
+    <%= render "items/quantity", item: item %>
+  </div>
+
+  <div class="item-actions-cell">
+    <div class="action-buttons">
+      <%= link_to "View", item, class: "btn btn-info" %>
+      <% unless defined?(show_actions) && show_actions == false %>
+        <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning", data: { offline_target: "editButton" } %>
+        <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?", offline_target: "deleteButton" }, class: "btn btn-danger" %>
+      <% end %>
+    </div>
+  </div>
+</div>

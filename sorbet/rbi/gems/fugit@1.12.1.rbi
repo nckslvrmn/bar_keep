@@ -86,19 +86,9 @@ class Fugit::Cron
   # source://fugit//lib/fugit/cron.rb#506
   def ==(o); end
 
-  # Mostly used as a #next_time sanity check.
-  # Avoid for "business" use, it's slow.
-  #
-  # 2017 is a non leap year (though it is preceded by
-  # a leap second on 2016-12-31)
-  #
-  # Nota bene: cron with seconds are not supported.
-  #
   # source://fugit//lib/fugit/cron.rb#404
   def brute_frequency(year = T.unsafe(nil)); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#215
   def day_match?(nt); end
 
@@ -108,75 +98,42 @@ class Fugit::Cron
   # source://fugit//lib/fugit/cron.rb#512
   def hash; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#172
   def hour_match?(nt); end
 
-  # Returns the value of attribute hours.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def hours; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#245
   def match?(t); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#173
   def min_match?(nt); end
 
-  # Returns the value of attribute minutes.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def minutes; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#171
   def month_match?(nt); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#204
   def monthday_match?(nt); end
 
-  # Returns the value of attribute monthdays.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def monthdays; end
 
-  # Returns the value of attribute months.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def months; end
 
-  # Returns an ::Enumerable instance that yields each "next time" in
-  # succession
-  #
   # source://fugit//lib/fugit/cron.rb#369
   def next(from = T.unsafe(nil)); end
 
-  # See gh-15 and tst/iteration_count.rb
-  #
-  # Initially set to 1024 after seeing the worst case for #next_time
-  # at 167 iterations, I placed it at 2048 after experimenting with
-  # gh-18 and noticing some > 1024 for some experiments. 2048 should
-  # be ok.
-  #
   # source://fugit//lib/fugit/cron.rb#262
   def next_time(from = T.unsafe(nil)); end
 
-  # Returns the value of attribute original.
-  #
   # source://fugit//lib/fugit/cron.rb#20
   def original; end
 
-  # Returns an ::Enumerable instance that yields each "previous time" in
-  # succession
-  #
   # source://fugit//lib/fugit/cron.rb#377
   def prev(from = T.unsafe(nil)); end
 
@@ -186,18 +143,12 @@ class Fugit::Cron
   # source://fugit//lib/fugit/cron.rb#434
   def rough_frequency; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#174
   def sec_match?(nt); end
 
-  # Returns the value of attribute seconds.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def seconds; end
 
-  # Returns the value of attribute timezone.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def timezone; end
 
@@ -210,34 +161,21 @@ class Fugit::Cron
   # source://fugit//lib/fugit/cron.rb#496
   def to_h; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#176
   def weekday_hash_match?(nt, hsh); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#194
   def weekday_match?(nt); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#188
   def weekday_modulo_match?(nt, mod); end
 
-  # Returns the value of attribute weekdays.
-  #
   # source://fugit//lib/fugit/cron.rb#22
   def weekdays; end
 
-  # Returns an array of EtOrbi::EoTime instances that correspond to
-  # the occurrences of the cron within the given time range
-  #
   # source://fugit//lib/fugit/cron.rb#385
   def within(time_range, time_end = T.unsafe(nil)); end
 
-  # Returns the value of attribute zone.
-  #
   # source://fugit//lib/fugit/cron.rb#20
   def zone; end
 
@@ -302,37 +240,25 @@ class Fugit::Cron
   end
 end
 
-# Used by Fugit::Cron#next and Fugit::Cron#prev
-#
 # source://fugit//lib/fugit/cron.rb#344
 class Fugit::Cron::CronIterator
   include ::Enumerable
 
-  # @return [CronIterator] a new instance of CronIterator
-  #
   # source://fugit//lib/fugit/cron.rb#349
   def initialize(cron, direction, start); end
 
-  # Returns the value of attribute cron.
-  #
   # source://fugit//lib/fugit/cron.rb#347
   def cron; end
 
-  # Returns the value of attribute current.
-  #
   # source://fugit//lib/fugit/cron.rb#347
   def current; end
 
-  # Returns the value of attribute direction.
-  #
   # source://fugit//lib/fugit/cron.rb#347
   def direction; end
 
   # source://fugit//lib/fugit/cron.rb#357
   def each; end
 
-  # Returns the value of attribute start.
-  #
   # source://fugit//lib/fugit/cron.rb#347
   def start; end
 end
@@ -342,41 +268,27 @@ Fugit::Cron::FREQUENCY_CACHE = T.let(T.unsafe(nil), Hash)
 
 # source://fugit//lib/fugit/cron.rb#463
 class Fugit::Cron::Frequency
-  # @return [Frequency] a new instance of Frequency
-  #
   # source://fugit//lib/fugit/cron.rb#468
   def initialize(deltas, span); end
 
-  # Returns the value of attribute delta_max.
-  #
   # source://fugit//lib/fugit/cron.rb#465
   def delta_max; end
 
-  # Returns the value of attribute delta_min.
-  #
   # source://fugit//lib/fugit/cron.rb#465
   def delta_min; end
 
-  # Returns the value of attribute occurrences.
-  #
   # source://fugit//lib/fugit/cron.rb#465
   def occurrences; end
 
-  # Returns the value of attribute span.
-  #
   # source://fugit//lib/fugit/cron.rb#465
   def span; end
 
-  # Returns the value of attribute span_years.
-  #
   # source://fugit//lib/fugit/cron.rb#466
   def span_years; end
 
   # source://fugit//lib/fugit/cron.rb#478
   def to_debug_s; end
 
-  # Returns the value of attribute yearly_occurrences.
-  #
   # source://fugit//lib/fugit/cron.rb#466
   def yearly_occurrences; end
 end
@@ -418,8 +330,6 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#827
   def _tz_name(i); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#760
   def and?(i); end
 
@@ -429,8 +339,6 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#758
   def comma(i); end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/cron.rb#759
   def comma?(i); end
 
@@ -515,13 +423,9 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#803
   def mon_elt(i); end
 
-  # min or sec
-  #
   # source://fugit//lib/fugit/cron.rb#764
   def mos(i); end
 
-  # ssws: slash or sorws
-  #
   # source://fugit//lib/fugit/cron.rb#800
   def mos_elt(i); end
 
@@ -537,13 +441,9 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#782
   def r_mon(i); end
 
-  # r: range
-  #
   # source://fugit//lib/fugit/cron.rb#779
   def r_mos(i); end
 
-  # rewriting the parsed tree
-  #
   # source://fugit//lib/fugit/cron.rb#850
   def rewrite_bound(k, t); end
 
@@ -562,8 +462,6 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#903
   def rewrite_tz(t); end
 
-  # piece parsers bottom to top
-  #
   # source://fugit//lib/fugit/cron.rb#755
   def s(i); end
 
@@ -585,8 +483,6 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#789
   def sor_mon(i); end
 
-  # sor: star or range
-  #
   # source://fugit//lib/fugit/cron.rb#786
   def sor_mos(i); end
 
@@ -602,8 +498,6 @@ module Fugit::Cron::Parser
   # source://fugit//lib/fugit/cron.rb#796
   def sorws_mon(i); end
 
-  # sorws: star or range with[out] slash
-  #
   # source://fugit//lib/fugit/cron.rb#793
   def sorws_mos(i); end
 
@@ -634,8 +528,6 @@ Fugit::Cron::SPECIALS = T.let(T.unsafe(nil), Hash)
 
 # source://fugit//lib/fugit/cron.rb#87
 class Fugit::Cron::TimeCursor
-  # @return [TimeCursor] a new instance of TimeCursor
-  #
   # source://fugit//lib/fugit/cron.rb#89
   def initialize(cron, t); end
 
@@ -750,16 +642,12 @@ class Fugit::Duration
   # source://fugit//lib/fugit/duration.rb#172
   def deflate(options = T.unsafe(nil)); end
 
-  # Returns a copy of this duration, omitting its seconds.
-  #
   # source://fugit//lib/fugit/duration.rb#308
   def drop_seconds; end
 
   # source://fugit//lib/fugit/duration.rb#294
   def eql?(o); end
 
-  # Returns the value of attribute h.
-  #
   # source://fugit//lib/fugit/duration.rb#7
   def h; end
 
@@ -775,21 +663,15 @@ class Fugit::Duration
   # source://fugit//lib/fugit/duration.rb#208
   def opposite; end
 
-  # Returns the value of attribute options.
-  #
   # source://fugit//lib/fugit/duration.rb#7
   def options; end
 
-  # Returns the value of attribute original.
-  #
   # source://fugit//lib/fugit/duration.rb#7
   def original; end
 
   # source://fugit//lib/fugit/duration.rb#277
   def subtract(a); end
 
-  # For now, let's alias to #h
-  #
   # source://fugit//lib/fugit/duration.rb#137
   def to_h; end
 
@@ -808,9 +690,6 @@ class Fugit::Duration
   # source://fugit//lib/fugit/duration.rb#97
   def to_rufus_s; end
 
-  # Warning: this is an "approximation", months are 30 days and years are
-  # 365 days, ...
-  #
   # source://fugit//lib/fugit/duration.rb#147
   def to_sec; end
 
@@ -877,13 +756,9 @@ module Fugit::Duration::IsoParser
   # source://fugit//lib/fugit/duration.rb#391
   def mon(i); end
 
-  # piece parsers bottom to top
-  #
   # source://fugit//lib/fugit/duration.rb#387
   def p(i); end
 
-  # rewrite parsed tree
-  #
   # source://fugit//lib/fugit/duration.rb#409
   def rewrite_dur(t); end
 
@@ -934,8 +809,6 @@ module Fugit::Duration::Parser
   # source://fugit//lib/fugit/duration.rb#344
   def hou(i); end
 
-  # rewrite parsed tree
-  #
   # source://fugit//lib/fugit/duration.rb#359
   def merge(h0, h1); end
 
@@ -960,8 +833,6 @@ module Fugit::Duration::Parser
   # source://fugit//lib/fugit/duration.rb#348
   def sek(i); end
 
-  # piece parsers bottom to top
-  #
   # source://fugit//lib/fugit/duration.rb#338
   def sep(i); end
 
@@ -975,14 +846,9 @@ module Fugit::Duration::Parser
   def yea(i); end
 end
 
-# Round float seconds to 9 decimals when deflating
-#
 # source://fugit//lib/fugit/duration.rb#170
 Fugit::Duration::SECOND_ROUND = T.let(T.unsafe(nil), Integer)
 
-# A natural language set of parsers for fugit.
-# Focuses on cron expressions. The rest is better left to Chronic and friends.
-#
 # source://fugit//lib/fugit/nat.rb#8
 module Fugit::Nat
   class << self
@@ -1022,8 +888,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#158
   def _dmin(i); end
 
-  # parsers bottom to top #################################################
-  #
   # source://fugit//lib/fugit/nat.rb#115
   def _every(i); end
 
@@ -1063,8 +927,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#128
   def _to_or_dash(i); end
 
-  # Try to follow https://en.wikipedia.org/wiki/12-hour_clock#Confusion_at_noon_and_midnight
-  #
   # source://fugit//lib/fugit/nat.rb#498
   def adjust_h(h, m, ap); end
 
@@ -1077,13 +939,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#273
   def at(i); end
 
-  # at five
-  # at five pm
-  # at five o'clock
-  # at 16:30
-  # at noon
-  # at 18:00 UTC <-- ...tz
-  #
   # source://fugit//lib/fugit/nat.rb#266
   def at_object(i); end
 
@@ -1120,9 +975,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#352
   def every(i); end
 
-  # every day
-  # every 1 minute
-  #
   # source://fugit//lib/fugit/nat.rb#283
   def every_interval(i); end
 
@@ -1135,22 +987,12 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#348
   def every_objects(i); end
 
-  # every 1st of the month
-  # every first of the month
-  # Every 2nd of the month
-  # Every second of the month
-  # every 15th of the month
-  #
   # source://fugit//lib/fugit/nat.rb#334
   def every_of_the_month(i); end
 
   # source://fugit//lib/fugit/nat.rb#287
   def every_single_interval(i); end
 
-  # every monday
-  # every Fri-Sun
-  # every Monday and Tuesday
-  #
   # source://fugit//lib/fugit/nat.rb#321
   def every_weekday(i); end
 
@@ -1199,14 +1041,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#149
   def omonthdays(i); end
 
-  # 'every month on day 2 at 10:00' => '0 10 2 * *',
-  # 'every month on day 2 and 5 at 10:00' => '0 10 2,5 * *',
-  # 'every month on days 1,15 at 10:00' => '0 10 1,15 * *',
-  #
-  # 'every week on monday 18:23' => '23 18 * * 1',
-  #
-  # every month on the 1st
-  #
   # source://fugit//lib/fugit/nat.rb#192
   def on(i); end
 
@@ -1318,8 +1152,6 @@ module Fugit::Nat::Parser
   # source://fugit//lib/fugit/nat.rb#229
   def simple_hour(i); end
 
-  # rewrite parsed tree ###################################################
-  #
   # source://fugit//lib/fugit/nat.rb#366
   def slot(key, data0, data1 = T.unsafe(nil), opts = T.unsafe(nil)); end
 
@@ -1360,8 +1192,6 @@ Fugit::Nat::Parser::MONTHDAY_REX = T.let(T.unsafe(nil), Regexp)
 # source://fugit//lib/fugit/nat.rb#108
 Fugit::Nat::Parser::NAMED_H_REX = T.let(T.unsafe(nil), Regexp)
 
-# prevent "mon" from eating "monday"
-#
 # source://fugit//lib/fugit/nat.rb#107
 Fugit::Nat::Parser::NAMED_M_REX = T.let(T.unsafe(nil), Regexp)
 
@@ -1391,32 +1221,18 @@ Fugit::Nat::Parser::WEEKDAY_REX = T.let(T.unsafe(nil), Regexp)
 
 # source://fugit//lib/fugit/nat.rb#568
 class Fugit::Nat::Slot
-  # @return [Slot] a new instance of Slot
-  #
   # source://fugit//lib/fugit/nat.rb#571
   def initialize(key, d0, d1 = T.unsafe(nil), opts = T.unsafe(nil)); end
 
-  # Returns the value of attribute _data0.
-  #
   # source://fugit//lib/fugit/nat.rb#570
   def _data0; end
 
-  # Sets the attribute _data0
-  #
-  # @param value the value to set the attribute _data0 to.
-  #
   # source://fugit//lib/fugit/nat.rb#570
   def _data0=(_arg0); end
 
-  # Returns the value of attribute _data1.
-  #
   # source://fugit//lib/fugit/nat.rb#570
   def _data1; end
 
-  # Sets the attribute _data1
-  #
-  # @param value the value to set the attribute _data1 to.
-  #
   # source://fugit//lib/fugit/nat.rb#570
   def _data1=(_arg0); end
 
@@ -1432,16 +1248,12 @@ class Fugit::Nat::Slot
   # source://fugit//lib/fugit/nat.rb#577
   def data1; end
 
-  # @return [Boolean]
-  #
   # source://fugit//lib/fugit/nat.rb#580
   def graded?; end
 
   # source://fugit//lib/fugit/nat.rb#586
   def inspect; end
 
-  # Returns the value of attribute key.
-  #
   # source://fugit//lib/fugit/nat.rb#569
   def key; end
 
@@ -1465,8 +1277,6 @@ end
 
 # source://fugit//lib/fugit/nat.rb#620
 class Fugit::Nat::SlotGroup
-  # @return [SlotGroup] a new instance of SlotGroup
-  #
   # source://fugit//lib/fugit/nat.rb#622
   def initialize(slots); end
 
@@ -1484,14 +1294,6 @@ class Fugit::Nat::SlotGroup
   # source://fugit//lib/fugit/nat.rb#693
   def parse_cron(hm, opts); end
 
-  # Return nil if the cron is "not strict"
-  #
-  # For example, "0 0/17 * * *" (gh-86) is a perfectly valid
-  # cron string, but makes not much sense when derived via `.parse_nat`
-  # from "every 17 hours".
-  #
-  # It happens here because it's nat being strict, not cron.
-  #
   # source://fugit//lib/fugit/nat.rb#732
   def restrict(a, cron); end
 

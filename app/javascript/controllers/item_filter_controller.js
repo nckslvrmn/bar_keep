@@ -4,61 +4,73 @@ export default class extends Controller {
     static targets = ["item", "searchInput", "categoryCheckbox", "categoryMatchRadio", "itemTypeSelect", "stockStatusSelect", "resultsCount", "noResults", "needsRestockingBtn"]
 
     connect() {
+        this.searchDebounceTimeout = null
+        this.cachedItems = null
+
         this.filterItems()
         this.updateRestockingButtonState()
 
-        this.boundHandleQuantityUpdate = this.handleQuantityUpdate.bind(this)
-        this.element.addEventListener('item-quantity-updated', this.boundHandleQuantityUpdate)
-
-        if (this.hasNeedsRestockingBtnTarget) {
-            const button = this.needsRestockingBtnTarget
-            if (button) {
-                button.addEventListener('touchend', () => {
-                    setTimeout(() => {
-                        try {
-                            if (button && typeof button.blur === 'function') {
-                                button.blur()
-                            }
-                        } catch (e) {
-                        }
-                    }, 50)
-                })
-            }
-        }
+        this.boundHandleMorph = this.handleMorph.bind(this)
+        document.addEventListener('turbo:morph', this.boundHandleMorph)
     }
 
     disconnect() {
-        if (this.boundHandleQuantityUpdate) {
-            this.element.removeEventListener('item-quantity-updated', this.boundHandleQuantityUpdate)
+        if (this.searchDebounceTimeout) {
+            clearTimeout(this.searchDebounceTimeout)
+        }
+        document.removeEventListener('turbo:morph', this.boundHandleMorph)
+    }
+
+    handleMorph(event) {
+        this.cachedItems = null
+
+        const targetId = event.target.id
+        if (targetId && targetId.startsWith('item_row_')) {
+            const item = event.target
+            const filters = this.getCurrentFilters()
+            const shouldShow = this.itemMatchesFilters(item, filters)
+
+            if (shouldShow) {
+                item.classList.remove("d-none")
+            } else {
+                item.classList.add("d-none")
+            }
+
+            this.updateCountsOnly()
+        } else {
+            this.filterItems()
         }
     }
 
-    handleQuantityUpdate(event) {
-        this.filterItems()
+    getCurrentFilters() {
+        return {
+            searchTerm: this.searchInputTarget.value.toLowerCase(),
+            selectedCategories: this.getSelectedCategories(),
+            categoryMatch: this.getCategoryMatch(),
+            itemType: this.itemTypeSelectTarget.value,
+            stockStatus: this.stockStatusSelectTarget.value
+        }
+    }
+
+    getCachedItems() {
+        if (!this.cachedItems) {
+            this.cachedItems = document.querySelectorAll('[data-item-filter-target="item"]')
+        }
+        return this.cachedItems
     }
 
     filterItems() {
-        const searchTerm = this.searchInputTarget.value.toLowerCase()
-        const selectedCategories = this.getSelectedCategories()
-        const categoryMatch = this.getCategoryMatch()
-        const itemType = this.itemTypeSelectTarget.value
-        const stockStatus = this.stockStatusSelectTarget.value
+        const filters = this.getCurrentFilters()
 
         let matchingItems = 0
         const visibleCategories = new Set()
         const categoryCounts = new Map()
         const processedItems = new Set()
 
-        const allItems = document.querySelectorAll('[data-item-filter-target="item"]')
+        const allItems = this.getCachedItems()
 
         allItems.forEach(item => {
-            const shouldShow = this.itemMatchesFilters(item, {
-                searchTerm,
-                selectedCategories,
-                categoryMatch,
-                itemType,
-                stockStatus
-            })
+            const shouldShow = this.itemMatchesFilters(item, filters)
 
             if (shouldShow) {
                 item.classList.remove("d-none")
@@ -78,6 +90,47 @@ export default class extends Controller {
                 }
             } else {
                 item.classList.add("d-none")
+            }
+        })
+
+        this.updateCategoryVisibility(visibleCategories, categoryCounts)
+
+        if (this.hasResultsCountTarget) {
+            this.resultsCountTarget.textContent = `${matchingItems} item${matchingItems !== 1 ? 's' : ''} found`
+        }
+
+        if (this.hasNoResultsTarget) {
+            if (matchingItems === 0) {
+                this.noResultsTarget.classList.remove("d-none")
+            } else {
+                this.noResultsTarget.classList.add("d-none")
+            }
+        }
+    }
+
+    updateCountsOnly() {
+        let matchingItems = 0
+        const visibleCategories = new Set()
+        const categoryCounts = new Map()
+        const processedItems = new Set()
+
+        const allItems = this.getCachedItems()
+
+        allItems.forEach(item => {
+            if (!item.classList.contains("d-none")) {
+                const itemKey = `${item.dataset.itemName}-${item.dataset.itemType}`
+
+                if (!processedItems.has(itemKey)) {
+                    processedItems.add(itemKey)
+                    matchingItems++
+
+                    const itemCategories = JSON.parse(item.dataset.itemCategories || "[]")
+                    itemCategories.forEach(catId => {
+                        const catIdStr = catId.toString()
+                        visibleCategories.add(catIdStr)
+                        categoryCounts.set(catIdStr, (categoryCounts.get(catIdStr) || 0) + 1)
+                    })
+                }
             }
         })
 
@@ -145,13 +198,17 @@ export default class extends Controller {
 
         if (filters.stockStatus) {
             const quantity = parseInt(item.dataset.itemQuantity)
-            const lowStockThreshold = parseInt(item.dataset.itemLowStockThreshold || "5")
+            const lowStockThreshold = item.dataset.itemLowStockThreshold
+                ? parseInt(item.dataset.itemLowStockThreshold)
+                : null
 
             switch (filters.stockStatus) {
                 case "in_stock":
-                    if (quantity === 0 || quantity <= lowStockThreshold) return false
+                    if (quantity === 0) return false
+                    if (lowStockThreshold !== null && quantity <= lowStockThreshold) return false
                     break
                 case "low_stock":
+                    if (lowStockThreshold === null) return false
                     if (quantity === 0 || quantity > lowStockThreshold) return false
                     break
                 case "out_of_stock":
@@ -175,7 +232,13 @@ export default class extends Controller {
     }
 
     onSearchInput() {
-        this.filterItems()
+        if (this.searchDebounceTimeout) {
+            clearTimeout(this.searchDebounceTimeout)
+        }
+
+        this.searchDebounceTimeout = setTimeout(() => {
+            this.filterItems()
+        }, 200)
     }
 
     onCategoryChange() {
@@ -205,7 +268,7 @@ export default class extends Controller {
         this.updateRestockingButtonState()
     }
 
-    showOutOfStock(event) {
+    showOutOfStock() {
         const isCurrentlyFiltered = this.stockStatusSelectTarget.value === "out_of_stock"
 
         if (isCurrentlyFiltered) {
@@ -214,31 +277,7 @@ export default class extends Controller {
             this.stockStatusSelectTarget.value = "out_of_stock"
         }
 
-        this.filterItems()
-        this.updateRestockingButtonState()
-
-        if (event && event.currentTarget) {
-            const button = event.currentTarget
-
-            try {
-                if (button && typeof button.blur === 'function') {
-                    button.blur()
-                }
-            } catch (e) {
-            }
-
-            setTimeout(() => {
-                try {
-                    if (button && typeof button.blur === 'function') {
-                        button.blur()
-                        if (button.classList) {
-                            button.classList.remove('active', 'focus')
-                        }
-                    }
-                } catch (e) {
-                }
-            }, 100)
-        }
+        this.stockStatusSelectTarget.dispatchEvent(new Event('change'))
     }
 
     updateRestockingButtonState() {

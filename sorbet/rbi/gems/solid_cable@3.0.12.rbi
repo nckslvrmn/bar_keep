@@ -15,8 +15,6 @@ module ActionCable::SubscriptionAdapter; end
 class ActionCable::SubscriptionAdapter::SolidCable < ::ActionCable::SubscriptionAdapter::Base
   include ::ActionCable::SubscriptionAdapter::ChannelPrefix
 
-  # @return [SolidCable] a new instance of SolidCable
-  #
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#13
   def initialize(*_arg0); end
 
@@ -40,8 +38,6 @@ end
 
 # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#41
 class ActionCable::SubscriptionAdapter::SolidCable::Listener < ::ActionCable::SubscriptionAdapter::SubscriberMap
-  # @return [Listener] a new instance of Listener
-  #
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#44
   def initialize(event_loop); end
 
@@ -71,26 +67,18 @@ class ActionCable::SubscriptionAdapter::SolidCable::Listener < ::ActionCable::Su
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#119
   def channels; end
 
-  # Returns the value of attribute event_loop.
-  #
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#108
   def event_loop; end
 
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#111
   def last_id; end
 
-  # Sets the attribute last_id
-  #
-  # @param value the value to set the attribute last_id to.
-  #
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#109
   def last_id=(_arg0); end
 
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#115
   def last_message_id; end
 
-  # Returns the value of attribute thread.
-  #
   # source://solid_cable//lib/action_cable/subscription_adapter/solid_cable.rb#108
   def thread; end
 
@@ -104,8 +92,6 @@ class ActionCable::SubscriptionAdapter::SolidCable::Listener::Stop < ::Exception
 # source://solid_cable//lib/solid_cable/version.rb#3
 module SolidCable
   class << self
-    # @return [Boolean]
-    #
     # source://solid_cable//lib/solid_cable.rb#25
     def autotrim?; end
 
@@ -127,8 +113,6 @@ module SolidCable
     # source://solid_cable//lib/solid_cable/engine.rb#5
     def railtie_routes_url_helpers(include_path_helpers = T.unsafe(nil)); end
 
-    # @return [Boolean]
-    #
     # source://solid_cable//lib/solid_cable.rb#13
     def silence_polling?; end
 
@@ -138,13 +122,6 @@ module SolidCable
     # source://solid_cable//lib/solid_cable.rb#29
     def trim_batch_size; end
 
-    # For every write that we do, we attempt to delete trim_chance times as
-    # many records. This ensures there is downward pressure on the cache size
-    # while there is valid data to delete. Read this as 'every time the trim job
-    # runs theres a trim_multiplier chance this trims'. Adjust number to make it
-    # more or less likely to trim. Only works like this if trim_batch_size is
-    # 100
-    #
     # source://solid_cable//lib/solid_cable.rb#47
     def trim_chance; end
 
