@@ -2,6 +2,7 @@
 
 pin "application", preload: true
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
+pin "idiomorph", to: "https://cdn.jsdelivr.net/npm/idiomorph@0.3.0/dist/idiomorph.esm.js"
 pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
 pin "controllers", to: "controllers/index.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"

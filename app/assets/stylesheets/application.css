@@ -63,7 +63,25 @@ main {
     overscroll-behavior-y: auto;
 }
 
+[data-bs-toggle="collapse"] .bi-chevron-down {
+    transition: transform 0.2s ease-in-out;
+}
+
+[data-bs-toggle="collapse"][aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+[data-bs-toggle="collapse"]:hover {
+    opacity: 0.8;
+}
+
 @media (hover: none) and (pointer: coarse) {
+
+    .btn {
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
 
     .btn:focus {
         outline: none;
@@ -78,6 +96,12 @@ main {
 
 @media (max-width: 767px) {
 
+    .btn {
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
     .btn:focus,
     .btn:active:focus,
     .btn.active:focus,
@@ -88,19 +112,21 @@ main {
         box-shadow: none !important;
     }
 
-    .btn-outline-danger:focus,
-    .btn-outline-danger:active:focus,
-    .btn-outline-danger.active:focus {
+    .btn-outline-danger:focus {
         outline: none !important;
         box-shadow: none !important;
-        background-color: transparent !important;
-        color: #dc3545 !important;
     }
 
-    .btn-outline-danger.active,
-    .btn-outline-danger:active {
+    .btn-danger {
         background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
         color: white !important;
+    }
+
+    .btn-outline-danger {
+        background-color: transparent !important;
+        border-color: #dc3545 !important;
+        color: #dc3545 !important;
     }
 }
 
@@ -292,7 +318,7 @@ img {
 }
 
 .mobile-quantity-controls {
-    gap: 8px;
+    gap: 10px;
 }
 
 .mobile-quantity-controls form {
@@ -301,9 +327,10 @@ img {
 }
 
 .mobile-quantity-controls .btn {
-    padding: 4px 10px;
-    font-size: 14px;
-    min-width: 36px;
+    padding: 6px 12px;
+    font-size: 16px;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .out-of-stock,
@@ -663,8 +690,9 @@ img {
     }
 
     .item-actions-cell .btn {
-        padding: 6px 12px;
+        padding: 8px 14px;
         font-size: 14px;
+        min-height: 44px;
     }
 
     .item-quantity-cell .quantity-controls {
@@ -674,7 +702,8 @@ img {
     .item-quantity-cell .btn {
         padding: 6px 12px;
         font-size: 16px;
-        min-width: 40px;
+        min-width: 44px;
+        min-height: 44px;
     }
 }
 

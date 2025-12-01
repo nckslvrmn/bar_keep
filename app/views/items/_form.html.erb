@@ -41,14 +41,14 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <%= form.label :quantity, class: "form-label" %>
-                <%= form.number_field :quantity, class: "form-control", min: 0, required: true %>
+                <%= form.number_field :quantity, class: "form-control", min: 0, required: true, inputmode: "numeric" %>
               </div>
             </div>
 
             <div class="col-md-6">
               <div class="mb-3">
                 <%= form.label :low_stock_threshold, class: "form-label" %>
-                <%= form.number_field :low_stock_threshold, class: "form-control", min: 0 %>
+                <%= form.number_field :low_stock_threshold, class: "form-control", min: 0, inputmode: "numeric" %>
                 <div class="form-text">Alert when quantity drops to this level</div>
               </div>
             </div>
