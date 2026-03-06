@@ -2,18 +2,14 @@ source "https://rubygems.org"
 
 gem "bcrypt"
 gem "bootsnap", require: false
-gem "image_processing"
 gem "importmap-rails"
-gem "jbuilder"
 gem "mini_magick"
 gem "propshaft"
 gem "puma"
 gem "rails"
 gem "require-hooks"
 gem "sorbet-runtime"
-gem "solid_cable"
 gem "solid_cache"
-gem "solid_queue"
 gem "sqlite3"
 gem "stimulus-rails"
 gem "thruster", require: false
