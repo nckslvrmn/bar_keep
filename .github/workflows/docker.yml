@@ -2,9 +2,8 @@ name: Deploy Image to GHCR
 
 on:
   release:
-    types: [ published ]
+    types: [published]
   workflow_dispatch:
-
 
 jobs:
   push-bar-keep-image:
@@ -13,21 +12,33 @@ jobs:
       contents: read
       packages: write
     steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v6
+      - name: "Checkout GitHub Action"
+        uses: actions/checkout@v6
 
-    - name: 'Login to GitHub Container Registry'
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{github.actor}}
-        password: ${{secrets.GITHUB_TOKEN}}
+      - name: "Login to GitHub Container Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
 
-    - name: Build and push with version tag
-      run: |
-        VERSION=${{ github.ref_name }}
+      - name: Build and push with version tag
+        run: |
+          VERSION=${{ github.ref_name }}
 
-        docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
-        docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:latest
-        docker push ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
-        docker push ghcr.io/${{ github.repository_owner }}/bar_keep:latest
+          docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
+          docker build . --tag ghcr.io/${{ github.repository_owner }}/bar_keep:latest
+          docker push ghcr.io/${{ github.repository_owner }}/bar_keep:${VERSION}
+          docker push ghcr.io/${{ github.repository_owner }}/bar_keep:latest
+
+  deploy:
+    needs: push-bar-keep-image
+    runs-on: [self-hosted]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: nckslvrmn/docker-compose-deploy@main
+        with:
+          file: compose.yml
+        env:
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+          BAR_KEEP_VERSION: ${{ github.ref_name }}

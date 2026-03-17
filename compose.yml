@@ -1,0 +1,22 @@
+services:
+  bar_keep:
+    image: ghcr.io/nckslvrmn/bar_keep:${BAR_KEEP_VERSION:-latest}
+    container_name: bar_keep
+    environment:
+      - RAILS_ENV=production
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - ALLOWED_HOST=barkeep.slvr.io
+      - FORCE_SSL=false
+    restart: always
+    volumes:
+      - /mnt/data/bar_keep/storage:/app/storage:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bar_keep.rule=Host(`barkeep.slvr.io`)"
+      - "traefik.http.routers.bar_keep.entrypoints=websecure"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

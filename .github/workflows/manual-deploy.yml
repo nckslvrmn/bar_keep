@@ -1,0 +1,21 @@
+name: Deploy To Home
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version tag (e.g. v3.1.0)"
+        required: false
+        default: "latest"
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: nckslvrmn/docker-compose-deploy@main
+        with:
+          file: compose.yml
+        env:
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+          BAR_KEEP_VERSION: ${{ inputs.version }}
