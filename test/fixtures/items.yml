@@ -1,0 +1,27 @@
+bourbon:
+  name: Buffalo Trace
+  quantity: 3
+  low_stock_threshold: 1
+  item_type: Alcohol
+  user: regular
+
+out_of_stock_gin:
+  name: Hendricks Gin
+  quantity: 0
+  low_stock_threshold: 1
+  item_type: Alcohol
+  user: regular
+
+low_stock_syrup:
+  name: Simple Syrup
+  quantity: 1
+  low_stock_threshold: 2
+  item_type: Syrup
+  user: regular
+
+admin_item:
+  name: Admin Whiskey
+  quantity: 5
+  low_stock_threshold: 1
+  item_type: Alcohol
+  user: admin

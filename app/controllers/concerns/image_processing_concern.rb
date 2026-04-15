@@ -1,8 +1,5 @@
-# typed: true
-
 module ImageProcessingConcern
   extend ActiveSupport::Concern
-  extend T::Sig
 
   included do
     helper_method :process_image_params
@@ -10,7 +7,6 @@ module ImageProcessingConcern
 
   private
 
-  sig { params(params_key: Symbol, image_field: Symbol).void }
   def process_image_params(params_key, image_field = :image)
     return unless params[params_key] && params[params_key][image_field]
 
@@ -22,7 +18,6 @@ module ImageProcessingConcern
     end
   end
 
-  sig { params(uploaded_file: ActionDispatch::Http::UploadedFile).returns(T.nilable(ActionDispatch::Http::UploadedFile)) }
   def convert_to_webp(uploaded_file)
     temp_file = Tempfile.new([ "converted", ".webp" ])
 

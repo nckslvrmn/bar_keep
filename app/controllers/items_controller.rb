@@ -1,8 +1,4 @@
-# typed: true
-
 class ItemsController < ApplicationController
-  extend T::Sig
-
   include ImageProcessingConcern
 
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement ]
@@ -13,8 +9,10 @@ class ItemsController < ApplicationController
     # Guest users see all items, regular users see only their own items
     items_scope = current_user.guest? ? Item.all : current_user.items
 
+    sanitized_category_ids = Array(params[:category_ids]).map(&:to_i).select(&:positive?)
+
     @items = items_scope.includes(:categories, :user, image_attachment: :blob)
-                 .by_categories(params[:category_ids], match_all: params[:category_match] == "all")
+                 .by_categories(sanitized_category_ids, match_all: params[:category_match] == "all")
                  .by_type(params[:item_type])
                  .by_stock_status(params[:stock_status])
                  .search(params[:search])

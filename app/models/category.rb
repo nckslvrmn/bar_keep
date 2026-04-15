@@ -1,8 +1,4 @@
-# typed: true
-
 class Category < ApplicationRecord
-  extend T::Sig
-
   has_and_belongs_to_many :items
 
   validates :name, presence: true, uniqueness: true
@@ -11,7 +7,6 @@ class Category < ApplicationRecord
 
   private
 
-  sig { returns(String) }
   def generate_slug
     self.slug = name.parameterize if name.present?
   end

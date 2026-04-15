@@ -31,13 +31,10 @@ Rails.application.configure do
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
 
-  # Tell Action Mailer not to deliver emails to the real world.
-  # The :test delivery method accumulates sent emails in the
-  # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
-
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Action Mailer is not loaded in this app (see config/application.rb).
+  # If you add it later, uncomment these lines:
+  # config.action_mailer.delivery_method = :test
+  # config.action_mailer.default_url_options = { host: "example.com" }
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

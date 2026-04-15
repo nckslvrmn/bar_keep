@@ -1,0 +1,9 @@
+bourbon_location:
+  item: bourbon
+  key: purchase_location
+  value: Total Wine
+
+bourbon_price:
+  item: bourbon
+  key: price
+  value: "$29.99"

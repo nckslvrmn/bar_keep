@@ -13,7 +13,7 @@
           <% if params[:category_ids].present? %>
             <div class="alert alert-info mb-3">
               <strong>Filtering by categories (<%= params[:category_match] == "all" ? "ALL" : "ANY" %>):</strong><br>
-              <% selected_categories = Category.where(id: params[:category_ids]) %>
+              <% selected_categories = @categories.select { |c| params[:category_ids].include?(c.id.to_s) } %>
               <% selected_categories.each do |cat| %>
                 <span class="badge bg-primary"><%= cat.name %></span>
               <% end %>
@@ -188,7 +188,11 @@
         </div>
       <% else %>
         <div class="alert alert-info">
-          No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+          <% if current_user&.guest? %>
+            No items found.
+          <% else %>
+            No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+          <% end %>
         </div>
       <% end %>
     </div>

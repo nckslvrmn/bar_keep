@@ -20,7 +20,8 @@ if User.count.zero?
   User.create!(
     username: 'admin',
     password: 'changeme123',
-    password_confirmation: 'changeme123'
+    password_confirmation: 'changeme123',
+    is_admin: true
   )
 
   puts "\n#{bold}#{green}✓ Default user created:#{reset}"

@@ -1,8 +1,4 @@
-# typed: true
-
 class Admin::UsersController < ApplicationController
-  extend T::Sig
-
   before_action :require_admin
   before_action :set_user, only: [ :show, :edit, :update, :destroy, :toggle_admin ]
 

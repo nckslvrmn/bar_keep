@@ -1,7 +1,4 @@
-# typed: true
-
 class SessionsController < ApplicationController
-  extend T::Sig
   skip_before_action :require_authentication, only: [ :new, :create ]
   protect_from_forgery with: :reset_session, only: [ :create ], prepend: true
 

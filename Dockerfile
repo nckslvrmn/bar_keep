@@ -1,4 +1,4 @@
-FROM ruby:3.4
+FROM ruby:4.0.2
 LABEL org.opencontainers.image.source="https://github.com/nckslvrmn/bar_keep"
 LABEL org.opencontainers.image.description="Bar Keep: A simple inventory manager for your home bar"
 LABEL org.opencontainers.image.licenses=MIT

@@ -7,8 +7,6 @@ gem "mini_magick"
 gem "propshaft"
 gem "puma"
 gem "rails"
-gem "require-hooks"
-gem "sorbet-runtime"
 gem "solid_cache"
 gem "sqlite3"
 gem "stimulus-rails"
@@ -20,8 +18,6 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw mswin x64_mingw ], require: "debug/prelude"
   gem "brakeman", require: false
   gem "rubocop-rails-omakase", require: false
-  gem "sorbet"
-  gem "tapioca", ">= 0.17.0", require: false
 end
 
 group :development do

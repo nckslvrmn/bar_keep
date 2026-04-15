@@ -1,0 +1,17 @@
+admin:
+  username: admin
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  is_admin: true
+  is_guest: false
+
+regular:
+  username: regular
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  is_admin: false
+  is_guest: false
+
+guest:
+  username: guest
+  password_digest: <%= BCrypt::Password.create("password123") %>
+  is_admin: false
+  is_guest: true
