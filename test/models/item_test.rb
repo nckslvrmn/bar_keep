@@ -86,7 +86,7 @@ class ItemTest < ActiveSupport::TestCase
     item.categories << categories(:spirits)
     item.categories << categories(:mixers)
     names = item.category_names.split(", ").sort
-    assert_equal ["Mixers", "Spirits"], names
+    assert_equal [ "Mixers", "Spirits" ], names
   end
 
   test "scope out_of_stock returns only zero-quantity items" do
