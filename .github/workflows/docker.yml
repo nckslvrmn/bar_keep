@@ -35,7 +35,7 @@ jobs:
     needs: push-bar-keep-image
     runs-on: [self-hosted]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: nckslvrmn/docker-compose-deploy@main
         with:
           file: compose.yml
