@@ -84,6 +84,33 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal original - 1, item.reload.quantity
   end
 
+  test "increment responds with a turbo stream" do
+    item = items(:bourbon)
+    patch increment_item_path(item), as: :turbo_stream
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+    assert_match "turbo-stream", response.body
+  end
+
+  test "updating categories removes ones left orphaned" do
+    item = items(:bourbon)
+    patch item_path(item), params: { item: { name: item.name, category_names: "Rare" } }
+    assert Category.exists?(name: "Rare")
+
+    patch item_path(item), params: { item: { name: item.name, category_names: "Common" } }
+    assert_not Category.exists?(name: "Rare"), "orphaned category should be deleted"
+    assert Category.exists?(name: "Common")
+  end
+
+  test "destroying an item cleans up its orphaned categories" do
+    item = items(:bourbon)
+    patch item_path(item), params: { item: { name: item.name, category_names: "Solo" } }
+    assert Category.exists?(name: "Solo")
+
+    delete item_path(item)
+    assert_not Category.exists?(name: "Solo"), "orphaned category should be deleted"
+  end
+
   test "cannot access other users items" do
     get item_path(items(:admin_item))
     assert_response :not_found

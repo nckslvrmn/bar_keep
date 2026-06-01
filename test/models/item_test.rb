@@ -9,6 +9,7 @@ class ItemTest < ActiveSupport::TestCase
 
   test "validates quantity presence and non-negative" do
     item = Item.new(name: "Test", item_type: "Alcohol", user: users(:regular))
+    item.quantity = nil
     assert_not item.valid?
 
     item.quantity = -1
@@ -99,6 +100,15 @@ class ItemTest < ActiveSupport::TestCase
     results = Item.search("Buffalo")
     assert_includes results, items(:bourbon)
     assert_not_includes results, items(:out_of_stock_gin)
+  end
+
+  test "scope search treats LIKE wildcards as literal characters" do
+    literal = users(:regular).items.create!(name: "10% Off Rum", quantity: 1, item_type: "Alcohol")
+    decoy = users(:regular).items.create!(name: "100 Proof Rum", quantity: 1, item_type: "Alcohol")
+
+    results = Item.search("10%")
+    assert_includes results, literal
+    assert_not_includes results, decoy
   end
 
   test "scope by_type filters by item type" do

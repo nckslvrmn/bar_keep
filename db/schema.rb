@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_15_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_31_000001) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -41,9 +41,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_000001) do
 
   create_table "categories", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "name"
+    t.string "name", null: false
     t.string "slug"
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
+    t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
   create_table "categories_items", id: false, force: :cascade do |t|
@@ -65,10 +67,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_15_000001) do
 
   create_table "items", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "item_type"
+    t.string "item_type", null: false
     t.integer "low_stock_threshold"
-    t.string "name"
-    t.integer "quantity"
+    t.string "name", null: false
+    t.integer "quantity", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_items_on_user_id"

@@ -58,6 +58,7 @@ class ItemsController < ApplicationController
 
     if @item.update(item_params.except(:category_names))
       handle_categories(@item, params[:item][:category_names])
+      Category.delete_orphaned
 
       if params[:metadata].present?
         @item.update_metadata(params[:metadata])
@@ -71,6 +72,7 @@ class ItemsController < ApplicationController
 
   def destroy
     @item.destroy
+    Category.delete_orphaned
     redirect_to items_url, notice: "Item was successfully destroyed."
   end
 
@@ -116,20 +118,17 @@ class ItemsController < ApplicationController
   def handle_categories(item, category_names_string)
     return unless category_names_string.present?
 
-    category_names = category_names_string.split(",").map(&:strip).reject(&:blank?)
+    category_names = category_names_string.split(",").map(&:strip).reject(&:blank?).uniq
     return if category_names.empty?
 
-    existing_categories = Category.where(name: category_names).index_by(&:name)
-    new_category_names = category_names - existing_categories.keys
+    item.categories = category_names.map { |name| find_or_create_category(name) }
+  end
 
-    if new_category_names.any?
-      new_categories = new_category_names.map do |name|
-        Category.create!(name: name, slug: name.parameterize)
-      end
-      new_categories.each { |cat| existing_categories[cat.name] = cat }
-    end
-
-    item.categories = category_names.map { |name| existing_categories[name] }.compact
+  def find_or_create_category(name)
+    Category.create_with(slug: name.parameterize).find_or_create_by!(name: name)
+  rescue ActiveRecord::RecordNotUnique
+    # Lost a race against a concurrent insert; the row now exists.
+    Category.find_by!(name: name)
   end
 
   def item_params

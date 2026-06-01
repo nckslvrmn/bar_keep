@@ -16,7 +16,7 @@ class UserTest < ActiveSupport::TestCase
   test "validates password minimum length" do
     user = User.new(username: "newuser", password: "short")
     assert_not user.valid?
-    assert_includes user.errors[:password], "is too short (minimum is 6 characters)"
+    assert_includes user.errors[:password], "is too short (minimum is 8 characters)"
   end
 
   test "normalizes username to lowercase" do

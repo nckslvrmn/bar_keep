@@ -38,7 +38,9 @@ module Authentication
 
   def require_authentication
     unless logged_in?
-      flash[:alert] = "You must be logged in to access this page."
+      # Landing on the root path unauthenticated is the normal entry flow,
+      # not an error worth alerting about.
+      flash[:alert] = "You must be logged in to access this page." unless request.path == root_path
       redirect_to login_path
     end
   end

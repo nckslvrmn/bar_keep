@@ -17,4 +17,15 @@ class CategoryTest < ActiveSupport::TestCase
     category = Category.create!(name: "Dark Spirits")
     assert_equal "dark-spirits", category.slug
   end
+
+  test "delete_orphaned removes categories with no items" do
+    orphan = Category.create!(name: "Orphan")
+    attached = Category.create!(name: "Attached")
+    items(:bourbon).categories << attached
+
+    Category.delete_orphaned
+
+    assert_not Category.exists?(orphan.id)
+    assert Category.exists?(attached.id)
+  end
 end

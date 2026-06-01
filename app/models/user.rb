@@ -5,7 +5,7 @@ class User < ApplicationRecord
   has_many :items, dependent: :destroy
 
   validates :username, presence: true, uniqueness: { case_sensitive: false }
-  validates :password, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
+  validates :password, length: { minimum: 8 }, if: -> { new_record? || !password.nil? }
 
   before_save :normalize_username
 

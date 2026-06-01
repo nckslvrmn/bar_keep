@@ -39,7 +39,7 @@ class Item < ApplicationRecord
     end
   }
 
-  scope :search, ->(query) { query.present? ? where("items.name LIKE ?", "%#{query}%") : all }
+  scope :search, ->(query) { query.present? ? where("items.name LIKE ? ESCAPE '\\'", "%#{sanitize_sql_like(query)}%") : all }
 
   ITEM_TYPES = [ "Alcohol", "Liqueur", "Juice", "Syrup", "Ingredient", "Other" ].freeze
 
