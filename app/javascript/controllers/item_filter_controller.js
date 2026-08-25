@@ -10,36 +10,26 @@ export default class extends Controller {
         this.filterItems()
         this.updateRestockingButtonState()
 
-        this.boundHandleMorph = this.handleMorph.bind(this)
-        document.addEventListener('turbo:morph', this.boundHandleMorph)
+        this.abortController = new AbortController()
+        document.addEventListener('turbo:morph-element', this.handleMorph.bind(this), {
+            signal: this.abortController.signal
+        })
     }
 
     disconnect() {
         if (this.searchDebounceTimeout) {
             clearTimeout(this.searchDebounceTimeout)
         }
-        document.removeEventListener('turbo:morph', this.boundHandleMorph)
+        this.abortController.abort()
     }
 
     handleMorph(event) {
+        const item = event.target
+        if (!item.id?.startsWith('item_row_')) return
+
         this.cachedItems = null
-
-        const targetId = event.target.id
-        if (targetId && targetId.startsWith('item_row_')) {
-            const item = event.target
-            const filters = this.getCurrentFilters()
-            const shouldShow = this.itemMatchesFilters(item, filters)
-
-            if (shouldShow) {
-                item.classList.remove("d-none")
-            } else {
-                item.classList.add("d-none")
-            }
-
-            this.updateCountsOnly()
-        } else {
-            this.filterItems()
-        }
+        item.classList.toggle("d-none", !this.itemMatchesFilters(item, this.getCurrentFilters()))
+        this.updateCountsOnly()
     }
 
     getCurrentFilters() {

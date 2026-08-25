@@ -92,6 +92,15 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_match "turbo-stream", response.body
   end
 
+  test "the quantity stream morphs the row using turbo's native action" do
+    item = items(:bourbon)
+    patch increment_item_path(item), as: :turbo_stream
+
+    assert_match(/action="replace"/, response.body)
+    assert_match(/method="morph"/, response.body)
+    assert_match(/target="item_row_#{item.id}"/, response.body)
+  end
+
   test "updating categories removes ones left orphaned" do
     item = items(:bourbon)
     patch item_path(item), params: { item: { name: item.name, category_names: "Rare" } }

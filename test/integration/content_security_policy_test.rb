@@ -19,10 +19,10 @@ class ContentSecurityPolicyTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "nothing is loaded from a cdn" do
+  test "nothing is loaded from an external host" do
     get items_path
     assert_response :success
-    assert_no_match(/cdnjs\.cloudflare\.com/, response.body)
+    assert_no_match(%r{(?:src|href)="https?://}, response.body)
   end
 
   test "bootstrap is served from this app" do
