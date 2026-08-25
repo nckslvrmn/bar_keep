@@ -9,8 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Bar Keep">
     <meta name="application-name" content="Bar Keep">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#2c2c2c" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#e8e8e8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#2c2c2c">
 
     <link rel="manifest" href="/manifest.json">
 
@@ -27,7 +26,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/icon-120.png">
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
 
     <%= stylesheet_link_tag "bootstrap.min", "application" %>
@@ -38,6 +36,10 @@
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
         document.documentElement.setAttribute('data-bs-theme', theme);
+
+        const meta = document.querySelector('meta[name="theme-color"]');
+        const color = getComputedStyle(document.documentElement).getPropertyValue('--navbar-bg').trim();
+        if (meta && color) meta.content = color;
       })();
     <% end %>
   </head>
