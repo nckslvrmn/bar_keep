@@ -45,9 +45,6 @@ module Authentication
     end
   end
 
-  def skip_authentication
-  end
-
   def login_user(user)
     user_session = user.sessions.create!
     session[:session_token] = user_session.session_token

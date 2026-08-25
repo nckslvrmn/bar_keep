@@ -1,10 +1,6 @@
 module ImageProcessingConcern
   extend ActiveSupport::Concern
 
-  included do
-    helper_method :process_image_params
-  end
-
   private
 
   def process_image_params(params_key, image_field = :image)

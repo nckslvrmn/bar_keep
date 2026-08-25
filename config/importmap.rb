@@ -6,4 +6,3 @@ pin "idiomorph", to: "https://cdn.jsdelivr.net/npm/idiomorph@0.3.0/dist/idiomorp
 pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
 pin "controllers", to: "controllers/index.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
-pin_all_from "app/javascript/turbo_stream_actions", under: "turbo_stream_actions"
