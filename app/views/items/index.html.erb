@@ -1,5 +1,4 @@
-<div class="container-fluid px-3" data-controller="item-filter offline">
-  <!-- Offline Banner -->
+<div class="container-fluid px-3" data-controller="offline">
   <div class="alert alert-warning d-none mb-3" data-offline-target="banner" role="alert">
     <strong>📵 Offline Mode</strong> - You're viewing cached inventory. Editing is disabled until you're back online.
   </div>
@@ -10,135 +9,122 @@
         <div class="card-body">
           <h5 class="card-title">Filters</h5>
 
-          <% if params[:category_ids].present? %>
-            <div class="alert alert-info mb-3">
-              <strong>Filtering by categories (<%= params[:category_match] == "all" ? "ALL" : "ANY" %>):</strong><br>
-              <% selected_categories = @categories.select { |c| params[:category_ids].include?(c.id.to_s) } %>
-              <% selected_categories.each do |cat| %>
-                <span class="badge bg-primary"><%= cat.name %></span>
-              <% end %>
+          <%= form_with url: items_path, method: :get, data: {
+                controller: "filter-form",
+                turbo_frame: "items",
+                turbo_action: "advance"
+              } do %>
+
+            <div class="mb-3">
+              <%= label_tag :search, "Search", class: "visually-hidden" %>
+              <%= text_field_tag :search, params[:search],
+                  class: "form-control",
+                  placeholder: "Search items...",
+                  autocomplete: "off",
+                  data: { action: "input->filter-form#debouncedSubmit" } %>
             </div>
+
+            <div class="mb-3">
+              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#categoriesCollapse"
+                      aria-expanded="<%= params[:category_ids].present? %>"
+                      aria-controls="categoriesCollapse">
+                <span class="form-label mb-0">Categories</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+              <div class="collapse <%= "show" if params[:category_ids].present? %>" id="categoriesCollapse">
+                <div class="category-filters mt-2">
+                  <% @categories.each do |category| %>
+                    <% selected = params[:category_ids]&.include?(category.id.to_s) %>
+                    <% count = @category_counts[category.id] %>
+                    <% next unless count || selected %>
+                    <div class="form-check">
+                      <%= check_box_tag "category_ids[]", category.id, selected,
+                          class: "form-check-input",
+                          id: "category_#{category.id}",
+                          data: { action: "change->filter-form#submit" } %>
+                      <%= label_tag "category_#{category.id}", "#{category.name} (#{count || 0})", class: "form-check-label" %>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="mt-2">
+                  <div class="form-check form-check-inline">
+                    <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
+                        class: "form-check-input",
+                        data: { action: "change->filter-form#submit" } %>
+                    <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
+                        class: "form-check-input",
+                        data: { action: "change->filter-form#submit" } %>
+                    <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
+                  </div>
+                </div>
+                <small class="form-text text-muted">Select multiple categories to filter</small>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#itemTypeCollapse"
+                      aria-expanded="<%= params[:item_type].present? %>"
+                      aria-controls="itemTypeCollapse">
+                <span class="form-label mb-0">Item Type</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+              <div class="collapse <%= "show" if params[:item_type].present? %>" id="itemTypeCollapse">
+                <%= label_tag :item_type, "Item type", class: "visually-hidden" %>
+                <%= select_tag :item_type,
+                    options_for_select([ [ "All Types", "" ] ] + Item::ITEM_TYPES.map { |t| [ t, t ] }, params[:item_type]),
+                    class: "form-select mt-2",
+                    data: { action: "change->filter-form#submit" } %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#stockStatusCollapse"
+                      aria-expanded="<%= params[:stock_status].present? %>"
+                      aria-controls="stockStatusCollapse">
+                <span class="form-label mb-0">Stock Status</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+              <div class="collapse <%= "show" if params[:stock_status].present? %>" id="stockStatusCollapse">
+                <%= label_tag :stock_status, "Stock status", class: "visually-hidden" %>
+                <%= select_tag :stock_status,
+                    options_for_select([
+                      [ "All Items", "" ],
+                      [ "In Stock", "in_stock" ],
+                      [ "Low Stock", "low_stock" ],
+                      [ "Out of Stock", "out_of_stock" ]
+                    ], params[:stock_status]),
+                    class: "form-select mt-2",
+                    data: { action: "change->filter-form#submit" } %>
+              </div>
+            </div>
+
+            <noscript><%= submit_tag "Apply Filters", class: "btn btn-primary w-100 mb-2" %></noscript>
           <% end %>
 
-          <div class="mb-3">
-            <%= text_field_tag :search, params[:search],
-                class: "form-control",
-                placeholder: "Search items...",
-                data: {
-                  "item-filter-target": "searchInput",
-                  action: "input->item-filter#onSearchInput"
-                } %>
-          </div>
-
-          <div class="mb-3">
-            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#categoriesCollapse"
-                    aria-expanded="false"
-                    aria-controls="categoriesCollapse">
-              <span class="form-label mb-0">Categories</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-              </svg>
-            </button>
-            <div class="collapse" id="categoriesCollapse">
-              <div class="category-filters mt-2" style="max-height: 200px; overflow-y: auto;">
-                <% @categories.each do |category| %>
-                  <div class="form-check">
-                    <%= check_box_tag "category_ids[]", category.id,
-                        params[:category_ids]&.include?(category.id.to_s),
-                        class: "form-check-input",
-                        id: "category_#{category.id}",
-                        data: {
-                          "item-filter-target": "categoryCheckbox",
-                          action: "change->item-filter#onCategoryChange"
-                        } %>
-                    <%= label_tag "category_#{category.id}", category.name, class: "form-check-label" %>
-                  </div>
-                <% end %>
-              </div>
-              <div class="mt-2">
-                <div class="form-check form-check-inline">
-                  <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
-                      class: "form-check-input",
-                      data: {
-                        "item-filter-target": "categoryMatchRadio",
-                        action: "change->item-filter#onCategoryMatchChange"
-                      } %>
-                  <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
-                </div>
-                <div class="form-check form-check-inline">
-                  <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
-                      class: "form-check-input",
-                      data: {
-                        "item-filter-target": "categoryMatchRadio",
-                        action: "change->item-filter#onCategoryMatchChange"
-                      } %>
-                  <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
-                </div>
-              </div>
-              <small class="form-text text-muted">Select multiple categories to filter</small>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#itemTypeCollapse"
-                    aria-expanded="false"
-                    aria-controls="itemTypeCollapse">
-              <span class="form-label mb-0">Item Type</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-              </svg>
-            </button>
-            <div class="collapse" id="itemTypeCollapse">
-              <%= select_tag :item_type,
-                  options_for_select([['All Types', '']] + Item::ITEM_TYPES.map { |t| [t, t] }, params[:item_type]),
-                  class: "form-select mt-2",
-                  data: {
-                    "item-filter-target": "itemTypeSelect",
-                    action: "change->item-filter#onItemTypeChange"
-                  } %>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#stockStatusCollapse"
-                    aria-expanded="false"
-                    aria-controls="stockStatusCollapse">
-              <span class="form-label mb-0">Stock Status</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-              </svg>
-            </button>
-            <div class="collapse" id="stockStatusCollapse">
-              <%= select_tag :stock_status,
-                  options_for_select([
-                    ['All Items', ''],
-                    ['In Stock', 'in_stock'],
-                    ['Low Stock', 'low_stock'],
-                    ['Out of Stock', 'out_of_stock']
-                  ], params[:stock_status]),
-                  class: "form-select mt-2",
-                  data: {
-                    "item-filter-target": "stockStatusSelect",
-                    action: "change->item-filter#onStockStatusChange"
-                  } %>
-            </div>
-          </div>
-
-          <button type="button" class="btn btn-outline-secondary w-100" data-action="click->item-filter#clearFilters">
-            Clear All Filters
-          </button>
+          <%= link_to "Clear All Filters", items_path,
+              class: "btn btn-outline-secondary w-100 #{"disabled" unless filters_active?}",
+              data: { turbo_frame: "items", turbo_action: "advance" } %>
 
           <div class="mt-3 text-center">
-            <small class="text-muted" data-item-filter-target="resultsCount"></small>
+            <small class="text-muted"><%= pluralize(@items.size, "item") %> found</small>
           </div>
         </div>
       </div>
@@ -148,13 +134,13 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Inventory</h1>
         <div class="d-flex gap-2 flex-wrap">
-          <button type="button"
-                  class="btn btn-outline-danger responsive-btn"
-                  data-action="click->item-filter#showOutOfStock"
-                  data-item-filter-target="needsRestockingBtn">
+          <% showing_out_of_stock = params[:stock_status] == "out_of_stock" %>
+          <%= link_to filter_url(stock_status: showing_out_of_stock ? nil : "out_of_stock"),
+              class: "btn #{showing_out_of_stock ? "btn-danger" : "btn-outline-danger"} responsive-btn",
+              data: { turbo_frame: "items", turbo_action: "advance" } do %>
             <span class="btn-text-mobile">Out of Stock</span>
-            <span class="btn-text-desktop">Show Out of Stock</span>
-          </button>
+            <span class="btn-text-desktop"><%= showing_out_of_stock ? "Show All" : "Show Out of Stock" %></span>
+          <% end %>
           <% unless current_user&.guest? %>
             <%= link_to new_item_path, class: "btn btn-success responsive-btn", data: { offline_target: "addButton" } do %>
               <span class="btn-text-mobile">Add Item</span>
@@ -164,36 +150,38 @@
         </div>
       </div>
 
-      <% if @items.any? %>
-        <div class="items-list <%= 'guest-view' if current_user&.guest? %>">
-          <div class="items-header d-none d-md-flex">
-            <div class="header-image">Image</div>
-            <div class="header-name">Name</div>
-            <% if current_user&.guest? %>
-              <div class="header-owner">Owner</div>
+      <%= turbo_frame_tag "items", target: "_top" do %>
+        <% if @items.any? %>
+          <div class="items-list <%= "guest-view" if current_user&.guest? %>">
+            <div class="items-header d-none d-md-flex">
+              <div class="header-image">Image</div>
+              <div class="header-name">Name</div>
+              <% if current_user&.guest? %>
+                <div class="header-owner">Owner</div>
+              <% end %>
+              <div class="header-categories">Categories</div>
+              <div class="header-type">Type</div>
+              <div class="header-quantity">Quantity</div>
+              <div class="header-actions">Actions</div>
+            </div>
+
+            <% @items.each do |item| %>
+              <%= render "item_row", item: item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? %>
             <% end %>
-            <div class="header-categories">Categories</div>
-            <div class="header-type">Type</div>
-            <div class="header-quantity">Quantity</div>
-            <div class="header-actions">Actions</div>
           </div>
-
-          <% @items.each do |item| %>
-            <%= render "item_row", item: item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? %>
-          <% end %>
-        </div>
-
-        <div class="alert alert-info d-none" data-item-filter-target="noResults">
-          No items match your filters. Try adjusting your search criteria.
-        </div>
-      <% else %>
-        <div class="alert alert-info">
-          <% if current_user&.guest? %>
-            No items found.
-          <% else %>
-            No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
-          <% end %>
-        </div>
+        <% elsif filters_active? %>
+          <div class="alert alert-info">
+            No items match your filters. <%= link_to "Clear all filters", items_path, class: "alert-link", data: { turbo_frame: "_top" } %>
+          </div>
+        <% else %>
+          <div class="alert alert-info">
+            <% if current_user&.guest? %>
+              No items found.
+            <% else %>
+              No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>

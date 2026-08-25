@@ -3,14 +3,7 @@
 <% stock_classes << 'low-stock' if item.low_stock? %>
 <% stock_class_string = stock_classes.join(' ') %>
 
-<div id="item_row_<%= item.id %>"
-     class="item-row <%= stock_class_string %>"
-     data-item-filter-target="item"
-     data-item-name="<%= item.name %>"
-     data-item-categories="<%= item.categories.pluck(:id).to_json %>"
-     data-item-type="<%= item.item_type %>"
-     data-item-quantity="<%= item.quantity %>"
-     <% if item.low_stock_threshold.present? %>data-item-low-stock-threshold="<%= item.low_stock_threshold %>"<% end %>>
+<div id="item_row_<%= item.id %>" class="item-row <%= stock_class_string %>">
 
   <div class="item-image-cell">
     <%= item_thumbnail(item) %>

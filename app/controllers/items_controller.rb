@@ -6,19 +6,9 @@ class ItemsController < ApplicationController
   before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement ]
 
   def index
-    # Guest users see all items, regular users see only their own items
-    items_scope = current_user.guest? ? Item.all : current_user.items
-
-    sanitized_category_ids = Array(params[:category_ids]).map(&:to_i).select(&:positive?)
-
-    @items = items_scope.includes(:categories, :user, image_attachment: :blob)
-                 .by_categories(sanitized_category_ids, match_all: params[:category_match] == "all")
-                 .by_type(params[:item_type])
-                 .by_stock_status(params[:stock_status])
-                 .search(params[:search])
-                 .order(:name)
-
+    @items = filtered_items.includes(:categories, :user, image_attachment: :blob).order(:name)
     @categories = Category.all.order(:name)
+    @category_counts = @items.flat_map(&:category_ids).tally
   end
 
   def show
@@ -95,6 +85,18 @@ class ItemsController < ApplicationController
   end
 
   private
+
+  def filtered_items
+    @filtered_items ||= begin
+      scope = current_user.guest? ? Item.all : current_user.items
+      category_ids = Array(params[:category_ids]).map(&:to_i).select(&:positive?)
+
+      scope.by_categories(category_ids, match_all: params[:category_match] == "all")
+           .by_type(params[:item_type])
+           .by_stock_status(params[:stock_status])
+           .search(params[:search])
+    end
+  end
 
   def set_item
     # Guest users can view all items, regular users only their own

@@ -4,16 +4,21 @@ export default class extends Controller {
   static targets = ["banner", "editButton", "deleteButton", "quantityButton", "addButton"]
 
   connect() {
-    this.boundUpdateStatus = this.updateOnlineStatus.bind(this)
+    this.abortController = new AbortController()
     this.updateOnlineStatus()
-    window.addEventListener('online', this.boundUpdateStatus)
-    window.addEventListener('offline', this.boundUpdateStatus)
+
+    window.addEventListener('online', () => this.updateOnlineStatus(), { signal: this.abortController.signal })
+    window.addEventListener('offline', () => this.updateOnlineStatus(), { signal: this.abortController.signal })
   }
 
   disconnect() {
-    window.removeEventListener('online', this.boundUpdateStatus)
-    window.removeEventListener('offline', this.boundUpdateStatus)
+    this.abortController.abort()
   }
+
+  editButtonTargetConnected(button) { this.updateButtonState(button, navigator.onLine) }
+  deleteButtonTargetConnected(button) { this.updateButtonState(button, navigator.onLine) }
+  quantityButtonTargetConnected(button) { this.updateButtonState(button, navigator.onLine) }
+  addButtonTargetConnected(button) { this.updateButtonState(button, navigator.onLine) }
 
   updateOnlineStatus() {
     const isOnline = navigator.onLine
@@ -22,13 +27,14 @@ export default class extends Controller {
       this.bannerTarget.classList.toggle('d-none', isOnline)
     }
 
-    const targetNames = ['edit', 'delete', 'quantity', 'add']
-    targetNames.forEach(targetName => {
-      const targets = this[`${targetName}ButtonTargets`]
-      if (targets) {
-        targets.forEach(btn => this.updateButtonState(btn, isOnline))
-      }
-    })
+    const buttons = [
+      ...this.editButtonTargets,
+      ...this.deleteButtonTargets,
+      ...this.quantityButtonTargets,
+      ...this.addButtonTargets
+    ]
+
+    buttons.forEach(button => this.updateButtonState(button, isOnline))
   }
 
   updateButtonState(button, isOnline) {

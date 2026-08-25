@@ -9,8 +9,8 @@
 
 import { application } from "controllers/application"
 
-import ItemFilterController from "controllers/item_filter_controller"
-application.register("item-filter", ItemFilterController)
+import FilterFormController from "controllers/filter_form_controller"
+application.register("filter-form", FilterFormController)
 
 import LoginFormController from "controllers/login_form_controller"
 application.register("login-form", LoginFormController)
