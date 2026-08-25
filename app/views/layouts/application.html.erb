@@ -37,13 +37,13 @@
     <%= stylesheet_link_tag "application" %>
     <%= javascript_importmap_tags %>
 
-    <script>
+    <%= javascript_tag nonce: true do %>
       (function() {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
         document.documentElement.setAttribute('data-bs-theme', theme);
       })();
-    </script>
+    <% end %>
   </head>
 
   <body>
@@ -103,14 +103,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js" integrity="sha512-HvOjJrdwNpDbkGJIG2ZNqDlVqMo77qbs4Me4cah0HoDrfhrbA+8SBlZn1KrvAQw7cILLPFJvdwIgphzQmMm+Pw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script>
+    <%= javascript_tag nonce: true do %>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js')
-            .then(registration => console.log('ServiceWorker registered'))
-            .catch(err => console.log('ServiceWorker registration failed:', err));
+            .catch(err => console.error('ServiceWorker registration failed:', err));
         });
       }
-    </script>
+    <% end %>
   </body>
 </html>
