@@ -49,6 +49,40 @@ class ItemTest < ActiveSupport::TestCase
     assert_equal original + 2, item.reload.quantity
   end
 
+  test "increment_quantity! ignores a negative amount" do
+    item = items(:bourbon)
+    original = item.quantity
+    item.increment_quantity!(-99)
+    assert_equal original + 1, item.reload.quantity
+  end
+
+  test "decrement_quantity! ignores a negative amount" do
+    item = items(:bourbon)
+    original = item.quantity
+    item.decrement_quantity!(-99)
+    assert_equal original - 1, item.reload.quantity
+  end
+
+  test "quantity adjustments do not lose concurrent writes" do
+    item = items(:bourbon)
+    item.update!(quantity: 0)
+    stale = Item.find(item.id)
+
+    item.increment_quantity!(1)
+    stale.increment_quantity!(1)
+
+    assert_equal 2, item.reload.quantity
+  end
+
+  test "quantity adjustments touch updated_at" do
+    item = items(:bourbon)
+    item.update!(updated_at: 1.day.ago)
+
+    assert_changes -> { item.reload.updated_at } do
+      item.increment_quantity!
+    end
+  end
+
   test "decrement_quantity! decreases quantity but not below zero" do
     item = items(:bourbon)
     item.decrement_quantity!(1)

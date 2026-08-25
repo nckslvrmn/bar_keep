@@ -42,6 +42,7 @@ class Item < ApplicationRecord
   scope :search, ->(query) { query.present? ? where("items.name LIKE ? ESCAPE '\\'", "%#{sanitize_sql_like(query)}%") : all }
 
   ITEM_TYPES = [ "Alcohol", "Liqueur", "Juice", "Syrup", "Ingredient", "Other" ].freeze
+  MAX_QUANTITY_ADJUSTMENT = 999
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
@@ -60,11 +61,11 @@ class Item < ApplicationRecord
   end
 
   def increment_quantity!(amount = 1)
-    update!(quantity: quantity + amount)
+    adjust_quantity!(clamp_adjustment(amount))
   end
 
   def decrement_quantity!(amount = 1)
-    update!(quantity: [ quantity - amount, 0 ].max)
+    adjust_quantity!(-clamp_adjustment(amount))
   end
 
   def out_of_stock?
@@ -81,5 +82,18 @@ class Item < ApplicationRecord
 
   def category_names
     categories.map(&:name).join(", ")
+  end
+
+  private
+
+  def clamp_adjustment(amount)
+    amount.to_i.clamp(1, MAX_QUANTITY_ADJUSTMENT)
+  end
+
+  def adjust_quantity!(delta)
+    self.class.where(id: id).update_all([
+      "quantity = MAX(0, quantity + ?), updated_at = ?", delta, Time.current
+    ])
+    reload
   end
 end
