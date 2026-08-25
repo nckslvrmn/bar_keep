@@ -12,9 +12,6 @@ import { application } from "controllers/application"
 import FilterFormController from "controllers/filter_form_controller"
 application.register("filter-form", FilterFormController)
 
-import LoginFormController from "controllers/login_form_controller"
-application.register("login-form", LoginFormController)
-
 import MetadataFieldsController from "controllers/metadata_fields_controller"
 application.register("metadata-fields", MetadataFieldsController)
 

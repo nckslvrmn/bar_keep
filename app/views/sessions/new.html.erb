@@ -5,13 +5,7 @@
         <div class="card-body">
           <h2 class="card-title text-center mb-4">Sign in to Bar Keep</h2>
 
-          <%= form_with url: login_path,
-                       local: true,
-                       data: {
-                         turbo: false,
-                         controller: "login-form",
-                         action: "submit->login-form#submit"
-                       } do |form| %>
+          <%= form_with url: login_path, local: true, data: { turbo: false } do |form| %>
             <div class="mb-3">
               <%= form.label :username, class: "form-label" %>
               <%= form.text_field :username,
