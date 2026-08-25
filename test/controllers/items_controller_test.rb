@@ -128,4 +128,10 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Buffalo Trace", response.body
   end
+
+  test "flash notice renders after a redirect" do
+    patch item_path(items(:bourbon)), params: { item: { name: "Renamed" } }
+    follow_redirect!
+    assert_match "Item was successfully updated.", response.body
+  end
 end

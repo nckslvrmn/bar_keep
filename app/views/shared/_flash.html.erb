@@ -1,0 +1,9 @@
+<div id="flash" class="flash-messages" aria-live="polite" aria-atomic="false">
+  <% flash.each do |type, message| %>
+    <% next if message.blank? %>
+    <div class="alert <%= flash_alert_class(type) %> alert-dismissible fade show">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss message"></button>
+    </div>
+  <% end %>
+</div>

@@ -12,12 +12,6 @@
                          controller: "login-form",
                          action: "submit->login-form#submit"
                        } do |form| %>
-            <% if flash[:alert] %>
-              <div class="alert alert-danger" role="alert">
-                <%= flash[:alert] %>
-              </div>
-            <% end %>
-
             <div class="mb-3">
               <%= form.label :username, class: "form-label" %>
               <%= form.text_field :username,

@@ -24,6 +24,12 @@ class GuestAccessTest < ActionDispatch::IntegrationTest
     assert_match "read-only", flash[:alert]
   end
 
+  test "guest is told why they were turned away" do
+    get new_item_path
+    follow_redirect!
+    assert_match "read-only", response.body
+  end
+
   test "guest cannot edit items" do
     get edit_item_path(items(:bourbon))
     assert_redirected_to items_path

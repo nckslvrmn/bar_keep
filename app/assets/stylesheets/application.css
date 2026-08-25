@@ -102,6 +102,9 @@ main {
 
 .container-fluid { overscroll-behavior-y: auto; }
 
+/* ── Flash messages ─────────────────────────────────────── */
+.flash-messages:not(:has(.alert)) { display: none; }
+
 /* ── Links ───────────────────────────────────────────────── */
 a {
   color: var(--bs-link-color);
