@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bar-keep-v4';
+const CACHE_NAME = 'bar-keep-v5';
 const MAX_IMAGE_CACHE_SIZE = 50;
 const MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 

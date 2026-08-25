@@ -3,12 +3,12 @@ Rails.application.config.content_security_policy do |policy|
   policy.font_src    :self, :https, :data
   policy.img_src     :self, :https, :data, :blob
   policy.object_src  :none
-  policy.script_src  :self, :https, "https://cdnjs.cloudflare.com"
-  policy.style_src   :self, :https, :unsafe_inline, "https://cdnjs.cloudflare.com"
-  policy.connect_src :self, :https
+  policy.script_src  :self
+  policy.style_src   :self, :unsafe_inline
+  policy.connect_src :self
 
   if Rails.env.development?
-    policy.script_src :self, :https, :unsafe_eval, :unsafe_inline, "https://cdnjs.cloudflare.com"
+    policy.script_src :self, :unsafe_eval, :unsafe_inline
   end
 end
 
