@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark" data-items-view="rows">
   <head>
     <title>Bar Keep - Home Bar Inventory</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -40,6 +40,9 @@
         const meta = document.querySelector('meta[name="theme-color"]');
         const color = getComputedStyle(document.documentElement).getPropertyValue('--navbar-bg').trim();
         if (meta && color) meta.content = color;
+
+        const view = localStorage.getItem('itemsView');
+        if (view) document.documentElement.setAttribute('data-items-view', view);
       })();
     <% end %>
   </head>

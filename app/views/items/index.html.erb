@@ -133,7 +133,18 @@
     <div class="col-lg-9 col-md-8">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Inventory</h1>
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+          <div class="view-toggle btn-group btn-group-sm" role="group" aria-label="List layout" data-controller="view-toggle">
+            <button type="button" class="btn btn-outline-secondary"
+                    data-view-toggle-target="button"
+                    data-view-toggle-view-param="rows"
+                    data-action="view-toggle#select">Rows</button>
+            <button type="button" class="btn btn-outline-secondary"
+                    data-view-toggle-target="button"
+                    data-view-toggle-view-param="cards"
+                    data-action="view-toggle#select">Cards</button>
+          </div>
+
           <% showing_out_of_stock = params[:stock_status] == "out_of_stock" %>
           <%= link_to filter_url(stock_status: showing_out_of_stock ? nil : "out_of_stock"),
               class: "btn #{showing_out_of_stock ? "btn-danger" : "btn-outline-danger"} responsive-btn",
@@ -153,7 +164,7 @@
       <%= turbo_frame_tag "items", target: "_top" do %>
         <% if @items.any? %>
           <div class="items-list <%= "guest-view" if current_user&.guest? %>">
-            <div class="items-header d-none d-md-flex">
+            <div class="items-header">
               <div class="header-image">Image</div>
               <div class="header-name">Name</div>
               <% if current_user&.guest? %>

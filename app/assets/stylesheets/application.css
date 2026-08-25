@@ -292,7 +292,12 @@ img { max-width: 100%; height: auto; }
 }
 
 .metadata-item { margin-block-end: 10px; }
-.category-filters { border: 1px solid var(--bs-border-color); }
+
+.category-filters {
+  border: 1px solid var(--bs-border-color);
+  max-height: 200px;
+  overflow-y: auto;
+}
 
 /* ── Quantity controls ─────────────────────────────────── */
 .quantity-controls, .mobile-quantity-controls {
@@ -365,12 +370,6 @@ img { max-width: 100%; height: auto; }
 
 /* ── Tablet ─────────────────────────────────────────────── */
 @media (max-width: 991px) and (min-width: 768px) {
-  .item-thumbnail {
-    width: 100px !important;
-    aspect-ratio: 1 !important;
-    max-width: 100px !important;
-  }
-
   .item-image { max-width: 150px !important; max-height: 150px !important; }
 
   .table td { padding: 0.5rem; vertical-align: middle; }
@@ -415,158 +414,214 @@ img { max-width: 100%; height: auto; }
   .mobile-item-name { font-size: 14px; }
 }
 
-/* ── Desktop item list ──────────────────────────────────── */
-.items-list { display: block; }
-
-@media (min-width: 768px) {
-  .items-list {
-    border: none;
-    border-radius: 0;
-    overflow: visible;
-  }
-
-  .items-header {
-    display: grid !important;
-    grid-template-columns: 120px minmax(200px, 1fr) minmax(150px, 250px) 100px 120px 240px;
-    background-color: transparent;
-    border-block-end: 2px solid var(--bs-border-color);
-    font-weight: 600;
-
-    > div { padding: 0.75rem; }
-    > div:last-child { text-align: left; }
-  }
-
-  .guest-view .items-header {
-    grid-template-columns: 100px minmax(150px, 1fr) 120px minmax(120px, 200px) 80px 100px 180px;
-  }
-
-  .item-row {
-    display: grid;
-    grid-template-columns: 120px minmax(200px, 1fr) minmax(150px, 250px) 100px 120px 240px;
-    border-block-end: 1px solid var(--bs-border-color);
-
-    &:last-child { border-block-end: none; }
-
-    > div {
-      padding: 0.75rem;
-      display: flex;
-      align-items: center;
-      background-color: transparent;
-    }
-
-    &:nth-child(odd) { background-color: var(--bs-body-bg); }
-    &:nth-child(even) { background-color: var(--stripe-bg); }
-
-    &.out-of-stock { background-color: color-mix(in srgb, #dc3545 10%, transparent) !important; }
-    &.low-stock { background-color: color-mix(in srgb, #ffc107 10%, transparent) !important; }
-  }
-
-  .guest-view .item-row {
-    grid-template-columns: 100px minmax(150px, 1fr) 120px minmax(120px, 200px) 80px 100px 180px;
-  }
-
-  .item-image-cell {
-    justify-content: center;
-
-    .item-thumbnail { width: 100px; aspect-ratio: 1; }
-  }
-
-  .item-categories-cell { flex-wrap: wrap; gap: 4px; }
-
-  .item-actions-cell {
-    justify-content: flex-start;
-
-    .action-buttons { display: flex; gap: 0.5rem; white-space: nowrap; }
-  }
-
-  .item-quantity-cell .quantity-controls { justify-content: flex-start; }
+/* ── Item list ──────────────────────────────────────────── */
+turbo-frame#items {
+  display: block;
+  container: items / inline-size;
 }
 
-/* ── Mobile item row (card layout) ─────────────────────── */
-@media (max-width: 767px) {
-  .items-list { gap: 24px; background-color: transparent; border: none; }
+.items-header { display: none; }
 
-  .item-row {
-    display: grid;
-    grid-template-areas:
-      "image name name"
-      "image categories categories"
-      "type type type"
-      "quantity quantity actions";
-    grid-template-columns: 80px 1fr auto;
-    gap: 8px;
-    padding: 16px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--border-radius-lg);
-    margin-block-end: 15px;
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  --items-columns: 84px minmax(140px, 1.4fr) minmax(110px, 1fr) 84px 104px 190px;
 
-    &:last-child { margin-block-end: 0; }
+  &.guest-view {
+    --items-columns: 70px minmax(110px, 1.3fr) 84px minmax(96px, 1fr) 70px 92px 165px;
   }
+}
 
-  .guest-view .item-row {
-    grid-template-areas:
-      "image name name"
-      "image categories categories"
-      "owner owner owner"
-      "type type type"
-      "quantity quantity actions";
+.item-row {
+  display: grid;
+  grid-template-areas:
+    "image name name"
+    "image categories categories"
+    "type type type"
+    "quantity quantity actions";
+  grid-template-columns: 80px 1fr auto;
+  gap: 8px;
+  padding: 16px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--border-radius-lg);
+
+  &.out-of-stock { background-color: color-mix(in srgb, #dc3545 12%, var(--card-bg)); }
+  &.low-stock { background-color: color-mix(in srgb, #ffc107 12%, var(--card-bg)); }
+}
+
+.guest-view .item-row {
+  grid-template-areas:
+    "image name name"
+    "image categories categories"
+    "owner owner owner"
+    "type type type"
+    "quantity quantity actions";
+}
+
+.item-image-cell {
+  grid-area: image;
+  align-self: start;
+  display: flex;
+
+  .item-thumbnail { width: 80px; aspect-ratio: 1; }
+}
+
+.item-name-cell {
+  grid-area: name;
+  font-size: 18px;
+  font-weight: 600;
+  align-self: center;
+  line-height: 1.2;
+}
+
+.item-categories-cell {
+  grid-area: categories;
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  .badge { font-size: 11px; padding: 3px 8px; }
+}
+
+.item-type-cell {
+  grid-area: type;
+  font-size: 14px;
+  color: var(--text-muted);
+  padding-block-start: 8px;
+  border-block-start: 1px solid var(--bs-border-color);
+}
+
+.item-owner-cell {
+  grid-area: owner;
+  font-size: 14px;
+  color: var(--text-muted);
+  padding-block-start: 8px;
+  border-block-start: 1px solid var(--bs-border-color);
+}
+
+.item-quantity-cell {
+  grid-area: quantity;
+  display: flex;
+  align-items: center;
+  padding-block-start: 8px;
+
+  .quantity-controls { gap: 8px; }
+  .btn { padding: 6px 12px; font-size: 16px; min-width: 44px; min-height: 44px; }
+}
+
+.item-actions-cell {
+  grid-area: actions;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  padding-block-start: 8px;
+
+  .action-buttons { display: flex; gap: 6px; }
+  .btn { padding: 8px 14px; font-size: 14px; min-height: 44px; }
+}
+
+/* ── Card grid, wide containers ─────────────────────────── */
+@container items (min-width: 720px) {
+  :root[data-items-view="cards"] {
+    .items-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      align-items: start;
+      gap: 1rem;
+    }
+
+    .item-row {
+      grid-template-areas:
+        "image image"
+        "name name"
+        "categories categories"
+        "type type"
+        "quantity actions";
+      grid-template-columns: 1fr auto;
+    }
+
+    .guest-view .item-row {
+      grid-template-areas:
+        "image image"
+        "name name"
+        "categories categories"
+        "owner owner"
+        "type type"
+        "quantity actions";
+    }
+
+    .item-image-cell {
+      justify-content: center;
+
+      .item-thumbnail { width: 100%; max-width: 11rem; aspect-ratio: 1; }
+    }
   }
+}
 
-  .item-image-cell {
-    grid-area: image;
-    align-self: start;
+/* ── Row list, wide containers ──────────────────────────── */
+@container items (min-width: 720px) {
+  :root[data-items-view="rows"] {
+    .items-list { display: block; }
 
-    .item-thumbnail { width: 80px; aspect-ratio: 1; }
+    .items-header {
+      display: grid;
+      grid-template-columns: var(--items-columns);
+      border-block-end: 2px solid var(--bs-border-color);
+      font-weight: 600;
+
+      > div { padding: 0.75rem; }
+    }
+
+    .item-row {
+      grid-template-columns: var(--items-columns);
+      gap: 0;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      border-block-end: 1px solid var(--bs-border-color);
+
+      &:last-child { border-block-end: none; }
+      &:nth-child(odd) { background-color: var(--bs-body-bg); }
+      &:nth-child(even) { background-color: var(--stripe-bg); }
+      &.out-of-stock { background-color: color-mix(in srgb, #dc3545 10%, transparent); }
+      &.low-stock { background-color: color-mix(in srgb, #ffc107 10%, transparent); }
+
+      > div {
+        grid-area: auto;
+        align-self: auto;
+        justify-self: auto;
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        background-color: transparent;
+        border-block-start: none;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
+      }
+    }
+
+    .item-image-cell {
+      justify-content: center;
+
+      .item-thumbnail { width: 76px; aspect-ratio: 1; }
+    }
+
+    .item-categories-cell { flex-wrap: wrap; gap: 4px; }
+    .item-actions-cell .action-buttons { white-space: nowrap; }
   }
+}
 
-  .item-name-cell {
-    grid-area: name;
-    font-size: 18px;
-    font-weight: 600;
-    align-self: center;
-    line-height: 1.2;
-  }
+/* ── View toggle ────────────────────────────────────────── */
+.view-toggle .btn.active {
+  background-color: var(--bs-link-color);
+  border-color: var(--bs-link-color);
+  color: var(--bs-body-bg);
+}
 
-  .item-categories-cell {
-    grid-area: categories;
-    padding-block-start: 0;
-    align-self: start;
-
-    .badge { font-size: 11px; padding: 3px 8px; margin-block-end: 4px; }
-  }
-
-  .item-type-cell {
-    grid-area: type;
-    font-size: 14px;
-    color: var(--text-muted);
-    padding-block-start: 8px;
-    border-block-start: 1px solid var(--bs-border-color);
-  }
-
-  .item-owner-cell {
-    grid-area: owner;
-    font-size: 14px;
-    color: var(--text-muted);
-    padding-block-start: 8px;
-    border-block-start: 1px solid var(--bs-border-color);
-  }
-
-  .item-quantity-cell {
-    grid-area: quantity;
-    justify-content: flex-start;
-    padding-block-start: 8px;
-
-    .quantity-controls { gap: 8px; }
-    .btn { padding: 6px 12px; font-size: 16px; min-width: 44px; min-height: 44px; }
-  }
-
-  .item-actions-cell {
-    grid-area: actions;
-    justify-self: end;
-    padding-block-start: 8px;
-
-    .action-buttons { display: flex; gap: 6px; }
-    .btn { padding: 8px 14px; font-size: 14px; min-height: 44px; }
-  }
+@media (max-width: 991px) {
+  .view-toggle { display: none; }
 }

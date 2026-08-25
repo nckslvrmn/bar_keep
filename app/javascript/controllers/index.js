@@ -20,3 +20,6 @@ application.register("offline", OfflineController)
 
 import ThemeController from "controllers/theme_controller"
 application.register("theme", ThemeController)
+
+import ViewToggleController from "controllers/view_toggle_controller"
+application.register("view-toggle", ViewToggleController)

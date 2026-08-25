@@ -13,6 +13,13 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
     assert_select "turbo-frame#items[target='_top']"
   end
 
+  test "the list offers a row and card view toggle" do
+    get items_path
+    assert_select "html[data-items-view='rows']"
+    assert_select ".view-toggle button[data-view-toggle-view-param='rows']"
+    assert_select ".view-toggle button[data-view-toggle-view-param='cards']"
+  end
+
   test "filters by a single category" do
     get items_path, params: { category_ids: [ categories(:mixers).id ] }
     assert_response :success
