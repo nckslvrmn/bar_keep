@@ -511,22 +511,37 @@ turbo-frame#items {
   font-weight: 600;
   align-self: center;
   line-height: 1.2;
-  overflow-wrap: anywhere;
+
+  a {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .item-categories-cell {
   grid-area: categories;
   min-width: 0;
-  align-self: start;
+  align-self: center;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: hidden;
   gap: 4px;
+  min-height: 1.375rem;
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.25rem), transparent);
 
-  .badge { font-size: 11px; padding: 3px 8px; }
+  .badge { flex: 0 0 auto; font-size: 11px; padding: 3px 8px; }
 }
 
 .item-type-cell {
   grid-area: type;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 14px;
   color: var(--text-muted);
   padding-block-start: 8px;
@@ -691,7 +706,6 @@ turbo-frame#items {
       .item-thumbnail { width: 76px; aspect-ratio: 1; }
     }
 
-    .item-categories-cell { flex-wrap: wrap; gap: 4px; }
 
     .item-quantity-cell {
       justify-content: flex-start;

@@ -10,7 +10,7 @@
   </div>
 
   <div class="item-name-cell">
-    <%= link_to item.name, item, class: "text-decoration-none" %>
+    <%= link_to item.name, item, class: "text-decoration-none", title: item.name %>
   </div>
 
   <% if defined?(show_owner) && show_owner %>

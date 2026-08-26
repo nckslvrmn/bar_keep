@@ -4,6 +4,7 @@
     <strong>📵 Offline Mode</strong> - You're viewing cached inventory. Editing is disabled until you're back online.
   </div>
 
+  <%= turbo_frame_tag "items", target: "_top" do %>
   <div class="row">
     <div class="col-md-3 mb-4">
       <div class="card">
@@ -30,7 +31,7 @@
                   class: "form-control",
                   placeholder: "Search items...",
                   autocomplete: "off",
-                  data: { action: "input->auto-submit#debouncedSubmit" } %>
+                  data: { turbo_permanent: true, action: "input->auto-submit#debouncedSubmit" } %>
             </div>
 
             <div class="mb-3">
@@ -130,7 +131,7 @@
 
           <%= link_to "Clear All Filters", items_path,
               class: "btn btn-outline-secondary w-100 #{"disabled" unless filters_active?}",
-              data: { turbo_frame: "items", turbo_action: "advance" } %>
+              data: { turbo: false } %>
 
           <div class="mt-3 text-center">
             <small class="text-muted"><%= pluralize(@items.size, "item") %> found</small>
@@ -170,39 +171,38 @@
         </div>
       </div>
 
-      <%= turbo_frame_tag "items", target: "_top" do %>
-        <% if @items.any? %>
-          <div class="items-list <%= "guest-view" if current_user&.guest? %>">
-            <div class="items-header">
-              <div class="header-image">Image</div>
-              <div class="header-name">Name</div>
-              <% if current_user&.guest? %>
-                <div class="header-owner">Owner</div>
-              <% end %>
-              <div class="header-categories">Categories</div>
-              <div class="header-type">Type</div>
-              <div class="header-quantity">Quantity</div>
-              <div class="header-actions">Actions</div>
-            </div>
-
-            <% @items.each do |item| %>
-              <%= render "item_row", item: item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? %>
-            <% end %>
-          </div>
-        <% elsif filters_active? %>
-          <div class="alert alert-info">
-            No items match your filters. <%= link_to "Clear all filters", items_path, class: "alert-link", data: { turbo_frame: "_top" } %>
-          </div>
-        <% else %>
-          <div class="alert alert-info">
+      <% if @items.any? %>
+        <div class="items-list <%= "guest-view" if current_user&.guest? %>">
+          <div class="items-header">
+            <div class="header-image">Image</div>
+            <div class="header-name">Name</div>
             <% if current_user&.guest? %>
-              No items found.
-            <% else %>
-              No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+              <div class="header-owner">Owner</div>
             <% end %>
+            <div class="header-categories">Categories</div>
+            <div class="header-type">Type</div>
+            <div class="header-quantity">Quantity</div>
+            <div class="header-actions">Actions</div>
           </div>
-        <% end %>
+
+          <% @items.each do |item| %>
+            <%= render "item_row", item: item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? %>
+          <% end %>
+        </div>
+      <% elsif filters_active? %>
+        <div class="alert alert-info">
+          No items match your filters. <%= link_to "Clear all filters", items_path, class: "alert-link", data: { turbo: false } %>
+        </div>
+      <% else %>
+        <div class="alert alert-info">
+          <% if current_user&.guest? %>
+            No items found.
+          <% else %>
+            No items found. <%= link_to "Add your first item", new_item_path, class: "alert-link" %>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
+  <% end %>
 </div>

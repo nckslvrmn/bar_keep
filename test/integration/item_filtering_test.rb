@@ -8,9 +8,38 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
     items(:low_stock_syrup).categories = [ categories(:mixers) ]
   end
 
-  test "the results live in a turbo frame that targets the top level" do
+  test "the frame wraps the filters as well as the results" do
     get items_path
-    assert_select "turbo-frame#items[target='_top']"
+    assert_select "turbo-frame#items[target='_top']" do
+      assert_select "select[name='sort']"
+      assert_select "input[name='search']"
+      assert_select ".items-list"
+    end
+  end
+
+  test "clear all filters is disabled only when nothing is filtered" do
+    get items_path
+    assert_select "a.btn.disabled", text: "Clear All Filters"
+
+    get items_path, params: { search: "Gin" }
+    assert_select "a.btn", text: "Clear All Filters"
+    assert_select "a.btn.disabled", text: "Clear All Filters", count: 0
+  end
+
+  test "the results count reflects the active filter" do
+    get items_path
+    assert_select "small", text: /3 items found/
+
+    get items_path, params: { search: "Gin" }
+    assert_select "small", text: /1 item found/
+  end
+
+  test "the out of stock shortcut reflects whether it is on" do
+    get items_path
+    assert_select "a.btn-outline-danger .btn-text-desktop", text: "Show Out of Stock"
+
+    get items_path, params: { stock_status: "out_of_stock" }
+    assert_select "a.btn-danger .btn-text-desktop", text: "Show All"
   end
 
   test "the list offers a row and card view toggle" do
