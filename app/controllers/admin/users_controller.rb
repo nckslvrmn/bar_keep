@@ -77,7 +77,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:username, :password, :password_confirmation, :user_type)
+    params.expect(user: [ :username, :password, :password_confirmation, :user_type ])
   end
 
   def set_user_type(user, type)
