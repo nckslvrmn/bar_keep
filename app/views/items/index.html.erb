@@ -8,13 +8,21 @@
     <div class="col-md-3 mb-4">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Filters</h5>
+          <h5 class="card-title">Filter &amp; Sort</h5>
 
           <%= form_with url: items_path, method: :get, data: {
                 controller: "auto-submit",
                 turbo_frame: "items",
                 turbo_action: "advance"
               } do %>
+
+            <div class="mb-3">
+              <%= label_tag :sort, "Sort by", class: "form-label" %>
+              <%= select_tag :sort,
+                  options_for_select(Item::SORT_OPTIONS.map { |value, label| [ label, value ] }, params[:sort]),
+                  class: "form-select",
+                  data: { action: "change->auto-submit#submit" } %>
+            </div>
 
             <div class="mb-3">
               <%= label_tag :search, "Search", class: "visually-hidden" %>

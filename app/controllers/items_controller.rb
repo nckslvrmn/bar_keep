@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
   before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
 
   def index
-    @items = filtered_items.includes(:categories, :user, image_attachment: :blob).order(:name)
+    @items = filtered_items.includes(:categories, :user, image_attachment: :blob).sorted_by(params[:sort])
     @categories = Category.all.order(:name)
     @category_counts = @items.flat_map(&:category_ids).tally
   end

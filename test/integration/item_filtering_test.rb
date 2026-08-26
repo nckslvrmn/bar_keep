@@ -28,6 +28,38 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
     assert_select "button[aria-label='Remove one Buffalo Trace']"
   end
 
+  test "sorts by name by default" do
+    get items_path
+    names = css_select(".item-name-cell a").map(&:text)
+    assert_equal names.sort, names
+  end
+
+  test "sorting by restock puts empty shelves first" do
+    get items_path, params: { sort: "restock" }
+    names = css_select(".item-name-cell a").map(&:text)
+    assert_equal "Hendricks Gin", names.first
+    assert_equal "Simple Syrup", names.second
+  end
+
+  test "sorting by quantity runs low to high" do
+    get items_path, params: { sort: "quantity" }
+    names = css_select(".item-name-cell a").map(&:text)
+    assert_equal [ "Hendricks Gin", "Simple Syrup", "Buffalo Trace" ], names
+  end
+
+  test "an unknown sort falls back to name" do
+    get items_path, params: { sort: "'; DROP TABLE items; --" }
+    assert_response :success
+    names = css_select(".item-name-cell a").map(&:text)
+    assert_equal names.sort, names
+  end
+
+  test "sort survives a filter change" do
+    get items_path, params: { sort: "restock", search: "Gin" }
+    assert_select "select[name='sort'] option[value='restock'][selected='selected']"
+    assert_select "a[href*='sort=restock']"
+  end
+
   test "filters by a single category" do
     get items_path, params: { category_ids: [ categories(:mixers).id ] }
     assert_response :success

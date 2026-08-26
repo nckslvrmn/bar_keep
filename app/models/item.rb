@@ -39,11 +39,35 @@ class Item < ApplicationRecord
     end
   }
 
+  RESTOCK_PRIORITY = Arel.sql(<<~SQL.squish)
+    CASE
+      WHEN quantity = 0 THEN 0
+      WHEN low_stock_threshold IS NOT NULL AND quantity <= low_stock_threshold THEN 1
+      ELSE 2
+    END
+  SQL
+
+  scope :sorted_by, ->(key) {
+    case key
+    when "restock" then order(RESTOCK_PRIORITY, :name)
+    when "quantity" then order(:quantity, :name)
+    when "recent" then order(updated_at: :desc, name: :asc)
+    else order(:name)
+    end
+  }
+
   scope :search, ->(query) { query.present? ? where("items.name LIKE ? ESCAPE '\\'", "%#{sanitize_sql_like(query)}%") : all }
 
   ITEM_TYPES = [ "Alcohol", "Liqueur", "Juice", "Syrup", "Ingredient", "Other" ].freeze
   MAX_QUANTITY_ADJUSTMENT = 999
   MAX_QUANTITY = 9999
+
+  SORT_OPTIONS = {
+    "name" => "Name",
+    "restock" => "Needs restocking",
+    "quantity" => "Quantity, low first",
+    "recent" => "Recently updated"
+  }.freeze
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 

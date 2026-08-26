@@ -1,5 +1,5 @@
 module ItemsHelper
-  FILTER_KEYS = [ :search, :item_type, :stock_status, :category_match ].freeze
+  FILTER_KEYS = [ :search, :item_type, :stock_status, :category_match, :sort ].freeze
 
   def current_filters
     params.permit(*FILTER_KEYS, category_ids: []).to_h.symbolize_keys
@@ -10,7 +10,7 @@ module ItemsHelper
   end
 
   def filters_active?
-    current_filters.except(:category_match).any? { |_key, value| value.present? }
+    current_filters.except(:category_match, :sort).any? { |_key, value| value.present? }
   end
 
   def optimized_item_image(item, options = {})
