@@ -333,6 +333,15 @@ img { max-width: 100%; height: auto; }
 
 .quantity-value { font-variant-numeric: tabular-nums; }
 
+/* ── Category picker ───────────────────────────────────── */
+.category-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
 .mobile-quantity-controls {
   gap: 10px;
 

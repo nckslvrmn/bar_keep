@@ -12,6 +12,9 @@ import { application } from "controllers/application"
 import AutoSubmitController from "controllers/auto_submit_controller"
 application.register("auto-submit", AutoSubmitController)
 
+import CategoryPickerController from "controllers/category_picker_controller"
+application.register("category-picker", CategoryPickerController)
+
 import MetadataFieldsController from "controllers/metadata_fields_controller"
 application.register("metadata-fields", MetadataFieldsController)
 

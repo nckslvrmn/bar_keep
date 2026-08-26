@@ -171,6 +171,15 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal [ "Whiskey" ], items(:low_stock_syrup).reload.categories.map(&:name)
   end
 
+  test "the form offers existing categories as chips" do
+    items(:bourbon).categories = [ categories(:spirits) ]
+
+    get new_item_path
+    assert_select "[data-controller='category-picker']"
+    assert_select "button[data-category-picker-name-param='Spirits']"
+    assert_select "input[name='item[category_names]'][data-category-picker-target='field']"
+  end
+
   test "cannot access other users items" do
     get item_path(items(:admin_item))
     assert_response :not_found
