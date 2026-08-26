@@ -23,7 +23,7 @@
 
           <div class="mb-3">
             <%= form.label :category_names, "Categories", class: "form-label" %>
-            <%= form.text_field :category_names, value: item.category_names, class: "form-control", placeholder: "Enter categories separated by commas (e.g., Spirits, Whiskey, Premium)" %>
+            <%= form.text_field :category_names, class: "form-control", placeholder: "Enter categories separated by commas (e.g., Spirits, Whiskey, Premium)" %>
             <div class="form-text">
               You can enter multiple categories separated by commas. New categories will be created automatically.
               <% if categories.any? %>

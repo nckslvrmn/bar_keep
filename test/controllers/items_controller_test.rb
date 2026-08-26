@@ -46,13 +46,23 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, Item.last.categories.count
   end
 
-  test "create with invalid params renders form" do
+  test "create with invalid params renders the form with errors" do
     assert_no_difference "Item.count" do
       post items_path, params: {
         item: { name: "", quantity: -1, item_type: "Alcohol" }
       }
     end
-    assert_response :success # re-renders :new
+    assert_response :unprocessable_entity
+    assert_match "prohibited this item from being saved", response.body
+  end
+
+  test "a failed create does not leave categories behind" do
+    assert_no_difference "Category.count" do
+      post items_path, params: {
+        item: { name: "", quantity: 1, item_type: "Alcohol", category_names: "Ghost" }
+      }
+    end
+    assert_not Category.exists?(name: "Ghost")
   end
 
   test "update item" do

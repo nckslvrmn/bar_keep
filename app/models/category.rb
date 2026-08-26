@@ -11,6 +11,12 @@ class Category < ApplicationRecord
     left_joins(:items).where(items: { id: nil }).destroy_all
   end
 
+  def self.find_or_create_by_name(name)
+    create_with(slug: name.parameterize).find_or_create_by!(name: name)
+  rescue ActiveRecord::RecordNotUnique
+    find_by!(name: name)
+  end
+
   private
 
   def generate_slug

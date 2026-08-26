@@ -47,6 +47,8 @@ class Item < ApplicationRecord
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
+  after_save :sync_pending_categories
+
   def metadata_hash
     item_metadata.pluck(:key, :value).to_h
   end
@@ -86,10 +88,23 @@ class Item < ApplicationRecord
   end
 
   def category_names
+    return @pending_category_names.join(", ") if @pending_category_names
+
     categories.map(&:name).join(", ")
   end
 
+  def category_names=(value)
+    @pending_category_names = value.to_s.split(",").map(&:strip).reject(&:blank?).uniq
+  end
+
   private
+
+  def sync_pending_categories
+    return if @pending_category_names.nil?
+
+    self.categories = @pending_category_names.map { |name| Category.find_or_create_by_name(name) }
+    @pending_category_names = nil
+  end
 
   def clamp_adjustment(amount)
     amount.to_i.clamp(1, MAX_QUANTITY_ADJUSTMENT)

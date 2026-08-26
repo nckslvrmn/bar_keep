@@ -24,18 +24,13 @@ class ItemsController < ApplicationController
   def create
     process_image_params(:item)
 
-    @item = current_user.items.build(item_params.except(:category_names))
+    @item = current_user.items.build(item_params)
 
     if @item.save
-      handle_categories(@item, params[:item][:category_names])
-
-      if params[:metadata].present?
-        @item.update_metadata(params[:metadata])
-      end
-
+      @item.update_metadata(params[:metadata]) if params[:metadata].present?
       redirect_to @item, notice: "Item was successfully created."
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -46,17 +41,12 @@ class ItemsController < ApplicationController
   def update
     process_image_params(:item)
 
-    if @item.update(item_params.except(:category_names))
-      handle_categories(@item, params[:item][:category_names])
+    if @item.update(item_params)
       Category.delete_orphaned
-
-      if params[:metadata].present?
-        @item.update_metadata(params[:metadata])
-      end
-
+      @item.update_metadata(params[:metadata]) if params[:metadata].present?
       redirect_to @item, notice: "Item was successfully updated."
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -126,23 +116,7 @@ class ItemsController < ApplicationController
     end
   end
 
-  def handle_categories(item, category_names_string)
-    return unless category_names_string.present?
-
-    category_names = category_names_string.split(",").map(&:strip).reject(&:blank?).uniq
-    return if category_names.empty?
-
-    item.categories = category_names.map { |name| find_or_create_category(name) }
-  end
-
-  def find_or_create_category(name)
-    Category.create_with(slug: name.parameterize).find_or_create_by!(name: name)
-  rescue ActiveRecord::RecordNotUnique
-    # Lost a race against a concurrent insert; the row now exists.
-    Category.find_by!(name: name)
-  end
-
   def item_params
-    params.require(:item).permit(:name, :quantity, :low_stock_threshold, :item_type, :image, :category_names)
+    params.expect(item: [ :name, :quantity, :low_stock_threshold, :item_type, :image, :category_names ])
   end
 end
