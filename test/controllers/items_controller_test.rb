@@ -157,6 +157,20 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_not Category.exists?(name: "Solo"), "orphaned category should be deleted"
   end
 
+  test "reusing a category with different casing does not blow up" do
+    item = items(:bourbon)
+    patch item_path(item), params: { item: { name: item.name, category_names: "Whiskey" } }
+    assert_redirected_to item_path(item)
+
+    assert_no_difference "Category.count" do
+      patch item_path(items(:low_stock_syrup)), params: {
+        item: { name: items(:low_stock_syrup).name, category_names: "whiskey" }
+      }
+    end
+    assert_redirected_to item_path(items(:low_stock_syrup))
+    assert_equal [ "Whiskey" ], items(:low_stock_syrup).reload.categories.map(&:name)
+  end
+
   test "cannot access other users items" do
     get item_path(items(:admin_item))
     assert_response :not_found

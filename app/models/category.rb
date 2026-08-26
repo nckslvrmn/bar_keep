@@ -1,7 +1,7 @@
 class Category < ApplicationRecord
   has_and_belongs_to_many :items
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { case_sensitive: false }
 
   before_validation :generate_slug
 
@@ -12,14 +12,19 @@ class Category < ApplicationRecord
   end
 
   def self.find_or_create_by_name(name)
-    create_with(slug: name.parameterize).find_or_create_by!(name: name)
+    slug = slug_for(name)
+    find_by(slug: slug) || create!(name: name.strip, slug: slug)
   rescue ActiveRecord::RecordNotUnique
-    find_by!(name: name)
+    find_by!(slug: slug)
+  end
+
+  def self.slug_for(name)
+    name.parameterize.presence || name.strip.downcase
   end
 
   private
 
   def generate_slug
-    self.slug = name.parameterize if name.present?
+    self.slug = self.class.slug_for(name) if name.present?
   end
 end
