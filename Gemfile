@@ -2,8 +2,10 @@ source "https://rubygems.org"
 
 gem "bcrypt"
 gem "bootsnap", require: false
+gem "image_processing"
 gem "importmap-rails"
 gem "mini_magick"
+gem "ruby-vips"
 gem "propshaft"
 gem "puma"
 gem "rails"

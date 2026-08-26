@@ -13,32 +13,24 @@ module ItemsHelper
     current_filters.except(:category_match, :sort).any? { |_key, value| value.present? }
   end
 
+  THUMBNAIL_LIMIT = [ 320, 320 ].freeze
+  DETAIL_LIMIT = [ 800, 800 ].freeze
+
   def optimized_item_image(item, options = {})
     return unless item.image.attached?
 
-    default_options = {
-      loading: "lazy",
-      class: options[:class] || "item-image"
-    }
-
-    image_tag item.image, default_options.merge(options)
+    image_tag item.image.variant(resize_to_limit: DETAIL_LIMIT, format: :webp),
+      { loading: "lazy", decoding: "async", class: "item-image" }.merge(options)
   end
 
   def item_thumbnail(item, options = {})
     content_tag :div, class: "item-thumbnail d-flex align-items-center justify-content-center" do
       if item.image.attached?
-        variant = item.image.variant(resize_to_limit: [ 150, 150 ])
-        image_tag variant, options.merge(class: "w-100 h-100", style: "object-fit: contain;", loading: "lazy", width: 150, height: 150)
+        image_tag item.image.variant(resize_to_limit: THUMBNAIL_LIMIT, format: :webp),
+          options.merge(class: "w-100 h-100", style: "object-fit: contain;", loading: "lazy", decoding: "async")
       else
         content_tag :span, "📷"
       end
     end
-  end
-
-  def item_detail_image(item, options = {})
-    return unless item.image.attached?
-
-    variant = item.image.variant(resize_to_limit: [ 800, 800 ])
-    image_tag variant, options.merge(loading: "lazy", class: options[:class] || "item-detail-image")
   end
 end

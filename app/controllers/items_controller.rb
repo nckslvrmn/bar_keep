@@ -1,6 +1,4 @@
 class ItemsController < ApplicationController
-  include ImageProcessingConcern
-
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
   before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
@@ -22,8 +20,6 @@ class ItemsController < ApplicationController
   end
 
   def create
-    process_image_params(:item)
-
     @item = current_user.items.build(item_params)
 
     if @item.save
@@ -39,8 +35,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    process_image_params(:item)
-
     if @item.update(item_params)
       Category.delete_orphaned
       @item.update_metadata(params[:metadata]) if params[:metadata].present?
