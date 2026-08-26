@@ -722,12 +722,33 @@ turbo-frame#items {
   }
 }
 
-/* ── View toggle ────────────────────────────────────────── */
+/* ── Accent buttons ─────────────────────────────────────── */
+.btn-accent,
 .view-toggle .btn.active {
   background-color: var(--bs-link-color);
   border-color: var(--bs-link-color);
   color: var(--bs-body-bg);
+  font-weight: 500;
 }
+
+.btn-accent {
+  &:hover,
+  &:focus-visible {
+    background-color: var(--bs-link-hover-color);
+    border-color: var(--bs-link-hover-color);
+    color: var(--bs-body-bg);
+  }
+}
+
+.btn.disabled {
+  background-color: transparent;
+  border-color: var(--bs-border-color);
+  border-style: dashed;
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+/* ── View toggle ────────────────────────────────────────── */
 
 @media (max-width: 991px) {
   .view-toggle { display: none; }

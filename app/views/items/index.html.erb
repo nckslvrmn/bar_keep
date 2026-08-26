@@ -130,7 +130,8 @@
           <% end %>
 
           <%= link_to "Clear All Filters", items_path,
-              class: "btn btn-outline-secondary w-100 #{"disabled" unless filters_active?}",
+              class: "btn w-100 #{filters_active? ? "btn-accent" : "btn-outline-secondary disabled"}",
+              aria: { disabled: !filters_active? },
               data: { turbo: false } %>
 
           <div class="mt-3 text-center">

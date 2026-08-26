@@ -19,11 +19,12 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
 
   test "clear all filters is disabled only when nothing is filtered" do
     get items_path
-    assert_select "a.btn.disabled", text: "Clear All Filters"
+    assert_select "a.btn.disabled[aria-disabled='true']", text: "Clear All Filters"
+    assert_select "a.btn-accent", count: 0
 
     get items_path, params: { search: "Gin" }
-    assert_select "a.btn", text: "Clear All Filters"
-    assert_select "a.btn.disabled", text: "Clear All Filters", count: 0
+    assert_select "a.btn-accent", text: "Clear All Filters"
+    assert_select "a.btn.disabled", count: 0
   end
 
   test "the results count reflects the active filter" do
