@@ -462,10 +462,10 @@ turbo-frame#items {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  --items-columns: 84px minmax(140px, 1.4fr) minmax(110px, 1fr) 84px 104px 190px;
+  --items-columns: 76px minmax(150px, 1.6fr) minmax(110px, 1fr) 90px 160px 200px;
 
   &.guest-view {
-    --items-columns: 70px minmax(110px, 1.3fr) 84px minmax(96px, 1fr) 70px 92px 165px;
+    --items-columns: 64px minmax(120px, 1.4fr) 90px minmax(96px, 1fr) 72px 160px 200px;
   }
 }
 
@@ -476,7 +476,7 @@ turbo-frame#items {
     "image categories categories"
     "type type type"
     "quantity quantity actions";
-  grid-template-columns: 80px 1fr auto;
+  grid-template-columns: 80px minmax(0, 1fr) auto;
   gap: 8px;
   padding: 16px;
   background-color: var(--card-bg);
@@ -506,14 +506,17 @@ turbo-frame#items {
 
 .item-name-cell {
   grid-area: name;
+  min-width: 0;
   font-size: 18px;
   font-weight: 600;
   align-self: center;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .item-categories-cell {
   grid-area: categories;
+  min-width: 0;
   align-self: start;
   display: flex;
   flex-wrap: wrap;
@@ -540,23 +543,54 @@ turbo-frame#items {
 
 .item-quantity-cell {
   grid-area: quantity;
+  min-width: 0;
   display: flex;
   align-items: center;
   padding-block-start: 8px;
 
   .quantity-controls { gap: 8px; }
-  .btn { padding: 6px 12px; font-size: 16px; min-width: 44px; min-height: 44px; }
+  .btn { padding: 6px 10px; font-size: 16px; min-width: 40px; min-height: 40px; }
 }
 
 .item-actions-cell {
   grid-area: actions;
+  min-width: 0;
   justify-self: end;
   display: flex;
   align-items: center;
   padding-block-start: 8px;
 
   .action-buttons { display: flex; gap: 6px; }
-  .btn { padding: 8px 14px; font-size: 14px; min-height: 44px; }
+  .btn { padding: 8px 12px; font-size: 14px; min-height: 40px; }
+}
+
+/* ── Narrow phones, stack the card footer ───────────────── */
+@container items (max-width: 400px) {
+  .item-row {
+    grid-template-areas:
+      "image name name"
+      "image categories categories"
+      "type type type"
+      "quantity quantity quantity"
+      "actions actions actions";
+  }
+
+  .guest-view .item-row {
+    grid-template-areas:
+      "image name name"
+      "image categories categories"
+      "owner owner owner"
+      "type type type"
+      "quantity quantity quantity"
+      "actions actions actions";
+  }
+
+  .item-actions-cell {
+    justify-self: stretch;
+
+    .action-buttons { width: 100%; }
+    .btn { flex: 1 1 0; min-width: 0; padding-inline: 4px; }
+  }
 }
 
 /* ── Card grid, wide containers ─────────────────────────── */
@@ -564,29 +598,31 @@ turbo-frame#items {
   :root[data-items-view="cards"] {
     .items-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
       align-items: start;
       gap: 1rem;
     }
 
     .item-row {
       grid-template-areas:
-        "image image"
-        "name name"
-        "categories categories"
-        "type type"
-        "quantity actions";
-      grid-template-columns: 1fr auto;
+        "image"
+        "name"
+        "categories"
+        "type"
+        "quantity"
+        "actions";
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .guest-view .item-row {
       grid-template-areas:
-        "image image"
-        "name name"
-        "categories categories"
-        "owner owner"
-        "type type"
-        "quantity actions";
+        "image"
+        "name"
+        "categories"
+        "owner"
+        "type"
+        "quantity"
+        "actions";
     }
 
     .item-image-cell {
@@ -594,11 +630,20 @@ turbo-frame#items {
 
       .item-thumbnail { width: 100%; max-width: 11rem; aspect-ratio: 1; }
     }
+
+    .item-quantity-cell { justify-content: center; }
+
+    .item-actions-cell {
+      justify-self: stretch;
+
+      .action-buttons { width: 100%; }
+      .btn { flex: 1 1 0; min-width: 0; padding-inline: 4px; }
+    }
   }
 }
 
 /* ── Row list, wide containers ──────────────────────────── */
-@container items (min-width: 720px) {
+@container items (min-width: 820px) {
   :root[data-items-view="rows"] {
     .items-list { display: block; }
 
@@ -647,7 +692,19 @@ turbo-frame#items {
     }
 
     .item-categories-cell { flex-wrap: wrap; gap: 4px; }
-    .item-actions-cell .action-buttons { white-space: nowrap; }
+
+    .item-quantity-cell {
+      justify-content: flex-start;
+
+      .quantity-controls { gap: 6px; }
+    }
+
+    .item-actions-cell {
+      justify-self: stretch;
+
+      .action-buttons { gap: 5px; white-space: nowrap; }
+      .btn { padding: 6px 10px; font-size: 13px; min-height: 40px; }
+    }
   }
 }
 
