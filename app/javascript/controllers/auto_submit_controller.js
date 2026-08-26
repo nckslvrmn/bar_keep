@@ -16,4 +16,12 @@ export default class extends Controller {
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => this.element.requestSubmit(), this.delayValue)
     }
+
+    revert(event) {
+        if (event.key !== "Escape") return
+
+        event.preventDefault()
+        event.target.value = event.target.defaultValue
+        event.target.blur()
+    }
 }

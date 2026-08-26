@@ -1,9 +1,9 @@
 class ItemsController < ApplicationController
   include ImageProcessingConcern
 
-  before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement ]
+  before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
-  before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement ]
+  before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
 
   def index
     @items = filtered_items.includes(:categories, :user, image_attachment: :blob).order(:name)
@@ -81,6 +81,15 @@ class ItemsController < ApplicationController
     respond_to do |format|
       format.turbo_stream { render :update_quantity }
       format.html { redirect_back(fallback_location: items_path, notice: "Quantity decreased.") }
+    end
+  end
+
+  def set_quantity
+    @item.set_quantity!(params[:quantity])
+
+    respond_to do |format|
+      format.turbo_stream { render :update_quantity }
+      format.html { redirect_back(fallback_location: items_path, notice: "Quantity updated.") }
     end
   end
 

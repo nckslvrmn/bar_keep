@@ -56,25 +56,7 @@
 
               <dt class="col-sm-4">Quantity:</dt>
               <dd class="col-sm-8">
-                <% if current_user&.guest? %>
-                  <span class="fs-4"><%= @item.quantity %></span>
-                <% else %>
-                  <div class="quantity-controls" id="item_<%= @item.id %>_quantity">
-                    <%= button_to "-", decrement_item_path(@item),
-                        method: :patch,
-                        class: "btn btn-outline-danger",
-                        params: { amount: 1 },
-                        aria: { label: "Remove one #{@item.name}" },
-                        data: { offline_target: "quantityButton" } %>
-                    <output class="mx-3 fs-4" for="item_<%= @item.id %>_quantity"><%= @item.quantity %></output>
-                    <%= button_to "+", increment_item_path(@item),
-                        method: :patch,
-                        class: "btn btn-outline-success",
-                        params: { amount: 1 },
-                        aria: { label: "Add one #{@item.name}" },
-                        data: { offline_target: "quantityButton" } %>
-                  </div>
-                <% end %>
+                <%= render "items/quantity", item: @item, size: :lg %>
               </dd>
 
               <dt class="col-sm-4">Low Stock Threshold:</dt>

@@ -10,7 +10,7 @@
           <h5 class="card-title">Filters</h5>
 
           <%= form_with url: items_path, method: :get, data: {
-                controller: "filter-form",
+                controller: "auto-submit",
                 turbo_frame: "items",
                 turbo_action: "advance"
               } do %>
@@ -21,7 +21,7 @@
                   class: "form-control",
                   placeholder: "Search items...",
                   autocomplete: "off",
-                  data: { action: "input->filter-form#debouncedSubmit" } %>
+                  data: { action: "input->auto-submit#debouncedSubmit" } %>
             </div>
 
             <div class="mb-3">
@@ -46,7 +46,7 @@
                       <%= check_box_tag "category_ids[]", category.id, selected,
                           class: "form-check-input",
                           id: "category_#{category.id}",
-                          data: { action: "change->filter-form#submit" } %>
+                          data: { action: "change->auto-submit#submit" } %>
                       <%= label_tag "category_#{category.id}", "#{category.name} (#{count || 0})", class: "form-check-label" %>
                     </div>
                   <% end %>
@@ -55,13 +55,13 @@
                   <div class="form-check form-check-inline">
                     <%= radio_button_tag :category_match, "any", params[:category_match] != "all",
                         class: "form-check-input",
-                        data: { action: "change->filter-form#submit" } %>
+                        data: { action: "change->auto-submit#submit" } %>
                     <%= label_tag :category_match_any, "Any selected", class: "form-check-label" %>
                   </div>
                   <div class="form-check form-check-inline">
                     <%= radio_button_tag :category_match, "all", params[:category_match] == "all",
                         class: "form-check-input",
-                        data: { action: "change->filter-form#submit" } %>
+                        data: { action: "change->auto-submit#submit" } %>
                     <%= label_tag :category_match_all, "All selected", class: "form-check-label" %>
                   </div>
                 </div>
@@ -86,7 +86,7 @@
                 <%= select_tag :item_type,
                     options_for_select([ [ "All Types", "" ] ] + Item::ITEM_TYPES.map { |t| [ t, t ] }, params[:item_type]),
                     class: "form-select mt-2",
-                    data: { action: "change->filter-form#submit" } %>
+                    data: { action: "change->auto-submit#submit" } %>
               </div>
             </div>
 
@@ -112,7 +112,7 @@
                       [ "Out of Stock", "out_of_stock" ]
                     ], params[:stock_status]),
                     class: "form-select mt-2",
-                    data: { action: "change->filter-form#submit" } %>
+                    data: { action: "change->auto-submit#submit" } %>
               </div>
             </div>
 

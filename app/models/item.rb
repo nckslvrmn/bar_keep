@@ -43,6 +43,7 @@ class Item < ApplicationRecord
 
   ITEM_TYPES = [ "Alcohol", "Liqueur", "Juice", "Syrup", "Ingredient", "Other" ].freeze
   MAX_QUANTITY_ADJUSTMENT = 999
+  MAX_QUANTITY = 9999
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
@@ -66,6 +67,10 @@ class Item < ApplicationRecord
 
   def decrement_quantity!(amount = 1)
     adjust_quantity!(-clamp_adjustment(amount))
+  end
+
+  def set_quantity!(value)
+    update!(quantity: value.to_i.clamp(0, MAX_QUANTITY))
   end
 
   def out_of_stock?

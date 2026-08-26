@@ -300,7 +300,38 @@ img { max-width: 100%; height: auto; }
   display: flex;
   align-items: center;
   gap: 10px;
+
+  form { margin: 0; display: flex; }
 }
+
+.quantity-input {
+  width: 4ch;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button { appearance: none; margin: 0; }
+
+  &:hover { border-color: var(--bs-border-color); }
+
+  &:focus {
+    border-color: var(--bs-link-color);
+    background-color: var(--bs-body-bg);
+    outline: 2px solid var(--bs-link-color);
+    outline-offset: 1px;
+  }
+
+  &:disabled { cursor: not-allowed; }
+}
+
+.quantity-value { font-variant-numeric: tabular-nums; }
 
 .mobile-quantity-controls {
   gap: 10px;

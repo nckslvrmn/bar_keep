@@ -1,17 +1,34 @@
+<% size = local_assigns.fetch(:size, :sm) %>
+<% button_class = size == :lg ? "btn" : "btn btn-sm" %>
+<% input_class = size == :lg ? "quantity-input fs-4" : "quantity-input" %>
+
 <div id="item_<%= item.id %>_quantity" class="quantity-controls">
   <% if current_user&.guest? %>
-    <span class="mx-2"><%= item.quantity %></span>
+    <span class="quantity-value <%= "fs-4" if size == :lg %>"><%= item.quantity %></span>
   <% else %>
     <%= button_to "-", decrement_item_path(item),
         method: :patch,
-        class: "btn btn-sm btn-outline-danger",
+        class: "#{button_class} btn-outline-danger",
         params: { amount: 1 },
         aria: { label: "Remove one #{item.name}" },
         data: { offline_target: "quantityButton" } %>
-    <output class="mx-2" for="item_<%= item.id %>_quantity"><%= item.quantity %></output>
+
+    <%= form_with url: set_quantity_item_path(item), method: :patch, data: { controller: "auto-submit" } do %>
+      <%= number_field_tag :quantity, item.quantity,
+          in: 0..Item::MAX_QUANTITY,
+          class: input_class,
+          inputmode: "numeric",
+          autocomplete: "off",
+          aria: { label: "#{item.name} quantity" },
+          data: {
+            offline_target: "quantityButton",
+            action: "change->auto-submit#submit keydown->auto-submit#revert"
+          } %>
+    <% end %>
+
     <%= button_to "+", increment_item_path(item),
         method: :patch,
-        class: "btn btn-sm btn-outline-success",
+        class: "#{button_class} btn-outline-success",
         params: { amount: 1 },
         aria: { label: "Add one #{item.name}" },
         data: { offline_target: "quantityButton" } %>

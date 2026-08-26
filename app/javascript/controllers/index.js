@@ -9,8 +9,8 @@
 
 import { application } from "controllers/application"
 
-import FilterFormController from "controllers/filter_form_controller"
-application.register("filter-form", FilterFormController)
+import AutoSubmitController from "controllers/auto_submit_controller"
+application.register("auto-submit", AutoSubmitController)
 
 import MetadataFieldsController from "controllers/metadata_fields_controller"
 application.register("metadata-fields", MetadataFieldsController)

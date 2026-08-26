@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     member do
       patch :increment
       patch :decrement
+      patch :set_quantity
     end
   end
 end

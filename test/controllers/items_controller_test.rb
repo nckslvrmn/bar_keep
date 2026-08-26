@@ -84,6 +84,33 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal original - 1, item.reload.quantity
   end
 
+  test "set_quantity sets an absolute value" do
+    item = items(:bourbon)
+    patch set_quantity_item_path(item), params: { quantity: 24 }
+    assert_equal 24, item.reload.quantity
+  end
+
+  test "set_quantity clamps out of range values" do
+    item = items(:bourbon)
+
+    patch set_quantity_item_path(item), params: { quantity: -5 }
+    assert_equal 0, item.reload.quantity
+
+    patch set_quantity_item_path(item), params: { quantity: 999_999 }
+    assert_equal Item::MAX_QUANTITY, item.reload.quantity
+  end
+
+  test "set_quantity responds with a turbo stream" do
+    patch set_quantity_item_path(items(:bourbon)), params: { quantity: 7 }, as: :turbo_stream
+    assert_response :success
+    assert_equal "text/vnd.turbo-stream.html", response.media_type
+  end
+
+  test "the quantity field is editable in place" do
+    get items_path
+    assert_select "input.quantity-input[name='quantity'][aria-label='Buffalo Trace quantity']"
+  end
+
   test "increment responds with a turbo stream" do
     item = items(:bourbon)
     patch increment_item_path(item), as: :turbo_stream

@@ -42,6 +42,19 @@ class GuestAccessTest < ActionDispatch::IntegrationTest
     assert_redirected_to items_path
   end
 
+  test "guest cannot set a quantity directly" do
+    original = items(:bourbon).quantity
+    patch set_quantity_item_path(items(:bourbon)), params: { quantity: 99 }
+    assert_equal original, items(:bourbon).reload.quantity
+    assert_redirected_to items_path
+  end
+
+  test "guest sees quantities as plain text" do
+    get items_path
+    assert_select "input.quantity-input", false
+    assert_select ".quantity-value"
+  end
+
   test "guest cannot increment quantity" do
     original = items(:bourbon).quantity
     patch increment_item_path(items(:bourbon))
