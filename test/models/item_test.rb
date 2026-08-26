@@ -110,6 +110,35 @@ class ItemTest < ActiveSupport::TestCase
     assert_nil item.metadata_hash["purchase_location"] # old key gone
   end
 
+  test "update_metadata keeps rows that survive the update" do
+    item = items(:bourbon)
+    item.update_metadata({ "brand" => "BT" })
+    row = item.item_metadata.find_by(key: "brand")
+
+    item.update_metadata({ "brand" => "Buffalo Trace", "origin" => "Kentucky" })
+    updated = item.item_metadata.find_by(key: "brand")
+
+    assert_equal row.id, updated.id
+    assert_equal row.created_at.to_i, updated.created_at.to_i
+    assert_equal "Buffalo Trace", updated.value
+  end
+
+  test "update_metadata clears everything when given nothing" do
+    item = items(:bourbon)
+    item.update_metadata({ "brand" => "BT" })
+    item.update_metadata({})
+
+    assert_empty item.item_metadata
+  end
+
+  test "update_metadata accepts controller parameters" do
+    item = items(:bourbon)
+    item.update_metadata(ActionController::Parameters.new(brand: "BT", empty: ""))
+
+    assert_equal "BT", item.metadata_hash["brand"]
+    assert_nil item.metadata_hash["empty"]
+  end
+
   test "update_metadata skips blank values" do
     item = items(:bourbon)
     item.update_metadata({ "brand" => "BT", "empty" => "" })

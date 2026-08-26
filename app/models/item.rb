@@ -53,14 +53,21 @@ class Item < ApplicationRecord
     item_metadata.pluck(:key, :value).to_h
   end
 
-  def update_metadata(metadata_hash)
-    transaction do
-      item_metadata.destroy_all
+  def update_metadata(attributes)
+    entries = {}
+    attributes.each { |key, value| entries[key.to_s] = value if value.present? }
 
-      metadata_hash.each do |key, value|
-        item_metadata.create!(key: key, value: value) if value.present?
+    transaction do
+      item_metadata.where.not(key: entries.keys).delete_all
+
+      if entries.any?
+        now = Time.current
+        rows = entries.map { |key, value| { item_id: id, key: key, value: value, created_at: now, updated_at: now } }
+        ItemMetadatum.upsert_all(rows, unique_by: [ :item_id, :key ], update_only: [ :value, :updated_at ])
       end
     end
+
+    item_metadata.reset
   end
 
   def increment_quantity!(amount = 1)
