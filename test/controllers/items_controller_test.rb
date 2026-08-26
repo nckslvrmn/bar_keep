@@ -175,6 +175,14 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Buffalo Trace", response.body
   end
 
+  test "pages carry their own title" do
+    get items_path
+    assert_select "title", "Inventory · Bar Keep"
+
+    get item_path(items(:bourbon))
+    assert_select "title", "Buffalo Trace · Bar Keep"
+  end
+
   test "flash notice renders after a redirect" do
     patch item_path(items(:bourbon)), params: { item: { name: "Renamed" } }
     follow_redirect!
