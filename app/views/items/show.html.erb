@@ -64,13 +64,15 @@
                         method: :patch,
                         class: "btn btn-outline-danger",
                         params: { amount: 1 },
-                        data: { turbo_method: :patch, offline_target: "quantityButton" } %>
-                    <span class="mx-3 fs-4"><%= @item.quantity %></span>
+                        aria: { label: "Remove one #{@item.name}" },
+                        data: { offline_target: "quantityButton" } %>
+                    <output class="mx-3 fs-4" for="item_<%= @item.id %>_quantity"><%= @item.quantity %></output>
                     <%= button_to "+", increment_item_path(@item),
                         method: :patch,
                         class: "btn btn-outline-success",
                         params: { amount: 1 },
-                        data: { turbo_method: :patch, offline_target: "quantityButton" } %>
+                        aria: { label: "Add one #{@item.name}" },
+                        data: { offline_target: "quantityButton" } %>
                   </div>
                 <% end %>
               </dd>

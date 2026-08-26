@@ -35,10 +35,10 @@
 
   <div class="item-actions-cell">
     <div class="action-buttons">
-      <%= link_to "View", item, class: "btn btn-info" %>
+      <%= link_to "View", item, class: "btn btn-info", aria: { label: "View #{item.name}" } %>
       <% unless defined?(show_actions) && show_actions == false %>
-        <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning", data: { offline_target: "editButton" } %>
-        <%= link_to "Delete", item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?", offline_target: "deleteButton" }, class: "btn btn-danger" %>
+        <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning", aria: { label: "Edit #{item.name}" }, data: { offline_target: "editButton" } %>
+        <%= link_to "Delete", item, class: "btn btn-danger", aria: { label: "Delete #{item.name}" }, data: { "turbo-method": :delete, "turbo-confirm": "Delete #{item.name}?", offline_target: "deleteButton" } %>
       <% end %>
     </div>
   </div>

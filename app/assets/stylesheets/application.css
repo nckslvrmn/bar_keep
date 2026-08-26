@@ -149,28 +149,24 @@ a:not([class]) { text-underline-offset: 0.25em; }
 /* Touch/coarse pointer adjustments */
 @media (hover: none) and (pointer: coarse) {
   .btn {
-    &:focus { outline: none; box-shadow: none; }
-  }
-}
-
-@media (max-width: 767px) {
-  .btn {
     &:focus,
     &:active:focus,
     &.active:focus,
     &.focus,
     &:active.focus,
     &.active.focus {
-      outline: none !important;
-      box-shadow: none !important;
+      outline: none;
+      box-shadow: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--bs-link-color);
+      outline-offset: 2px;
     }
   }
+}
 
-  .btn-outline-danger:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-
+@media (max-width: 767px) {
   .btn-danger {
     background-color: #dc3545 !important;
     border-color: #dc3545 !important;

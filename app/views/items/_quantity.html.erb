@@ -6,12 +6,14 @@
         method: :patch,
         class: "btn btn-sm btn-outline-danger",
         params: { amount: 1 },
+        aria: { label: "Remove one #{item.name}" },
         data: { offline_target: "quantityButton" } %>
-    <span class="mx-2"><%= item.quantity %></span>
+    <output class="mx-2" for="item_<%= item.id %>_quantity"><%= item.quantity %></output>
     <%= button_to "+", increment_item_path(item),
         method: :patch,
         class: "btn btn-sm btn-outline-success",
         params: { amount: 1 },
+        aria: { label: "Add one #{item.name}" },
         data: { offline_target: "quantityButton" } %>
   <% end %>
 </div>

@@ -20,6 +20,14 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
     assert_select ".view-toggle button[data-view-toggle-view-param='cards']"
   end
 
+  test "row controls name the item they act on" do
+    get items_path
+    assert_select "a[aria-label='Edit Buffalo Trace']"
+    assert_select "a[aria-label='Delete Buffalo Trace']"
+    assert_select "button[aria-label='Add one Buffalo Trace']"
+    assert_select "button[aria-label='Remove one Buffalo Trace']"
+  end
+
   test "filters by a single category" do
     get items_path, params: { category_ids: [ categories(:mixers).id ] }
     assert_response :success
