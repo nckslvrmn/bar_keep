@@ -11,11 +11,13 @@ on:
 jobs:
   deploy:
     runs-on: [self-hosted]
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v7
-      - uses: nckslvrmn/docker-compose-deploy@main
-        with:
-          file: compose.yml
-        env:
-          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-          BAR_KEEP_VERSION: ${{ inputs.version }}
+    - uses: actions/checkout@v7
+    - uses: nckslvrmn/docker-compose-deploy@main
+      with:
+        file: compose.yml
+      env:
+        SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+        BAR_KEEP_VERSION: ${{ inputs.version }}
