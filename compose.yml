@@ -9,7 +9,7 @@ services:
     - FORCE_SSL=false
     restart: always
     volumes:
-    - /mnt/data/bar_keep/storage:/app/storage:rw
+    - /app/bar_keep:/app/storage:rw
     labels:
     - "traefik.enable=true"
     - "traefik.http.routers.bar_keep.rule=Host(`barkeep.slvr.io`)"
