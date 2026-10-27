@@ -24,6 +24,13 @@ class GuestAccessTest < ActionDispatch::IntegrationTest
     assert_match "read-only", flash[:alert]
   end
 
+  test "guest cannot search for images" do
+    with_brave_api_key do
+      get image_search_items_path, params: { q: "Buffalo Trace" }
+    end
+    assert_redirected_to items_path
+  end
+
   test "guest is told why they were turned away" do
     get new_item_path
     follow_redirect!

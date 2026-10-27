@@ -211,4 +211,88 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_match "Item was successfully updated.", response.body
   end
+
+  test "image search returns results as json" do
+    results = [ { title: "Bottle", thumbnail_url: "https://imgs.search.brave.com/t", image_url: "https://example.com/b.png" } ]
+
+    with_brave_api_key do
+      stub_class_method(BraveImageSearch, :search, ->(query) { query == "Buffalo Trace" ? results : [] }) do
+        get image_search_items_path, params: { q: "Buffalo Trace" }
+      end
+    end
+
+    assert_response :success
+    assert_equal "https://example.com/b.png", response.parsed_body.first["image_url"]
+  end
+
+  test "image search reports upstream failures" do
+    with_brave_api_key do
+      stub_class_method(BraveImageSearch, :search, ->(_query) { raise BraveImageSearch::Error, "429" }) do
+        get image_search_items_path, params: { q: "Buffalo Trace" }
+      end
+    end
+
+    assert_response :bad_gateway
+  end
+
+  test "image search is unavailable without an api key" do
+    with_brave_api_key(nil) do
+      get image_search_items_path, params: { q: "Buffalo Trace" }
+    end
+
+    assert_response :not_found
+  end
+
+  test "the form offers image search only when an api key is set" do
+    with_brave_api_key do
+      get edit_item_path(items(:bourbon))
+    end
+    assert_select "[data-controller='image-search'] input[data-image-search-target='query']"
+
+    with_brave_api_key(nil) do
+      get edit_item_path(items(:bourbon))
+    end
+    assert_select "[data-controller='image-search']", false
+  end
+
+  test "a failed create keeps the submitted metadata" do
+    post items_path, params: {
+      item: { name: "", quantity: 1, item_type: "Alcohol" },
+      metadata: { price: "$42.50", vintage: "1998" }
+    }
+
+    assert_response :unprocessable_entity
+    assert_select "input[name='metadata[price]'][value='$42.50']"
+    assert_select "input[name='metadata[vintage]'][value='1998']"
+  end
+
+  test "a failed update keeps the submitted metadata" do
+    patch item_path(items(:bourbon)), params: {
+      item: { name: "" },
+      metadata: { purchase_location: "Costco", price: "$29.99" }
+    }
+
+    assert_response :unprocessable_entity
+    assert_select "input[name='metadata[purchase_location]'][value='Costco']"
+  end
+
+  test "remove image detaches the current image" do
+    item = items(:bourbon)
+    item.image.attach(io: Rails.root.join("public/icon-192.png").open, filename: "icon.png", content_type: "image/png")
+
+    patch item_path(item), params: { item: { remove_image: "1" } }
+
+    assert_redirected_to item_path(item)
+    assert_not item.reload.image.attached?
+  end
+
+  test "the edit form offers to remove an attached image" do
+    item = items(:bourbon)
+    get edit_item_path(item)
+    assert_select "input[name='item[remove_image]']", false
+
+    item.image.attach(io: Rails.root.join("public/icon-192.png").open, filename: "icon.png", content_type: "image/png")
+    get edit_item_path(item)
+    assert_select "input[type='checkbox'][name='item[remove_image]']"
+  end
 end

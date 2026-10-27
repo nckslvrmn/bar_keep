@@ -38,6 +38,8 @@ Rails.application.routes.draw do
   root "items#index"
 
   resources :items do
+    get :image_search, on: :collection
+
     member do
       patch :increment
       patch :decrement

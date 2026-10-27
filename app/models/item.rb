@@ -71,6 +71,12 @@ class Item < ApplicationRecord
 
   validates :item_type, inclusion: { in: ITEM_TYPES }
 
+  # Candidate URLs for the image, tried in order until one downloads. An uploaded file wins.
+  attr_accessor :image_urls
+  attribute :remove_image, :boolean
+
+  before_validation :attach_image_from_urls, if: -> { image_urls.present? && !attachment_changes.key?("image") }
+  before_save -> { self.image = nil }, if: -> { remove_image && !attachment_changes.key?("image") }
   after_save :sync_pending_categories
 
   def metadata_hash
@@ -129,6 +135,24 @@ class Item < ApplicationRecord
   end
 
   private
+
+  def attach_image_from_urls
+    attachable = Array(image_urls).compact_blank.lazy.filter_map { |url| download_image(url) }.first
+    self.image_urls = nil
+
+    if attachable
+      self.image = attachable
+    else
+      errors.add(:image, "could not be downloaded, pick another or upload a file")
+    end
+  end
+
+  def download_image(url)
+    RemoteImage.fetch(url)
+  rescue RemoteImage::Error => e
+    Rails.logger.info("Image download failed for #{url}: #{e.message}")
+    nil
+  end
 
   def sync_pending_categories
     return if @pending_category_names.nil?

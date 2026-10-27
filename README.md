@@ -48,6 +48,7 @@ docker compose up -d
 | `ALLOWED_HOST` | No | Hostname for production (default: localhost) |
 | `FORCE_SSL` | No | Set `false` if behind a reverse proxy (default: true) |
 | `RAILS_ENV` | No | Default: production |
+| `BRAVE_SEARCH_API_KEY` | No | [Brave Search API](https://brave.com/search/api/) key. Enables web image search on the item form |
 
 ### Image tags
 

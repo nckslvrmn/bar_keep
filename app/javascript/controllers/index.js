@@ -15,6 +15,9 @@ application.register("auto-submit", AutoSubmitController)
 import CategoryPickerController from "controllers/category_picker_controller"
 application.register("category-picker", CategoryPickerController)
 
+import ImageSearchController from "controllers/image_search_controller"
+application.register("image-search", ImageSearchController)
+
 import MetadataFieldsController from "controllers/metadata_fields_controller"
 application.register("metadata-fields", MetadataFieldsController)
 

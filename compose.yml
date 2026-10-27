@@ -7,6 +7,7 @@ services:
     - SECRET_KEY_BASE=${SECRET_KEY_BASE}
     - ALLOWED_HOST=barkeep.slvr.io
     - FORCE_SSL=false
+    - BRAVE_SEARCH_API_KEY=${BRAVE_SEARCH_API_KEY}
     restart: always
     volumes:
     - /app/bar_keep:/app/storage:rw

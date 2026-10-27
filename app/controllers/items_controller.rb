@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
   before_action :set_item, only: [ :show, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
   before_action :load_categories, only: [ :new, :edit, :create, :update ]
-  before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement, :set_quantity ]
+  before_action :restrict_guest_access, only: [ :new, :create, :edit, :update, :destroy, :increment, :decrement, :set_quantity, :image_search ]
 
   def index
     @items = filtered_items.includes(:categories, :user, image_attachment: :blob).sorted_by(params[:sort])
@@ -17,6 +17,7 @@ class ItemsController < ApplicationController
     @item = current_user.items.build
     @item.quantity = 1
     @item.low_stock_threshold = 0
+    @metadata = {}
   end
 
   def create
@@ -26,6 +27,7 @@ class ItemsController < ApplicationController
       @item.update_metadata(params[:metadata]) if params[:metadata].present?
       redirect_to @item, notice: "Item was successfully created."
     else
+      @metadata = submitted_metadata
       render :new, status: :unprocessable_entity
     end
   end
@@ -40,6 +42,7 @@ class ItemsController < ApplicationController
       @item.update_metadata(params[:metadata]) if params[:metadata].present?
       redirect_to @item, notice: "Item was successfully updated."
     else
+      @metadata = submitted_metadata
       render :edit, status: :unprocessable_entity
     end
   end
@@ -77,6 +80,15 @@ class ItemsController < ApplicationController
     end
   end
 
+  def image_search
+    return head :not_found unless BraveImageSearch.enabled?
+
+    render json: BraveImageSearch.search(params.expect(:q))
+  rescue BraveImageSearch::Error => e
+    Rails.logger.warn("Brave image search failed: #{e.message}")
+    render json: { error: "Image search failed." }, status: :bad_gateway
+  end
+
   private
 
   def filtered_items
@@ -110,7 +122,11 @@ class ItemsController < ApplicationController
     end
   end
 
+  def submitted_metadata
+    params.fetch(:metadata, {}).to_unsafe_h.transform_values(&:to_s).compact_blank
+  end
+
   def item_params
-    params.expect(item: [ :name, :quantity, :low_stock_threshold, :item_type, :image, :category_names ])
+    params.expect(item: [ :name, :quantity, :low_stock_threshold, :item_type, :image, :remove_image, :category_names, image_urls: [] ])
   end
 end

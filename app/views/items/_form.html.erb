@@ -67,7 +67,8 @@
             </div>
           </div>
 
-          <div class="mb-3">
+          <% image_search = BraveImageSearch.enabled? %>
+          <div class="mb-3" <%= tag.attributes(data: { controller: "image-search", image_search_url_value: image_search_items_path }) if image_search %>>
             <%= form.label :image, "Product Image", class: "form-label" %>
             <% if item.persisted? && item.image.attached? %>
               <div class="mb-2">
@@ -75,9 +76,27 @@
                 <div class="rounded p-3 text-center">
                   <%= optimized_item_image(item, class: "item-image", style: "object-fit: contain;") %>
                 </div>
+                <div class="form-check">
+                  <%= form.check_box :remove_image, class: "form-check-input" %>
+                  <%= form.label :remove_image, "Remove image", class: "form-check-label" %>
+                </div>
               </div>
             <% end %>
-            <%= form.file_field :image, class: "form-control", accept: "image/*" %>
+            <%= form.file_field :image, class: "form-control", accept: "image/*",
+                data: (image_search ? { image_search_target: "file", action: "change->image-search#clearSelection" } : {}) %>
+
+            <% if image_search %>
+              <div class="input-group mt-2">
+                <input type="search" class="form-control" placeholder="Or search the web for an image"
+                       aria-label="Image search query"
+                       data-image-search-target="query"
+                       data-action="keydown.enter->image-search#search:prevent">
+                <button type="button" class="btn btn-outline-secondary" data-action="image-search#search">Search</button>
+              </div>
+              <div class="form-text" data-image-search-target="status" aria-live="polite"></div>
+              <div class="image-search-results mt-2" data-image-search-target="results"></div>
+              <div data-image-search-target="selection"></div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -90,7 +109,6 @@
           <p class="text-muted">Add custom fields like purchase location, notes, etc.</p>
 
           <div id="metadata-fields" data-controller="metadata-fields">
-            <% metadata = item.persisted? ? item.metadata_hash : {} %>
             <% if metadata.any? %>
               <% metadata.each do |key, value| %>
                 <div class="metadata-field mb-3">
