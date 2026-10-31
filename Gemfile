@@ -12,7 +12,6 @@ gem "rails"
 gem "solid_cache"
 gem "sqlite3"
 gem "stimulus-rails"
-gem "thruster", require: false
 gem "turbo-rails"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

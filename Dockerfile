@@ -1,4 +1,4 @@
-FROM ruby:4.0.2
+FROM ruby:4.0.9-slim AS base
 LABEL org.opencontainers.image.source="https://github.com/nckslvrmn/bar_keep"
 LABEL org.opencontainers.image.description="Bar Keep: A simple inventory manager for your home bar"
 LABEL org.opencontainers.image.licenses=MIT
@@ -10,16 +10,24 @@ ENV RAILS_ENV=${RAILS_ENV:-production}
 
 ENV BUNDLE_WITHOUT=development:test
 
-RUN apt-get update && apt-get install -y \
-    librsvg2-bin \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libvips \
+    && rm -rf /var/lib/apt/lists/*
+
+FROM base AS build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler
 
 COPY Gemfile Gemfile.lock ./
-RUN bundle install
+RUN bundle install && rm -rf "${GEM_HOME}/cache"
 
+FROM base
+
+COPY --from=build "${GEM_HOME}" "${GEM_HOME}"
 COPY . .
 
 RUN chmod +x bin/docker-entrypoint
