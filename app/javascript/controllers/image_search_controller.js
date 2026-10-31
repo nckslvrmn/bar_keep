@@ -74,15 +74,24 @@ export default class extends Controller {
         button.dataset.action = "image-search#select"
         button.dataset.imageSearchImageUrlParam = image_url
         button.dataset.imageSearchThumbnailUrlParam = thumbnail_url
+        button.hidden = true
 
         const image = document.createElement("img")
-        image.src = thumbnail_url
+        image.addEventListener("load", () => button.hidden = false, { once: true })
+        image.addEventListener("error", () => this.removeResult(button), { once: true })
         image.alt = title
-        image.loading = "lazy"
         image.referrerPolicy = "no-referrer"
+        image.src = thumbnail_url
         button.append(image)
 
         return button
+    }
+
+    removeResult(button) {
+        button.remove()
+        if (!this.resultsTarget.children.length) {
+            this.statusTarget.textContent = "No images found."
+        }
     }
 
     get defaultQuery() {

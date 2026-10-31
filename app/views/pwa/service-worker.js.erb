@@ -59,6 +59,9 @@ self.addEventListener('fetch', event => {
     // Only handle GET requests
     if (request.method !== 'GET') return;
 
+    // The worker inherits the app's connect-src 'self', so fetching other origins from here would fail.
+    if (url.origin !== self.location.origin) return;
+
     // Never cache authentication or admin pages
     if (EXCLUDED_PATHS.some(path => url.pathname.startsWith(path))) {
         return;
