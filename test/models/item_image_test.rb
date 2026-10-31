@@ -48,6 +48,29 @@ class ItemImageTest < ActiveSupport::TestCase
     assert item.reload.image.attached?
   end
 
+  test "a downloaded image is saved with a transparent background" do
+    item = items(:low_stock_syrup)
+    item.image_urls = [ "https://example.com/bottle.jpg" ]
+    jpeg = { io: StringIO.new(Vips::Image.black(8, 8).invert.jpegsave_buffer), filename: "bottle.jpg", content_type: "image/jpeg" }
+
+    stub_class_method(RemoteImage, :fetch, ->(_url) { jpeg }) do
+      assert item.save
+    end
+    assert_equal "image/png", item.reload.image.blob.content_type
+    assert_equal "bottle.png", item.image.filename.to_s
+  end
+
+  test "the next url is tried when a download is not a decodable image" do
+    item = items(:low_stock_syrup)
+    item.image_urls = [ "https://example.com/broken.png", "https://imgs.search.brave.com/thumb" ]
+    fetch = ->(url) { url.include?("broken") ? { io: StringIO.new("garbage"), filename: "broken.png", content_type: "image/png" } : png_attachable }
+
+    stub_class_method(RemoteImage, :fetch, fetch) do
+      assert item.save
+    end
+    assert_equal "bottle.png", item.reload.image.filename.to_s
+  end
+
   test "the item is invalid when no url downloads" do
     item = items(:low_stock_syrup)
     item.image_urls = [ "https://example.com/blocked.png" ]

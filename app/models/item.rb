@@ -148,8 +148,8 @@ class Item < ApplicationRecord
   end
 
   def download_image(url)
-    RemoteImage.fetch(url)
-  rescue RemoteImage::Error => e
+    BackgroundRemoval.apply(RemoteImage.fetch(url))
+  rescue RemoteImage::Error, Vips::Error => e
     Rails.logger.info("Image download failed for #{url}: #{e.message}")
     nil
   end
