@@ -40,5 +40,6 @@ jobs:
         with:
           file: compose.yml
         env:
-          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
           BAR_KEEP_VERSION: ${{ github.ref_name }}
+          BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
