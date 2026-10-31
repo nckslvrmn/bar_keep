@@ -10,9 +10,7 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(username: params[:username]&.downcase&.strip)
-
-    if user&.authenticate(params[:password])
+    if user = User.authenticate_by(username: params[:username], password: params[:password])
       reset_session
       login_user(user)
       redirect_to root_path, notice: "Welcome back, #{user.username}!"

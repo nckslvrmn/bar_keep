@@ -4,7 +4,7 @@
     <div class="col-md-6">
       <h1 class="mb-4">Create New User</h1>
 
-      <%= form_with(model: [:admin, @user], local: true) do |form| %>
+      <%= form_with(model: [:admin, @user]) do |form| %>
         <% if @user.errors.any? %>
           <div class="alert alert-danger">
             <h6 class="alert-heading">Please fix the following errors:</h6>

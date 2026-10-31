@@ -53,7 +53,7 @@ class ItemFilteringTest < ActionDispatch::IntegrationTest
   test "row controls name the item they act on" do
     get items_path
     assert_select "a[aria-label='Edit Buffalo Trace']"
-    assert_select "a[aria-label='Delete Buffalo Trace']"
+    assert_select "form[data-turbo-confirm] button[aria-label='Delete Buffalo Trace']"
     assert_select "button[aria-label='Add one Buffalo Trace']"
     assert_select "button[aria-label='Remove one Buffalo Trace']"
   end

@@ -1,3 +1,0 @@
-<%= turbo_stream.replace "item_row_#{@item.id}", method: :morph do %>
-  <%= render partial: "items/item_row", formats: [ :html ], locals: { item: @item, show_owner: current_user&.guest?, show_actions: !current_user&.guest? } %>
-<% end %>

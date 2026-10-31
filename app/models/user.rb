@@ -7,7 +7,7 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 8 }, if: -> { new_record? || !password.nil? }
 
-  before_save :normalize_username
+  normalizes :username, with: ->(username) { username.strip.downcase }
 
   def admin?
     is_admin?
@@ -31,11 +31,5 @@ class User < ApplicationRecord
 
   def self.regular_users
     where(is_guest: false, is_admin: false)
-  end
-
-  private
-
-  def normalize_username
-    self.username = username.downcase.strip
   end
 end

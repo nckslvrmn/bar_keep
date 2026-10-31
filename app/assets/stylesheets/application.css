@@ -117,12 +117,18 @@ a:not([class]) { text-underline-offset: 0.25em; }
 .text-decoration-none { color: var(--bs-body-color) !important; }
 .text-muted { color: var(--text-muted) !important; }
 
-/* ── Collapse chevron ──────────────────────────────────── */
-[data-bs-toggle="collapse"] {
+/* ── Filter sections ───────────────────────────────────── */
+.filter-section {
+  > summary {
+    list-style: none;
+
+    &::-webkit-details-marker { display: none; }
+    &:hover { opacity: 0.8; }
+  }
+
   .bi-chevron-down { transition: transform 0.2s ease-in-out; }
 
-  &[aria-expanded="true"] .bi-chevron-down { transform: rotate(180deg); }
-  &:hover { opacity: 0.8; }
+  &[open] .bi-chevron-down { transform: rotate(180deg); }
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
@@ -189,7 +195,53 @@ a:not([class]) { text-underline-offset: 0.25em; }
 
 .navbar-toggler-icon { background-image: var(--toggler-icon); }
 
+/* The fixed offsets are fallbacks for browsers without anchor positioning. */
+.navbar { anchor-name: --navbar; }
+
+.navbar-collapse[popover] {
+  position-anchor: --navbar;
+  inset: auto;
+  top: 3.5rem;
+  left: 0;
+  right: 0;
+  top: anchor(bottom);
+  left: anchor(left);
+  right: anchor(right);
+  width: auto;
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-block-end: 1px solid var(--bs-border-color);
+  background-color: var(--navbar-bg);
+  color: inherit;
+}
+
+@media (min-width: 992px) {
+  .navbar-collapse[popover] {
+    position: static;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+  }
+}
+
 /* ── Dropdown ──────────────────────────────────────────── */
+.user-menu-toggle { anchor-name: --user-menu; }
+
+.navbar-nav .dropdown-menu[popover] {
+  position: absolute;
+  position-anchor: --user-menu;
+  inset: auto;
+  top: 3.5rem;
+  right: 1rem;
+  top: anchor(bottom);
+  right: anchor(right);
+  margin: 0.125rem 0 0;
+
+  &:popover-open { display: block; }
+}
+
 .dropdown-menu {
   --bs-dropdown-bg: var(--dropdown-bg);
   --bs-dropdown-link-color: var(--bs-body-color);
@@ -232,6 +284,17 @@ a:not([class]) { text-underline-offset: 0.25em; }
 }
 
 [data-bs-theme="dark"] .card { box-shadow: var(--card-shadow); }
+
+/* ── Dialog ──────────────────────────────────────────────── */
+.metadata-dialog {
+  width: min(32rem, calc(100% - 2rem));
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+
+  &::backdrop { background-color: rgb(0 0 0 / 0.5); }
+}
 
 /* ── Theme toggle ──────────────────────────────────────── */
 .theme-toggle {
@@ -596,6 +659,7 @@ turbo-frame#items {
   padding-block-start: 8px;
 
   .action-buttons { display: flex; gap: 6px; }
+  .action-buttons form { display: contents; }
   .btn { padding: 8px 12px; font-size: 14px; min-height: 40px; }
 }
 

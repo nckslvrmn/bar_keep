@@ -110,32 +110,30 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     assert_equal Item::MAX_QUANTITY, item.reload.quantity
   end
 
-  test "set_quantity responds with a turbo stream" do
-    patch set_quantity_item_path(items(:bourbon)), params: { quantity: 7 }, as: :turbo_stream
-    assert_response :success
-    assert_equal "text/vnd.turbo-stream.html", response.media_type
+  test "quantity changes redirect back to the referring page" do
+    item = items(:bourbon)
+    referer = items_path(sort: "quantity")
+
+    patch set_quantity_item_path(item), params: { quantity: 7 }, headers: { "Referer" => referer }
+    assert_redirected_to referer
+    assert_response :see_other
+
+    patch increment_item_path(item), headers: { "Referer" => referer }
+    assert_redirected_to referer
+
+    patch decrement_item_path(item), headers: { "Referer" => referer }
+    assert_redirected_to referer
+  end
+
+  test "pages refresh by morphing so quantity changes keep scroll position" do
+    get items_path
+    assert_select "meta[name='turbo-refresh-method'][content='morph']"
+    assert_select "meta[name='turbo-refresh-scroll'][content='preserve']"
   end
 
   test "the quantity field is editable in place" do
     get items_path
     assert_select "input.quantity-input[name='quantity'][aria-label='Buffalo Trace quantity']"
-  end
-
-  test "increment responds with a turbo stream" do
-    item = items(:bourbon)
-    patch increment_item_path(item), as: :turbo_stream
-    assert_response :success
-    assert_equal "text/vnd.turbo-stream.html", response.media_type
-    assert_match "turbo-stream", response.body
-  end
-
-  test "the quantity stream morphs the row using turbo's native action" do
-    item = items(:bourbon)
-    patch increment_item_path(item), as: :turbo_stream
-
-    assert_match(/action="replace"/, response.body)
-    assert_match(/method="morph"/, response.body)
-    assert_match(/target="item_row_#{item.id}"/, response.body)
   end
 
   test "updating categories removes ones left orphaned" do

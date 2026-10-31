@@ -1,0 +1,135 @@
+const CACHE_NAME = 'bar-keep-v6';
+const MAX_IMAGE_CACHE_SIZE = 50;
+const MAX_CACHE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+const urlsToCache = [
+    '/manifest.json',
+    '/icon.svg',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/icon-180.png',
+    '/icon-152.png',
+    '/icon-120.png',
+    '/offline.html',
+    '<%= asset_path("bootstrap.min.css") %>',
+    '<%= asset_path("application.css") %>'
+];
+
+// Paths that should NEVER be cached (auth, mutations)
+const EXCLUDED_PATHS = [
+    '/login',
+    '/logout',
+    '/sessions',
+    '/users',
+    '/admin'
+];
+
+// Paths allowed for offline viewing (read-only)
+const OFFLINE_VIEWABLE_PATHS = [
+    '/',
+    '/items'
+];
+
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(urlsToCache))
+            .then(() => self.skipWaiting())
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
+});
+
+self.addEventListener('fetch', event => {
+    const { request } = event;
+    const url = new URL(request.url);
+
+    // Only handle GET requests
+    if (request.method !== 'GET') return;
+
+    // Never cache authentication or admin pages
+    if (EXCLUDED_PATHS.some(path => url.pathname.startsWith(path))) {
+        return;
+    }
+
+    // Never cache requests with CSRF tokens (mutations)
+    if (url.pathname.includes('authenticity_token') ||
+        request.headers.get('X-CSRF-Token')) {
+        return;
+    }
+
+    const isHTML = request.headers.get('Accept')?.includes('text/html');
+
+    event.respondWith(isHTML ? networkFirst(request, url) : cacheFirst(request, url));
+});
+
+function isOfflineViewable(url) {
+    return OFFLINE_VIEWABLE_PATHS.some(path => url.pathname === path || url.pathname.startsWith(`${path}/`));
+}
+
+function isImage(request, url) {
+    return request.destination === 'image' || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url.pathname);
+}
+
+// Pages always come from the network so inventory is never stale; the cache only serves them offline.
+function networkFirst(request, url) {
+    return fetch(request).then(response => {
+        // A redirect here is usually to /login, which must not be stored under the requested URL.
+        if (response.ok && response.type === 'basic' && !response.redirected && isOfflineViewable(url)) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, responseToCache));
+        }
+
+        return response;
+    }).catch(() =>
+        // Rails varies pages on Accept, which differs between Turbo visits and full page loads.
+        caches.match(request, { ignoreVary: true }).then(cached => cached || caches.match('/offline.html'))
+    );
+}
+
+// Assets are digest stamped and blob URLs are signed, so a cached copy is never out of date.
+function cacheFirst(request, url) {
+    return caches.match(request).then(cached => cached || fetch(request).then(response => {
+        if (!response.ok || response.type !== 'basic') {
+            return response;
+        }
+
+        const contentType = response.headers.get('Content-Type') || '';
+        const image = isImage(request, url);
+
+        if (image || contentType.includes('css') || contentType.includes('javascript')) {
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME).then(cache => {
+                cache.put(request, responseToCache);
+
+                if (image) {
+                    cache.keys().then(keys => {
+                        const imageKeys = keys.filter(k =>
+                            k.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)
+                        );
+
+                        if (imageKeys.length > MAX_IMAGE_CACHE_SIZE) {
+                            const keysToDelete = imageKeys.slice(0, imageKeys.length - MAX_IMAGE_CACHE_SIZE);
+                            return Promise.all(keysToDelete.map(key => cache.delete(key)));
+                        }
+                    });
+                }
+            });
+        }
+
+        return response;
+    }));
+}

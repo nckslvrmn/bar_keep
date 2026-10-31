@@ -55,29 +55,17 @@ class ItemsController < ApplicationController
 
   def increment
     @item.increment_quantity!(params[:amount]&.to_i || 1)
-
-    respond_to do |format|
-      format.turbo_stream { render :update_quantity }
-      format.html { redirect_back(fallback_location: items_path, notice: "Quantity increased.") }
-    end
+    redirect_back fallback_location: items_path, status: :see_other
   end
 
   def decrement
     @item.decrement_quantity!(params[:amount]&.to_i || 1)
-
-    respond_to do |format|
-      format.turbo_stream { render :update_quantity }
-      format.html { redirect_back(fallback_location: items_path, notice: "Quantity decreased.") }
-    end
+    redirect_back fallback_location: items_path, status: :see_other
   end
 
   def set_quantity
     @item.set_quantity!(params[:quantity])
-
-    respond_to do |format|
-      format.turbo_stream { render :update_quantity }
-      format.html { redirect_back(fallback_location: items_path, notice: "Quantity updated.") }
-    end
+    redirect_back fallback_location: items_path, status: :see_other
   end
 
   def image_search

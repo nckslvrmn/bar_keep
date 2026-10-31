@@ -34,19 +34,15 @@
                   data: { turbo_permanent: true, action: "input->auto-submit#debouncedSubmit" } %>
             </div>
 
-            <div class="mb-3">
-              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#categoriesCollapse"
-                      aria-expanded="<%= params[:category_ids].present? %>"
-                      aria-controls="categoriesCollapse">
+            <details class="filter-section mb-3" <%= "open" if params[:category_ids].present? %>
+                     data-controller="disclosure" data-action="turbo:before-morph-attribute->disclosure#keepOpenState">
+              <summary class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center">
                 <span class="form-label mb-0">Categories</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                 </svg>
-              </button>
-              <div class="collapse <%= "show" if params[:category_ids].present? %>" id="categoriesCollapse">
+              </summary>
+              <div>
                 <div class="category-filters mt-2">
                   <% @categories.each do |category| %>
                     <% selected = params[:category_ids]&.include?(category.id.to_s) %>
@@ -77,42 +73,34 @@
                 </div>
                 <small class="form-text text-muted">Select multiple categories to filter</small>
               </div>
-            </div>
+            </details>
 
-            <div class="mb-3">
-              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#itemTypeCollapse"
-                      aria-expanded="<%= params[:item_type].present? %>"
-                      aria-controls="itemTypeCollapse">
+            <details class="filter-section mb-3" <%= "open" if params[:item_type].present? %>
+                     data-controller="disclosure" data-action="turbo:before-morph-attribute->disclosure#keepOpenState">
+              <summary class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center">
                 <span class="form-label mb-0">Item Type</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                 </svg>
-              </button>
-              <div class="collapse <%= "show" if params[:item_type].present? %>" id="itemTypeCollapse">
+              </summary>
+              <div>
                 <%= label_tag :item_type, "Item type", class: "visually-hidden" %>
                 <%= select_tag :item_type,
                     options_for_select([ [ "All Types", "" ] ] + Item::ITEM_TYPES.map { |t| [ t, t ] }, params[:item_type]),
                     class: "form-select mt-2",
                     data: { action: "change->auto-submit#submit" } %>
               </div>
-            </div>
+            </details>
 
-            <div class="mb-3">
-              <button class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#stockStatusCollapse"
-                      aria-expanded="<%= params[:stock_status].present? %>"
-                      aria-controls="stockStatusCollapse">
+            <details class="filter-section mb-3" <%= "open" if params[:stock_status].present? %>
+                     data-controller="disclosure" data-action="turbo:before-morph-attribute->disclosure#keepOpenState">
+              <summary class="btn btn-link p-0 text-decoration-none text-start w-100 d-flex justify-content-between align-items-center">
                 <span class="form-label mb-0">Stock Status</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                 </svg>
-              </button>
-              <div class="collapse <%= "show" if params[:stock_status].present? %>" id="stockStatusCollapse">
+              </summary>
+              <div>
                 <%= label_tag :stock_status, "Stock status", class: "visually-hidden" %>
                 <%= select_tag :stock_status,
                     options_for_select([
@@ -124,7 +112,7 @@
                     class: "form-select mt-2",
                     data: { action: "change->auto-submit#submit" } %>
               </div>
-            </div>
+            </details>
 
             <noscript><%= submit_tag "Apply Filters", class: "btn btn-primary w-100 mb-2" %></noscript>
           <% end %>

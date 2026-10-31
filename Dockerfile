@@ -11,6 +11,7 @@ ENV RAILS_ENV=${RAILS_ENV:-production}
 ENV BUNDLE_WITHOUT=development:test
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    libjemalloc2 \
     libvips \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,10 +26,13 @@ RUN gem install bundler
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && rm -rf "${GEM_HOME}/cache"
 
+COPY . .
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+
 FROM base
 
 COPY --from=build "${GEM_HOME}" "${GEM_HOME}"
-COPY . .
+COPY --from=build /app /app
 
 RUN chmod +x bin/docker-entrypoint
 

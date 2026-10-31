@@ -8,7 +8,7 @@
         <div class="card-body">
           <h5 class="card-title">Profile Information</h5>
 
-          <%= form_with model: @user, url: user_path, local: true do |form| %>
+          <%= form_with model: @user, url: user_path do |form| %>
             <div class="mb-3">
               <%= form.label :username, class: "form-label" %>
               <%= form.text_field :username, class: "form-control" %>
@@ -30,7 +30,7 @@
         <div class="card-body">
           <h5 class="card-title">Change Password</h5>
 
-          <%= form_with url: update_password_user_path, method: :patch, local: true do |form| %>
+          <%= form_with url: update_password_user_path, method: :patch do |form| %>
             <div class="mb-3">
               <%= form.label :current_password, class: "form-label" %>
               <%= form.password_field :current_password,

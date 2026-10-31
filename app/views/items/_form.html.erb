@@ -1,4 +1,4 @@
-<%= form_with(model: item, local: true) do |form| %>
+<%= form_with(model: item) do |form| %>
   <% if item.errors.any? %>
     <div class="alert alert-danger">
       <h6><%= pluralize(item.errors.count, "error") %> prohibited this item from being saved:</h6>
@@ -108,7 +108,8 @@
           <h5 class="card-title">Additional Information</h5>
           <p class="text-muted">Add custom fields like purchase location, notes, etc.</p>
 
-          <div id="metadata-fields" data-controller="metadata-fields">
+          <div data-controller="metadata-fields">
+          <div id="metadata-fields" data-metadata-fields-target="fields">
             <% if metadata.any? %>
               <% metadata.each do |key, value| %>
                 <div class="metadata-field mb-3">
@@ -133,7 +134,35 @@
             <% end %>
           </div>
 
-          <button type="button" class="btn btn-sm btn-secondary" data-action="click->metadata-fields#add">+ Add Custom Field</button>
+          <button type="button" class="btn btn-sm btn-secondary" data-action="metadata-fields#open">+ Add Custom Field</button>
+
+          <dialog class="metadata-dialog" closedby="any" aria-labelledby="add-field-title" data-metadata-fields-target="dialog">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" id="add-field-title">Add Custom Field</h5>
+                <button type="button" class="btn-close" aria-label="Close" data-action="metadata-fields#close"></button>
+              </div>
+              <div class="card-body">
+                <label for="metadata-field-name" class="form-label">Field Name</label>
+                <input type="text" id="metadata-field-name" class="form-control" placeholder="e.g., Purchase Date, Brand, etc." autofocus
+                       data-metadata-fields-target="name"
+                       data-action="keydown.enter->metadata-fields#add:prevent">
+                <div class="form-text">The field name will be used as the label for this custom field.</div>
+              </div>
+              <div class="card-footer d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-secondary" data-action="metadata-fields#close">Cancel</button>
+                <button type="button" class="btn btn-primary" data-action="metadata-fields#add">Add Field</button>
+              </div>
+            </div>
+          </dialog>
+
+          <template data-metadata-fields-target="template">
+            <div class="metadata-field mb-3">
+              <label class="form-label"></label>
+              <input type="text" class="form-control">
+            </div>
+          </template>
+          </div>
         </div>
       </div>
     </div>

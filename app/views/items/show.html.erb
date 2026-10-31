@@ -12,9 +12,10 @@
         <div class="d-flex justify-content-between align-items-start">
           <h1 class="card-title"><%= @item.name %></h1>
           <% unless current_user&.guest? %>
-            <div>
+            <div class="d-flex gap-1">
               <%= link_to "Edit", edit_item_path(@item), class: "btn btn-warning", data: { offline_target: "editButton" } %>
-              <%= link_to "Delete", @item, data: { "turbo-method": :delete, "turbo-confirm": "Are you sure?", offline_target: "deleteButton" }, class: "btn btn-danger" %>
+              <%= button_to "Delete", @item, method: :delete, class: "btn btn-danger",
+                  form: { data: { turbo_confirm: "Are you sure?" } }, data: { offline_target: "deleteButton" } %>
             </div>
           <% end %>
         </div>

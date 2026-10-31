@@ -11,11 +11,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#2c2c2c">
 
-    <link rel="manifest" href="/manifest.json">
+    <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%= turbo_refresh_method_tag :morph %>
+    <%= turbo_refresh_scroll_tag :preserve %>
     <%= yield :head %>
 
     <link rel="icon" href="/icon.png" type="image/png">
@@ -51,10 +53,10 @@
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <%= link_to "Bar Keep 🍸", root_path, class: "navbar-brand" %>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" popovertarget="navbarNav" aria-label="Menu">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="navbar-collapse" id="navbarNav" popover>
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
               <%= link_to "All Items", items_path, class: "nav-link" %>
@@ -70,14 +72,14 @@
               </button>
             </li>
             <% if logged_in? %>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+              <li class="nav-item">
+                <button type="button" class="nav-link dropdown-toggle user-menu-toggle" popovertarget="user-menu">
                   <%= current_user.username %>
                   <% if current_user.guest? %>
                     <span class="badge bg-info ms-1">Guest</span>
                   <% end %>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
+                </button>
+                <ul class="dropdown-menu" id="user-menu" popover>
                   <% unless current_user.guest? %>
                     <li><%= link_to "Profile Settings", edit_user_path, class: "dropdown-item" %></li>
                   <% end %>
@@ -102,12 +104,10 @@
       <%= yield %>
     </main>
 
-    <%= javascript_include_tag "bootstrap.bundle.min" %>
-
     <%= javascript_tag nonce: true do %>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js')
+          navigator.serviceWorker.register('<%= pwa_service_worker_path(format: :js) %>')
             .catch(err => console.error('ServiceWorker registration failed:', err));
         });
       }

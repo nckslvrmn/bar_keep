@@ -26,8 +26,13 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "login is case-insensitive" do
-    post login_path, params: { username: "REGULAR", password: "password123" }
+    post login_path, params: { username: "  REGULAR ", password: "password123" }
     assert_redirected_to root_path
+  end
+
+  test "login without a password is rejected" do
+    post login_path, params: { username: "regular" }
+    assert_response :unprocessable_entity
   end
 
   test "logout destroys session" do

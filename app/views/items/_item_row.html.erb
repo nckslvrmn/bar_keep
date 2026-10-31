@@ -38,7 +38,8 @@
       <%= link_to "View", item, class: "btn btn-info", aria: { label: "View #{item.name}" } %>
       <% unless defined?(show_actions) && show_actions == false %>
         <%= link_to "Edit", edit_item_path(item), class: "btn btn-warning", aria: { label: "Edit #{item.name}" }, data: { offline_target: "editButton" } %>
-        <%= link_to "Delete", item, class: "btn btn-danger", aria: { label: "Delete #{item.name}" }, data: { "turbo-method": :delete, "turbo-confirm": "Delete #{item.name}?", offline_target: "deleteButton" } %>
+        <%= button_to "Delete", item, method: :delete, class: "btn btn-danger", aria: { label: "Delete #{item.name}" },
+            form: { data: { turbo_confirm: "Delete #{item.name}?" } }, data: { offline_target: "deleteButton" } %>
       <% end %>
     </div>
   </div>

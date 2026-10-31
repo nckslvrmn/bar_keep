@@ -74,7 +74,7 @@
               <%= button_to "Remove Admin Privileges", toggle_admin_admin_user_path(@user),
                   method: :patch,
                   class: "btn btn-warning w-100 mb-2",
-                  data: { confirm: "Remove admin privileges from #{@user.username}?" } %>
+                  form: { data: { turbo_confirm: "Remove admin privileges from #{@user.username}?" } } %>
             <% else %>
               <%= button_to "Grant Admin Privileges", toggle_admin_admin_user_path(@user),
                   method: :patch,
@@ -84,7 +84,7 @@
             <%= button_to "Delete User", admin_user_path(@user),
                 method: :delete,
                 class: "btn btn-danger w-100",
-                data: { confirm: "Are you sure you want to delete #{@user.username}? This will also delete all their items." } %>
+                form: { data: { turbo_confirm: "Are you sure you want to delete #{@user.username}? This will also delete all their items." } } %>
           <% end %>
 
           <hr>

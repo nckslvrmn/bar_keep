@@ -20,8 +20,18 @@ class SessionTest < ActiveSupport::TestCase
 
   test "extend_expiration! pushes expiration forward" do
     session = sessions(:active_session)
+    session.update!(expires_at: 10.days.from_now)
     session.extend_expiration!
     assert session.expires_at > 29.days.from_now
+  end
+
+  test "extend_expiration! skips the write when extended within the last day" do
+    session = sessions(:active_session)
+    session.update!(expires_at: 30.days.from_now - 1.hour)
+
+    assert_no_changes -> { session.reload.updated_at } do
+      session.extend_expiration!
+    end
   end
 
   test "scope active returns only non-expired sessions" do

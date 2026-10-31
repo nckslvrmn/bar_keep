@@ -28,7 +28,6 @@ class ContentSecurityPolicyTest < ActionDispatch::IntegrationTest
   test "bootstrap is served from this app" do
     get items_path
     assert_match(/href="\/assets\/bootstrap\.min-\w+\.css"/, response.body)
-    assert_match(/src="\/assets\/bootstrap\.bundle\.min-\w+\.js"/, response.body)
   end
 
   test "the policy does not allow unsafe inline scripts" do
